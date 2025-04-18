@@ -1,0 +1,91 @@
+/* src/App.css */
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Lora&display=swap');
+
+/* Custom Theme using CSS Variables */
+@layer base {
+    :root {
+        --background-color: #070f0c;
+        /* Dark background color */
+        --text-color: #fcfdfd;
+        /* Light off-white text color */
+        --button-color: #f6f43d;
+        /* Bright yellow button color */
+        --highlight-color: #c0c6ff;
+        /* Light blue for links or hover effects */
+        --font-family: 'Poppins', sans-serif;
+    }
+
+    html.dark {
+        --background-color: #070f0c;
+        /* Dark background for dark mode */
+        --text-color: #fcfdfd;
+        /* Light text for dark background */
+        --button-color: #f6f43d;
+        /* Button color stays the same */
+        --highlight-color: #c0c6ff;
+        /* Light blue for links or hover effects */
+        --font-family: 'Poppins', sans-serif;
+    }
+}
+
+/* Base Styles */
+@layer base {
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    h1,
+    h2,
+    h3 {
+        font-family: 'Lora', serif;
+        font-weight: 600;
+        color: var(--highlight-color);
+        /* Light blue for headings */
+    }
+}
+
+/* Button Styles (without @apply) */
+@layer utilities {
+    .btn-primary {
+        font-family: 'Poppins', sans-serif;
+        padding: 1rem 2rem;
+        /* Equivalent to px-4 py-2 */
+        border-radius: 1rem;
+        /* Equivalent to rounded-xl */
+        font-weight: 600;
+        /* Equivalent to font-semibold */
+        transition: opacity 0.3s;
+        /* Equivalent to transition */
+        background-color: var(--button-color);
+        /* Bright yellow for buttons */
+        color: white;
+    }
+
+    .btn-primary:hover {
+        opacity: 0.9;
+        background-color: var(--highlight-color);
+        /* Light blue hover effect */
+    }
+}
+
+/* Optional: Add more custom utilities if needed for text, borders, etc. */
+@layer utilities {
+    .text-color-text {
+        color: var(--text-color);
+        /* Text color */
+    }
+
+    .bg-color-background {
+        background-color: var(--background-color);
+        /* Background color */
+    }
+
+    .border-color-border {
+        border-color: var(--button-color);
+        /* Border color matching button */
+    }
+}
