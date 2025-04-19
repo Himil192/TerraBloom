@@ -4,10 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  server: {
-    host: '0.0.0.0', // Allow connections from phone
-    port: 5173
-  },
+  base: '/terrabloom/',
   plugins: [
     react(),
     tailwindcss(),
