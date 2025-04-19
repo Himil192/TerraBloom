@@ -14,11 +14,11 @@ const Home = () => {
     }, [isDark]);
 
     const imagesUrls = [
-        '/carousel/Product1.png', // Corrected image paths
-        '/carousel/Product2.png',
-        '/carousel/Product3.webp',
-        '/carousel/Product4.webp',
-        '/carousel/Product5.webp',
+        'carousel/Product1.png', // Corrected image paths
+        'carousel/Product2.png',
+        'carousel/Product3.webp',
+        'carousel/Product4.webp',
+        'carousel/Product5.webp',
     ];
     return (
 
