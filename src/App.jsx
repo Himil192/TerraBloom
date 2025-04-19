@@ -16,7 +16,7 @@ function App() {
   ];
   return (
     <>
-      <Router>
+      <Router basename="/TerraBloom">
         <ThemeProvider>
           <Navbar links={navLinks} />
           {/*main contains */}
