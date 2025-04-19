@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Blog from './pages/Blog';
 import Products from './pages/Products';
 import Contact from './pages/Contact';
+import { ThemeProvider } from './theme/ThemeContext';
 
 function App() {
   const navLinks = [
@@ -16,17 +17,18 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar links={navLinks} />
-        {/*main contains */}
-        <div className='container p-6 mx-auto '>
-          <Routes>
+        <ThemeProvider>
+          <Navbar links={navLinks} />
+          {/*main contains */}
+          <div className='container p-6 mx-auto '>
+            <Routes>
 
-            <Route path='/' element={<Home />} />
-            <Route path="/blogs" element={<Blog />} />
-            <Route path='/products' element={<Products />} />
-            <Route path='/contact-us' element={<Contact />} />
-          </Routes>
-        </div>
+              <Route path='/' element={<Home />} />
+              <Route path="/blogs" element={<Blog />} />
+              <Route path='/products' element={<Products />} />
+              <Route path='/contact-us' element={<Contact />} />
+            </Routes>
+          </div></ThemeProvider>
       </Router>
 
     </>
