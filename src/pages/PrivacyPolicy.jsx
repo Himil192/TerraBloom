@@ -73,8 +73,8 @@ const PrivacyPolicy = () => {
                 <h2 className="text-2xl font-semibold mb-2">8. Contact</h2>
                 <p>
                     Questions? Email us at:{" "}
-                    <a href="mailto:your@email.com" className="text-green-600 underline">
-                        your@email.com
+                    <a href="mailto:himilprajapati.com" className="text-green-600 underline">
+                        himilprajapati.com
                     </a>
                 </p>
             </section>
