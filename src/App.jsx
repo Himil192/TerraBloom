@@ -8,6 +8,8 @@ import Contact from './pages/Contact';
 import { ThemeProvider } from './theme/ThemeContext';
 import Footer from './component/Footer';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
+import NotFound from './pages/404';
 
 function App() {
   const navLinks = [
@@ -32,6 +34,8 @@ function App() {
                 <Route path="/products" element={<Products />} />
                 <Route path="/contact-us" element={<Contact />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
+                <Route path='*' element={<NotFound />} />
               </Routes>
             </main>
 

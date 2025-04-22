@@ -55,12 +55,11 @@ const Footer = () => {
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-white  uppercase     ">Legal</h2>
                                 <ul className="  font-medium">
-                                    <li className="mb-4">
-                                        <a href="/TerraBloom/privacy-policy" target="_blank"
-                                            rel="noopener noreferrer" className="hover:text-second-highlight-color">Privacy Policy</a>
-                                    </li>
+                                    <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">
+                                        Privacy Policy
+                                    </Link>
                                     <li>
-                                        <a href="#" className="hover:text-second-highlight-color">Terms &amp; Conditions</a>
+                                        <Link to="/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">Terms &amp; Conditions</Link>
                                     </li>
                                 </ul>
                             </div>
