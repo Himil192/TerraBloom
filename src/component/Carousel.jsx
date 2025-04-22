@@ -15,10 +15,16 @@ const Carousel = ({ images, intervel = 3000 }) => {
         <div className="w-full overflow-hidden py-4 px-2">
             <img
                 src={images[currentIndex]}
+                loading="lazy"
                 alt={`slide ${currentIndex + 1}`}
-                className="w-full h-auto max-h-60 mx-auto rounded-xl shadow-md transition-transform duration-300 ease-in-out"
+                className="w-full h-full object-contain mx-auto rounded-xl shadow-md transition-transform duration-300 ease-in-out 
+            sm:max-w-full 
+            md:max-w-2xl lg:max-w-4xl xl:max-w-5xl 
+            sm:max-h-60 md:max-h-80 lg:max-h-96 xl:max-h-112"
             />
         </div>
+
+
     );
 };
 

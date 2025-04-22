@@ -6,6 +6,7 @@ import Blog from './pages/Blog';
 import Products from './pages/Products';
 import Contact from './pages/Contact';
 import { ThemeProvider } from './theme/ThemeContext';
+import Footer from './component/Footer';
 
 function App() {
   const navLinks = [
@@ -18,17 +19,24 @@ function App() {
     <>
       <Router basename="/TerraBloom">
         <ThemeProvider>
+          {/* Navbar */}
           <Navbar links={navLinks} />
-          {/*main contains */}
-          <div className='container p-6 mx-auto '>
-            <Routes>
 
-              <Route path='/' element={<Home />} />
-              <Route path="/blogs" element={<Blog />} />
-              <Route path='/products' element={<Products />} />
-              <Route path='/contact-us' element={<Contact />} />
-            </Routes>
-          </div></ThemeProvider>
+          {/* Main container */}
+          <div className="flex flex-col min-h-screen">
+            <main className="flex-grow container p-6 mx-auto">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/blogs" element={<Blog />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/contact-us" element={<Contact />} />
+              </Routes>
+            </main>
+
+            {/* Footer */}
+            <Footer />
+          </div>
+        </ThemeProvider>
       </Router>
 
     </>

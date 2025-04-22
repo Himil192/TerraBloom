@@ -1,94 +1,123 @@
 /* src/App.css */
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Lora&display=swap');
-
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 /* Custom Theme using CSS Variables */
 @layer base {
     :root {
         /* Light Theme Colors */
-        --background-color: #fcfdfd;
-        /* Light background */
-        --text-color: #070f0c;
-        /* Dark text */
-        --highlight-color: #8bc34a;
-        --second-highlight-color: #f6f43d;
-        /* Soft green for highlights */
-        /* Bright yellow for highlights */
-        --button-color: #c0c6ff;
-        /* Light blue for buttons */
+        --bg-color-background: #FFFEFF;
+        --text-color-text: #3B3437;
+        --primary-color: #4A9B4B;
+        --secondary-color: #88B73B;
+        --accent-color: #FFB829;
+
+        /* Dark Theme Colors */
+        --bg-color-background-dark: #1D1F1F;
+        --text-color-text-dark: #F0F7D8;
+        --primary-color-dark: #A2C73E;
+        --secondary-color-dark: #7A9C2F;
+        --accent-color-dark: #F6B700;
     }
 
     html.dark {
-        /* Dark Theme Colors */
-        --background-color: #070f0c;
-        /* Dark background */
-        --text-color: #fcfdfd;
-        /* Light text */
-        --highlight-color: #f6f43d;
-        --second-highlight-color: #8bc34a;
-        /* Bright yellow for highlights */
-        --button-color: #c0c6ff;
-        /* Light blue for buttons */
+        --bg-color-background: var(--bg-color-background-dark);
+        --text-color-text: var(--text-color-text-dark);
+        --primary-color: var(--primary-color-dark);
+        --secondary-color: var(--secondary-color-dark);
+        --accent-color: var(--accent-color-dark);
     }
 }
 
-/* Base Styles */
 @layer base {
     body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-color);
+        background-color: var(--bg-color-background);
+        color: var(--text-color-text);
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     h1,
     h2,
     h3 {
-        font-family: 'Lora', serif;
-        font-weight: 600;
-        color: var(--highlight-color);
+        color: var(--primary-color);
     }
 }
 
-/* Button Styles (without @apply) */
 @layer utilities {
+
+    /* Button Styles */
     .btn-primary {
-        font-family: 'Poppins', sans-serif;
-        padding: 1rem 2rem;
-        border-radius: 1rem;
-        font-weight: 600;
-        transition: opacity 0.3s;
-        background-color: var(--button-color);
+        background-color: var(--primary-color);
         color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
     .btn-primary:hover {
-        opacity: 0.9;
-        background-color: var(--highlight-color);
+        background-color: var(--accent-color);
     }
-}
 
-/* Optional: Add more custom utilities if needed for text, borders, etc. */
-@layer utilities {
+    /* Text Colors */
     .text-color-text {
-        color: var(--text-color);
+        color: var(--text-color-text);
     }
 
+    .text-color-text-dark {
+        color: var(--text-color-text-dark);
+    }
+
+    /* Background Colors */
     .bg-color-background {
-        background-color: var(--background-color);
+        background-color: var(--bg-color-background);
     }
 
+    .bg-color-background-dark {
+        background-color: var(--bg-color-background-dark);
+    }
+
+    /* Border Colors */
     .border-color-border {
-        border-color: var(--button-color);
+        border-color: var(--primary-color);
     }
 
+    .border-color-border-dark {
+        border-color: var(--primary-color-dark);
+    }
+
+    /* Highlight and Accent Colors */
     .second-highlight-color {
-        color: var(--second-highlight-color);
+        background-color: var(--secondary-color);
     }
 
     .text-highlight {
-        color: var(--second-highlight-color);
+        color: var(--accent-color);
+    }
+}
+
+/* Footer Styles */
+@layer utilities {
+    .footer {
+        background-color: var(--primary-color);
+        color: black;
+        padding: 20px;
+        text-align: center;
+    }
+}
+
+/* Header Styles */
+@layer utilities {
+    .header {
+        background-color: var(--primary-color);
+        color: white;
+
+
+
     }
 }

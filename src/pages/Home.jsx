@@ -28,12 +28,12 @@ const Home = () => {
                     {/* Left - Text Content */}
                     <div className="flex-1 text-left">
                         <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-                            Welcome to <span className="second-highlight-color">TerraBloom</span>
+                            Welcome to <span className="text-highlight">TerraBloom</span>
                         </h2>
-                        <p className="mt-4 text-lg max-w-lg">
+                        <p className="m-4 text-lg max-w-lg">
                             Nurture your space and spirit with our curated collection of eco-friendly plants, wellness goods, and green living essentials.
                         </p>
-                        <button className="btn-primary mt-6">Click Me</button>
+                        <button className="btn-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Click Me</button>
                     </div>
 
                     {/* Right - Image */}
