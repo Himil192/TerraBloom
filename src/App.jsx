@@ -7,6 +7,7 @@ import Products from './pages/Products';
 import Contact from './pages/Contact';
 import { ThemeProvider } from './theme/ThemeContext';
 import Footer from './component/Footer';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 function App() {
   const navLinks = [
@@ -30,11 +31,15 @@ function App() {
                 <Route path="/blogs" element={<Blog />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/contact-us" element={<Contact />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               </Routes>
             </main>
 
             {/* Footer */}
             <Footer />
+
+
+
           </div>
         </ThemeProvider>
       </Router>
