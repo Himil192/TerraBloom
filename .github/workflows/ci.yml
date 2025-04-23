@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [production] # Change this to the branch you want to build from
+    branches: [main] # Change this to the main branch
   pull_request:
-    branches: [production] # Also update the branch for PRs if needed
+    branches: [main] # Also update the branch for PRs to main
   workflow_dispatch:
 
 jobs:

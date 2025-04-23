@@ -14,11 +14,11 @@ const Home = () => {
     }, [isDark]);
 
     const imagesUrls = [
-        `${import.meta.env.BASE_URL}carousel/Product1.png`,
-        `${import.meta.env.BASE_URL}carousel/Product2.png`,
-        `${import.meta.env.BASE_URL}carousel/Product3.webp`,
-        `${import.meta.env.BASE_URL}carousel/Product4.webp`,
-        `${import.meta.env.BASE_URL}carousel/Product5.webp`,
+        `/carousel/Product1.png`,
+        ` /carousel/Product2.png`,
+        ` /carousel/Product3.webp`,
+        ` /carousel/Product4.webp`,
+        ` /carousel/Product5.webp`,
     ];
     return (
 

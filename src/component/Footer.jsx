@@ -55,11 +55,11 @@ const Footer = () => {
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-white  uppercase     ">Legal</h2>
                                 <ul className="  font-medium">
-                                    <Link to={`${import.meta.env.BASE_URL}/privacy-policy`} target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">
+                                    <Link to={`/pages/privacy-policy`} target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">
                                         Privacy Policy
                                     </Link>
                                     <li>
-                                        <Link to={`${import.meta.env.BASE_URL}/terms-and-conditions`} target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">Terms &amp; Conditions</Link>
+                                        <Link to={`/pages/terms-and-conditions`} target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">Terms &amp; Conditions</Link>
                                     </li>
                                 </ul>
                             </div>
