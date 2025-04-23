@@ -1,11 +1,10 @@
-# .github/workflows/ci.yml
 name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [production] # Change this to the branch you want to build from
   pull_request:
-    branches: [main]
+    branches: [production] # Also update the branch for PRs if needed
   workflow_dispatch:
 
 jobs:
