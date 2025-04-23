@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import { Link } from 'react-router-dom';
 import SvgComponent from './SvgComponent';
-
 const Footer = () => {
     const { isDark } = useTheme();
 
@@ -55,11 +54,11 @@ const Footer = () => {
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-white  uppercase     ">Legal</h2>
                                 <ul className="  font-medium">
-                                    <Link to={`/pages/privacy-policy`} target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">
+                                    <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">
                                         Privacy Policy
                                     </Link>
                                     <li>
-                                        <Link to={`/pages/terms-and-conditions`} target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">Terms &amp; Conditions</Link>
+                                        <Link to="/terms-and-conditions" target="_blank" rel="noopener noreferrer" className="hover:text-second-highlight-color">Terms &amp; Conditions</Link>
                                     </li>
                                 </ul>
                             </div>
