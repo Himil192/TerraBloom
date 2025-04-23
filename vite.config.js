@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // base: '/TerraBloom/', // GitHub Pages URL path
+  base: '/', // Base URL for the app
   plugins: [
     react(),
     tailwindcss(),
