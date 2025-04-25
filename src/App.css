@@ -7,7 +7,7 @@
 @layer base {
     :root {
         /* Light Theme Colors */
-        --bg-color-background: #FFFEFF;
+        --bg-color-background: #e6faeb;
         --text-color-text: #3B3437;
         --primary-color: #4A9B4B;
         --secondary-color: #88B73B;
@@ -31,6 +31,11 @@
 }
 
 @layer base {
+    html {
+        scroll-behavior: smooth;
+
+    }
+
     body {
         background-color: var(--bg-color-background);
         color: var(--text-color-text);
@@ -117,7 +122,7 @@
         background-color: var(--primary-color);
         color: white;
 
-
-
     }
+
+
 }

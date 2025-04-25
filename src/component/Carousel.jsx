@@ -17,12 +17,12 @@ const Carousel = ({ images, intervel = 3000 }) => {
                 src={images[currentIndex]}
                 loading="lazy"
                 alt={`slide ${currentIndex + 1}`}
-                className="w-full h-full object-contain mx-auto rounded-xl shadow-md transition-transform duration-300 ease-in-out 
-            sm:max-w-full 
-            md:max-w-2xl lg:max-w-4xl xl:max-w-5xl 
-            sm:max-h-60 md:max-h-80 lg:max-h-96 xl:max-h-112"
+                className="w-full h-full object-contain mx-auto  transition-transform duration-300 ease-in-out 
+            sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 
+            sm:max-h-48 md:max-h-64 lg:max-h-72 xl:max-h-80"
             />
         </div>
+
 
 
     );

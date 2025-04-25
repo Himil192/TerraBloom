@@ -46,7 +46,7 @@ const Navbar = ({ links }) => {
                     })}
                 </div>
                 <div className="hidden md:flex items-center space-x-4 pr-4">
-                    <button className="bg-highlight-color text-black px-4 py-1 rounded-full">
+                    <button className="btn-primary px-4 py-1 rounded-full">
                         Login
                     </button>
 
