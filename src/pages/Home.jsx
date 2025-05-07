@@ -24,7 +24,7 @@ const Home = () => {
     return (
 
         <>
-            <section className='bg-color-background text-color-text  mt-10'>
+            <section className='pt-20 bg-color-background text-color-text  '>
 
                 <div className=" gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl   lg:py-16 lg:px-6">
                     <div className="flex flex-col md:flex-row items-center gap-8">
@@ -60,13 +60,17 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+            {/* Hero Section End */}
+
+            { /*Our Purpose  */}
 
             <section className="bg-color-background text-color-text  ">
                 <h2 className=" text-4xl tracking-tight font-extrabold text-center ">We’re not just a store. We’re a movement. </h2>
                 <div className="gap-16 items-center  mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
                     <div className="grid grid-cols-2 gap-4 mt-8 mb-4">
-                        <img className="w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/content/office-long-2.png" alt="office content 1" />
-                        <img className="mt-4 w-full lg:mt-10 rounded-lg" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/content/office-long-1.png" alt="office content 2" />
+                        <img className="mt-4 w-full lg:mt-10 rounded-lg" loading="lazy" src="PromiseTwo.jpg" alt="healthy plant " />
+                        <img className="w-full rounded-lg" loading="lazy" src="PromiseOne.jpg" alt="office content 1" />
+
 
                     </div>
                     <div className="font-light mt-4 lg:mt-10">
