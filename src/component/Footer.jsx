@@ -34,9 +34,9 @@ const Footer = () => {
 
                         </div>
 
-                        <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-                            <div>
-                                {/* <h2 className="mb-6 text-sm font-semibold text-white  uppercase ">Resources</h2>
+                        <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3 pt-10 md:pt-0">
+                            {/* <div>
+                                <h2 className="mb-6 text-sm font-semibold text-white  uppercase ">Resources</h2>
                                 <ul className="  font-medium">
                                     <li className="mb-4">
                                         <a href="https://flowbite.com/" className="hover:text-second-highlight-color">Flowbite</a>
@@ -44,8 +44,8 @@ const Footer = () => {
                                     <li>
                                         <a href="https://tailwindcss.com/" className="hover:text-second-highlight-color">Tailwind CSS</a>
                                     </li>
-                                </ul> */}
-                            </div>
+                                </ul>
+                            </div> */}
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-white  uppercase ">Follow us</h2>
                                 <ul className="  font-medium">

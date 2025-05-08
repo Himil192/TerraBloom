@@ -137,7 +137,7 @@ const Home = () => {
 
             <section className="bg-color-background text-color-text pt-25">
                 <h2 className="text-4xl tracking-tight font-extrabold text-center mb-8">Featured Products</h2>
-                <div className="flex flex-wrap justify-center gap-8 p-10">
+                <div className="flex flex-wrap justify-center  ">
 
                     {products.map((product) => (
                         <ProductCards key={product.id} product={product} />
