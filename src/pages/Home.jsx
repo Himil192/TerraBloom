@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import Carousel from '../component/Carousel';
+import ProductCards from '../component/ProductCards';
 
 const Home = () => {
     const { isDark } = useTheme(); // Importing the isDark state from ThemeContext
@@ -20,6 +21,27 @@ const Home = () => {
         ` /carousel/Product3.webp`,
         ` /carousel/Product4.webp`,
         ` /carousel/Product5.webp`,
+    ];
+
+    const products = [
+        {
+            id: 1,
+            image: "/FeatureProducts/BambooBrush.jpg",
+            title: "Bamboo Toothbrush",
+            price: 100,
+        },
+        {
+            id: 2,
+            image: "/FeatureProducts/gorrilaSocks.jpg",
+            title: "Gorillas Socks socks",
+            price: 120.0,
+        },
+        {
+            id: 3,
+            image: "/FeatureProducts/Eco-Panda-facial-removal.jpg",
+            title: "Eco Panda Facial Removal Pads",
+            price: 250.0,
+        },
     ];
     return (
 
@@ -64,7 +86,7 @@ const Home = () => {
 
             { /*Our Purpose  */}
 
-            <section className="bg-color-background text-color-text  ">
+            <section className="bg-color-background text-color-text pt-25 ">
                 <h2 className=" text-4xl tracking-tight font-extrabold text-center ">We’re not just a store. We’re a movement. </h2>
                 <div className="gap-16 items-center  mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
                     <div className="grid grid-cols-2 gap-4 mt-8 mb-4">
@@ -108,6 +130,24 @@ const Home = () => {
 
                 </div>
             </section>
+
+            {/* Featured Products */}
+
+
+
+            <section className="bg-color-background text-color-text pt-25">
+                <h2 className="text-4xl tracking-tight font-extrabold text-center mb-8">Featured Products</h2>
+                <div className="flex flex-wrap justify-center gap-8 p-10">
+
+                    {products.map((product) => (
+                        <ProductCards key={product.id} product={product} />
+                    ))}
+                </div>
+                <div className="flex justify-center mb-10">
+                    <button className="btn-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-2">View All Products</button>
+                </div>
+            </section >
+
 
         </>
 
