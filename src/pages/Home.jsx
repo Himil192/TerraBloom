@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import Carousel from '../component/Carousel';
 import ProductCards from '../component/ProductCards';
+import { Link } from 'react-router-dom';
+import TestimonialCard from '../component/TestimonialCard';
 
 const Home = () => {
     const { isDark } = useTheme(); // Importing the isDark state from ThemeContext
@@ -43,6 +45,98 @@ const Home = () => {
             price: 250.0,
         },
     ];
+
+
+    const testimonials = [
+        {
+            image: "https://i.pravatar.cc/150?img=12",
+            name: "Maria L.",
+            title: "Eco Shopper",
+            message:
+                "I switched to TerraBloom 6 months ago and it changed how I live. Every product feels good and *does* good.",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=9",
+            name: "Arjun P.",
+            title: "Environmentalist",
+            message:
+                "It’s not just a store, it’s a movement. TerraBloom makes eco-friendly feel effortless.",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=15",
+            name: "Sara M.",
+            title: "Zero Waste Advocate",
+            message:
+                "From the compostable packaging to the lovely products, I feel proud supporting TerraBloom.",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=18",
+            name: "Tom H.",
+            title: "Climate Blogger",
+            message:
+                "A rare brand that actually walks the talk. Highly recommend to conscious buyers.",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=22",
+            name: "Lina K.",
+            title: "Nature Enthusiast",
+            message:
+                "So refreshing to see plastic-free deliveries. TerraBloom made my eco journey fun!",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=31",
+            name: "David W.",
+            title: "Green Techie",
+            message:
+                "Smart packaging, mindful sourcing, and solid service. Can’t go back to regular shopping.",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=25",
+            name: "Emily Z.",
+            title: "Eco Mom",
+            message:
+                "From baby goods to kitchen staples, TerraBloom's products are life-changing.",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=35",
+            name: "Nikhil S.",
+            title: "Vegan Chef",
+            message:
+                "Amazing options that align with my values. TerraBloom never disappoints!",
+        },
+        {
+            image: "https://i.pravatar.cc/150?img=45",
+            name: "Jenna R.",
+            title: "Earth Warrior",
+            message:
+                "A small step for me, a giant leap for Earth. Thanks TerraBloom 🌍",
+        },
+    ];
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const slidesToShow = 6;
+    useEffect(() => {
+        const interval = setInterval(() => {
+            nextSlide();
+        }, 5000); // Auto swipe every 5 seconds
+
+        return () => clearInterval(interval); // Clean up the interval on component unmount
+    }, [currentIndex]);
+    const nextSlide = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % Math.ceil(testimonials.length / slidesToShow));
+    };
+    const prevSlide = () => {
+        setCurrentIndex(
+            (prevIndex) => (prevIndex - 1 + Math.ceil(testimonials.length / slidesToShow)) % Math.ceil(testimonials.length / slidesToShow)
+        );
+    };
+
+    const goToSlide = (index) => {
+        setCurrentIndex(index);
+    };
+
+    // Generate the visible cards based on the currentIndex
+    const currentTestimonials = testimonials.slice(currentIndex * slidesToShow, (currentIndex + 1) * slidesToShow);
+
     return (
 
         <>
@@ -144,10 +238,74 @@ const Home = () => {
                     ))}
                 </div>
                 <div className="flex justify-center mb-10">
-                    <button className="btn-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-2">View All Products</button>
+                    <Link to="/Products" >
+
+                        <button className="btn-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-2" href=" ">View All Products</button>
+                    </Link>
                 </div>
             </section >
 
+            {/*Testimonials */}
+            <section className="bg-color-background text-color-text pt-24 pb-16">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="font-bold text-4xl    ">Testimonials</h2>
+                        <h3 className="text-3xl sm:text-2xl font-extrabold text-highlight mt-2">What Our Customers Say</h3>
+                        <p className="text-base text-color-text mt-4 max-w-2xl mx-auto">
+                            Real stories from real people who care about the Earth as much as we do.
+                        </p>
+                    </div>
+
+                    {/* <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {testimonials.map((testimonial, index) => (
+                            <TestimonialCard
+                                key={index}
+                                image={testimonial.image}
+                                name={testimonial.name}
+                                title={testimonial.title}
+                                message={testimonial.message}
+                            />
+                        ))}
+                    </div> */}
+
+                    <div className="relative overflow-hidden">
+                        {/* Carousel Content */}
+                        <div className="grid grid-cols-3 gap-4 transition-transform duration-500 ease-in-out">
+                            {currentTestimonials.map((testimonial, index) => (
+                                <TestimonialCard
+                                    key={index}
+                                    image={testimonial.image}
+                                    name={testimonial.name}
+                                    title={testimonial.title}
+                                    message={testimonial.message}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Left and Right Buttons */}
+                        <div className="flex justify-center mt-6 space-x-4">
+                            <button
+                                className=" btn-primary   duration-500 ease-in-out  w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-90 transition "
+                                onClick={prevSlide}
+                            >
+                                &#10094;
+                            </button>
+                            <button
+                                className="  btn-primary  duration-500 ease-in-out w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-90 transition"
+                                onClick={nextSlide}
+                            >
+                                &#10095;
+                            </button>
+
+                        </div>
+
+
+                        {/* Bottom Centered Navigation */}
+
+                    </div>
+
+                </div>
+            </section>
 
         </>
 
