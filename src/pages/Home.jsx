@@ -113,29 +113,46 @@ const Home = () => {
         },
     ];
     const [currentIndex, setCurrentIndex] = useState(0);
-    const slidesToShow = 6;
+    const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow());
+
+    function getSlidesToShow() {
+        const width = window.innerWidth;
+        if (width >= 1024) return 6; // 3 cols x 2 rows
+        if (width >= 640) return 4;  // 2 cols x 2 rows
+        return 1;                    // 1 col x 1 row
+    }
+
+    useEffect(() => {
+        const handleResize = () => {
+            setSlidesToShow(getSlidesToShow());
+            setCurrentIndex(0); // Reset index on resize to avoid out-of-bound issues
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     useEffect(() => {
         const interval = setInterval(() => {
             nextSlide();
-        }, 5000); // Auto swipe every 5 seconds
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [currentIndex, slidesToShow]);
 
-        return () => clearInterval(interval); // Clean up the interval on component unmount
-    }, [currentIndex]);
+    const totalPages = Math.ceil(testimonials.length / slidesToShow);
+
     const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % Math.ceil(testimonials.length / slidesToShow));
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % totalPages);
     };
+
     const prevSlide = () => {
-        setCurrentIndex(
-            (prevIndex) => (prevIndex - 1 + Math.ceil(testimonials.length / slidesToShow)) % Math.ceil(testimonials.length / slidesToShow)
-        );
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + totalPages) % totalPages);
     };
 
-    const goToSlide = (index) => {
-        setCurrentIndex(index);
-    };
-
-    // Generate the visible cards based on the currentIndex
-    const currentTestimonials = testimonials.slice(currentIndex * slidesToShow, (currentIndex + 1) * slidesToShow);
+    const currentTestimonials = testimonials.slice(
+        currentIndex * slidesToShow,
+        (currentIndex + 1) * slidesToShow
+    );
 
     return (
 
@@ -240,7 +257,7 @@ const Home = () => {
                 <div className="flex justify-center mb-10">
                     <Link to="/Products" >
 
-                        <button className="btn-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-2" href=" ">View All Products</button>
+                        <button className="btn-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-2" href="/Products">View All Products</button>
                     </Link>
                 </div>
             </section >
@@ -249,28 +266,17 @@ const Home = () => {
             <section className="bg-color-background text-color-text pt-24 pb-16">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="font-bold text-4xl    ">Testimonials</h2>
-                        <h3 className="text-3xl sm:text-2xl font-extrabold text-highlight mt-2">What Our Customers Say</h3>
+                        <h2 className="font-bold text-4xl">Testimonials</h2>
+                        <h3 className="text-3xl sm:text-2xl font-extrabold text-highlight mt-2">
+                            What Our Customers Say
+                        </h3>
                         <p className="text-base text-color-text mt-4 max-w-2xl mx-auto">
                             Real stories from real people who care about the Earth as much as we do.
                         </p>
                     </div>
 
-                    {/* <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                        {testimonials.map((testimonial, index) => (
-                            <TestimonialCard
-                                key={index}
-                                image={testimonial.image}
-                                name={testimonial.name}
-                                title={testimonial.title}
-                                message={testimonial.message}
-                            />
-                        ))}
-                    </div> */}
-
                     <div className="relative overflow-hidden">
-                        {/* Carousel Content */}
-                        <div className="grid grid-cols-3 gap-4 transition-transform duration-500 ease-in-out">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {currentTestimonials.map((testimonial, index) => (
                                 <TestimonialCard
                                     key={index}
@@ -282,30 +288,87 @@ const Home = () => {
                             ))}
                         </div>
 
-                        {/* Left and Right Buttons */}
+                        {/* Navigation Buttons */}
                         <div className="flex justify-center mt-6 space-x-4">
                             <button
-                                className=" btn-primary   duration-500 ease-in-out  w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-90 transition "
+                                className="btn-primary w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-90 transition"
                                 onClick={prevSlide}
                             >
                                 &#10094;
                             </button>
                             <button
-                                className="  btn-primary  duration-500 ease-in-out w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-90 transition"
+                                className="btn-primary w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-opacity-90 transition"
                                 onClick={nextSlide}
                             >
                                 &#10095;
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
+            {/*how it works */}
+            <section class=" bg-color-background text-color-text pt-24 pb-16">
+                <div class="max-w-6xl mx-auto px-6 text-center">
+                    <h2 class=" font-bold text-4xl">How It Works</h2>
+                    <h3 class="text-3xl font-bold  text-highlight  mt-2 mb-4">Simple Steps to Sustainable Living</h3>
+                    <p class=" mb-12 text-color-text max-w-2xl mx-auto">
+                        We’ve made it effortless to go green. Just follow these steps and join our eco-revolution!
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+                        <div class="p-6  bg-white  rounded-xl shadow hover:shadow-lg transition">
+                            <div class="   text-4xl mb-4">🛍️</div>
+                            <h4 class="text-xl font-semibold  mb-2">Choose Your Product</h4>
+                            <p class=" text-sm">Browse our eco-conscious collection and pick what fits your lifestyle.</p>
                         </div>
 
 
-                        {/* Bottom Centered Navigation */}
+                        <div class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+                            <div class="  text-4xl mb-4">🚚</div>
+                            <h4 class="text-xl font-semibold  mb-2">We Deliver To You</h4>
+                            <p class="  text-sm">Our green delivery ensures your order arrives safely and sustainably.</p>
+                        </div>
 
+                        <div class="p-6 bg-white  rounded-xl shadow hover:shadow-lg transition">
+                            <div class="  text-4xl mb-4">🌍</div>
+                            <h4 class="text-xl font-semibold   mb-2">You Impact The Earth</h4>
+                            <p class="  text-sm">Every product you buy contributes to a cleaner, greener world.</p>
+                        </div>
                     </div>
 
+
+                    <div class="mt-10">
+                        <a href="/Products" class="inline-block  btn-primary py-3 px-6 rounded-full text-sm font-semibold    ">
+                            Start Shopping Green
+                        </a>
+                    </div>
                 </div>
             </section>
+            {/* Newsletter Signup */}
+
+            <section className="bg-color-background text-color-text pt-24 pb-16">
+                <div className="max-w-6xl mx-auto px-6 text-center">
+                    <h2 className="font-bold text-4xl">Join the Eco Revolution</h2>
+                    <h3 className="text-3xl font-bold text-highlight mt-2 mb-4">Subscribe to Our Newsletter</h3>
+                    <p className="mb-12 text-color-text max-w-2xl mx-auto">
+                        Get exclusive offers, eco-tips, and the latest news on sustainable living.
+                    </p>
+
+                    <form className="flex justify-center flex-col sm:flex-row">
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            className="border border-color-border rounded-l-lg p-3 w-full sm:w-1/3 mb-4 sm:mb-0"
+                        />
+                        <button type="submit" className="btn-primary rounded-r-lg px-6 py-3 sm:ml-4">
+                            Subscribe
+                        </button>
+                    </form>
+                </div>
+            </section>
+
 
         </>
 
