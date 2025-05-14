@@ -132,12 +132,12 @@ const Home = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            nextSlide();
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [currentIndex, slidesToShow]);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         nextSlide();
+    //     }, 5000);
+    //     return () => clearInterval(interval);
+    // }, [currentIndex, slidesToShow]);
 
     const totalPages = Math.ceil(testimonials.length / slidesToShow);
 
@@ -179,7 +179,7 @@ const Home = () => {
                                 <img
                                     src="/object.png"
                                     width={500}
-                                    loading="lazy"
+
                                     alt="Decorative Object"
                                     className="w-full h-full bg-[#e1d8c6] object-cover rounded-lg shadow-md "
                                 />
@@ -308,7 +308,7 @@ const Home = () => {
             </section>
 
             {/*how it works */}
-            <section class=" bg-color-background text-color-text pt-24 pb-16">
+            <section class=" bg-color-background  pt-24 pb-16">
                 <div class="max-w-6xl mx-auto px-6 text-center">
                     <h2 class=" font-bold text-4xl">How It Works</h2>
                     <h3 class="text-3xl font-bold  text-highlight  mt-2 mb-4">Simple Steps to Sustainable Living</h3>
@@ -320,29 +320,29 @@ const Home = () => {
 
                         <div class="p-6  bg-white  rounded-xl shadow hover:shadow-lg transition">
                             <div class="   text-4xl mb-4">🛍️</div>
-                            <h4 class="text-xl font-semibold  mb-2">Choose Your Product</h4>
-                            <p class=" text-sm">Browse our eco-conscious collection and pick what fits your lifestyle.</p>
+                            <h4 class="text-xl  text-gray-900 font-semibold  mb-2">Choose Your Product</h4>
+                            <p class=" text-sm text-gray-700">Browse our eco-conscious collection and pick what fits your lifestyle.</p>
                         </div>
 
 
                         <div class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
                             <div class="  text-4xl mb-4">🚚</div>
-                            <h4 class="text-xl font-semibold  mb-2">We Deliver To You</h4>
-                            <p class="  text-sm">Our green delivery ensures your order arrives safely and sustainably.</p>
+                            <h4 class="text-xl text-gray-900 font-semibold  mb-2">We Deliver To You</h4>
+                            <p class="  text-sm text-gray-700">Our green delivery ensures your order arrives safely and sustainably.</p>
                         </div>
 
                         <div class="p-6 bg-white  rounded-xl shadow hover:shadow-lg transition">
                             <div class="  text-4xl mb-4">🌍</div>
-                            <h4 class="text-xl font-semibold   mb-2">You Impact The Earth</h4>
-                            <p class="  text-sm">Every product you buy contributes to a cleaner, greener world.</p>
+                            <h4 class="text-xl text-gray-900 font-semibold   mb-2">You Impact The Earth</h4>
+                            <p class="  text-sm text-gray-700   ">Every product you buy contributes to a cleaner, greener world.</p>
                         </div>
                     </div>
 
 
                     <div class="mt-10">
-                        <a href="/Products" class="inline-block  btn-primary py-3 px-6 rounded-full text-sm font-semibold    ">
+                        <button href="/Products" class="inline-block  btn-primary py-3 px-6 rounded-full text-sm font-semibold    ">
                             Start Shopping Green
-                        </a>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -362,7 +362,7 @@ const Home = () => {
                             placeholder="Enter your email"
                             className="border border-color-border rounded-l-lg p-3 w-full sm:w-1/3 mb-4 sm:mb-0"
                         />
-                        <button type="submit" className="btn-primary rounded-r-lg px-6 py-3 sm:ml-4">
+                        <button type="submit" className="btn-primary  px-6 py-3 sm:ml-4">
                             Subscribe
                         </button>
                     </form>
