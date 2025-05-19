@@ -7,6 +7,7 @@ import TestimonialCard from '../component/TestimonialCard';
 
 import 'aos/dist/aos.css'; // You can also use <link> for styles
 import Aos from 'aos';
+import NewsLetter from './NewsLetter';
 const Home = () => {
 
 
@@ -378,27 +379,7 @@ const Home = () => {
             </section >
             {/* Newsletter Signup */}
 
-            < section className="bg-color-background text-color-text pt-24 pb-16" >
-                <div className="max-w-6xl mx-auto px-6 text-center">
-                    <h2 className="font-bold text-4xl" data-aos="zoom-in-up" data-aos-delay="200">Join the Eco Revolution</h2>
-                    <h3 className="text-3xl font-bold text-highlight mt-2 mb-4" data-aos="zoom-in-up" data-aos-delay="200">Subscribe to Our Newsletter</h3>
-                    <p className="mb-12 text-color-text max-w-2xl mx-auto" data-aos="zoom-in-up" data-aos-delay="200">
-                        Get exclusive offers, eco-tips, and the latest news on sustainable living.
-                    </p>
-
-                    <form className="flex justify-center flex-col sm:flex-row" >
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="border border-color-border rounded-l-lg p-3 w-full sm:w-1/3 mb-4 sm:mb-0"
-                            data-aos="zoom-in-right" data-aos-delay="200"
-                        />
-                        <button type="submit" className="btn-primary  px-6 py-3 sm:ml-4" data-aos="zoom-in-left" data-aos-delay="200">
-                            Subscribe
-                        </button>
-                    </form>
-                </div>
-            </ section>
+            <NewsLetter />
 
 
         </>
