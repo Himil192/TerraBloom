@@ -121,13 +121,14 @@
 
 //latest code
 
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useTheme } from '../../theme/ThemeContext';
 import SvgComponent from '../SvgComponent';
-
-
+import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import firebase, { auth } from '../../firebase'; // Adjust the path as needed 
 
 const Navbar = ({ links }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -141,7 +142,22 @@ const Navbar = ({ links }) => {
         }
     }, [isDark]);
 
+
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setIsLoggedIn(!!user);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    if (isLoggedIn) return null; // Show nothing if logged in
+
     return (
+
         <header className="pt-2">
             <nav className="fixed top-0 left-0 right-0 z-50 w-auto  ">
                 <div className="mx-auto  max-w-screen-xl px-4">
@@ -170,7 +186,9 @@ const Navbar = ({ links }) => {
 
                         {/* Desktop Buttons */}
                         <div className="hidden md:flex items-center space-x-4">
-                            <button className="btn-primary px-4 py-1 rounded-full">Login</button>
+
+                            <button className="btn-primary px-4 py-1 rounded-full" onClick={() => navigate('/login')}>Login/Signup</button>
+
                             <button
                                 onClick={toggleTheme}
                                 className="text-xl px-3 py-1 rounded-full hover:bg-[#A4D79B] transition-colors"
@@ -204,7 +222,7 @@ const Navbar = ({ links }) => {
                     {/* Mobile Menu (below the top row) */}
                     {isOpen && (
                         <>
-                            <div className="   absolute top-16 left-0 right-0 rounded-b-lg header  k p-4 md:hidden z-10 shadow-lg  mt-5">
+                            <div className="absolute top-16 left-0 right-0 rounded-b-lg header k p-4 md:hidden z-10 shadow-lg mt-5">
                                 {links.map((link, index) => {
                                     const isActive = location.pathname === link.href;
                                     return (
@@ -218,7 +236,21 @@ const Navbar = ({ links }) => {
                                         </Link>
                                     );
                                 })}
+
+                                {/* Login/Signup Button for Mobile */}
+                                <div className="mt-4">
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false); // Close menu
+                                            navigate('/login');
+                                        }}
+                                        className="w-full bg-highlight-color text-white py-2 rounded-full font-semibold hover:bg-green-600 transition-colors"
+                                    >
+                                        Login / Signup
+                                    </button>
+                                </div>
                             </div>
+
 
                             {/* Mobile Menu Overlay */}
                             <div
@@ -228,11 +260,16 @@ const Navbar = ({ links }) => {
                             ></div>
                         </>
                     )}
+
                 </div>
             </nav>
         </header>
-
     );
 };
+
+
+
+
+
 
 export default Navbar;

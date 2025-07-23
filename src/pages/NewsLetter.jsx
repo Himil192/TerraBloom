@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../firebase';
 
 const NewsLetter = () => {
     const [email, setEmail] = useState('');
