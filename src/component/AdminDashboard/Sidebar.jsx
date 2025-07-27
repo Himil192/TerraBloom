@@ -19,10 +19,23 @@ import SvgComponent from "../SvgComponent";
 import { Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Ensure this export exists
+import { showSuccess, showError } from "../../utils/toastUtils";
+
 
 export default function Sidebar() {
-    const [user, setUser] = useState(null);
 
+    const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
+    const [userData, setUserData] = useState(null);
+    const [user, setUser] = useState(null);
+    const [uid, setUid] = useState(null);
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: "",
+        profilePicture: "",
+
+    });
     // useEffect(() => {
     //     const unsubscribe = onAuthStateChanged(auth, currentUser => {
     //         setUser(currentUser);
@@ -33,38 +46,38 @@ export default function Sidebar() {
 
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            if (currentUser) {
-                try {
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    const userDocSnap = await getDoc(userDocRef);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setUser(user);
+                const uid = user.uid;
+                setUid(uid);
 
-                    if (userDocSnap.exists()) {
-                        const firestoreData = userDocSnap.data();
-                        setUser({
-                            ...currentUser,
-                            fullName: firestoreData.fullName || currentUser.displayName || "Admin",
+                try {
+                    const docRef = doc(db, "users", uid);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setUserData(data);
+                        setFormData({
+                            firstName: data.firstname || "",
+                            lastName: data.lastname || "",
+                            email: user.email || "",
+                            profilePicture: data.photoURL || "",
+                            role: data.role || "",
                         });
-                    } else {
-                        setUser({
-                            ...currentUser,
-                            fullName: currentUser.displayName || "Admin",
-                        });
+                        setImageUrl(data.photoURL || "");
                     }
                 } catch (error) {
-                    console.error("Error fetching Firestore user data:", error);
-                    setUser({
-                        ...currentUser,
-                        fullName: currentUser.displayName || "Admin",
-                    });
+                    showError("Failed to fetch user data");
+                    console.error("Error fetching user data:", error);
                 }
-            } else {
-                setUser(null);
             }
         });
 
         return () => unsubscribe();
     }, []);
+
 
 
     const handleLogout = async () => {
@@ -214,15 +227,15 @@ export default function Sidebar() {
                 // </div>
                 <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
                     <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50 cursor-pointer">
-                        {user.photoURL ? (
+                        {imageUrl ? (
                             <img
                                 alt="Profile"
-                                src={user.photoURL}
+                                src={imageUrl}
                                 className="size-10 rounded-full object-cover"
                             />
                         ) : (
                             <div className="size-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-medium text-sm uppercase">
-                                {(user.fullName || user.displayName || "User")
+                                {(formData.firstName || "U")
                                     .split(" ")
                                     .map((word) => word.charAt(0))
                                     .join("")
@@ -234,9 +247,9 @@ export default function Sidebar() {
                         <div>
                             <p className="text-xs">
                                 <strong className="block font-medium">
-                                    {user.fullName || user.displayName || "User"}
+                                    {formData.firstName || formData.lastName || "User"}
                                 </strong>
-                                <span>{user.email}</span>
+                                <span>{formData.email || user.email}</span>
                             </p>
                         </div>
                     </div>

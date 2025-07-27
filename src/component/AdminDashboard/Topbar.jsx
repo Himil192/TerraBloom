@@ -15,14 +15,25 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import app from "../../firebase";
 import { useNavigate } from "react-router-dom";
-
+import { showSuccess, showError } from "../../utils/toastUtils";
 export default function Topbar({ toggleSidebar }) {
     const [user, setUser] = useState(null);
     const [adminName, setAdminName] = useState("Loading...");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
+    const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
+    const [userData, setUserData] = useState(null);
 
+    const [uid, setUid] = useState(null);
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: "",
+        profilePicture: "",
+
+    });
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -67,7 +78,38 @@ export default function Topbar({ toggleSidebar }) {
         return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setUser(user);
+                const uid = user.uid;
+                setUid(uid);
 
+                try {
+                    const docRef = doc(db, "users", uid);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setUserData(data);
+                        setFormData({
+                            firstName: data.firstname || "",
+                            lastName: data.lastname || "",
+                            email: user.email || "",
+                            profilePicture: data.photoURL || "",
+                            role: data.role || "",
+                        });
+                        setImageUrl(data.photoURL || "");
+                    }
+                } catch (error) {
+                    showError("Failed to fetch user data");
+                    console.error("Error fetching user data:", error);
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -109,15 +151,16 @@ export default function Topbar({ toggleSidebar }) {
                     onKeyDown={(e) => e.key === "Enter" && setDropdownOpen((prev) => !prev)}
                     className="hidden sm:flex items-center space-x-2 cursor-pointer"
                 >
-                    {user?.photoURL ? (
+                    {/* User Avatar */}
+                    {imageUrl ? (
                         <img
-                            src={user.photoURL}
-                            alt="User avatar"
+                            alt="Profile"
+                            src={imageUrl}
                             className="w-9 h-9 rounded-full border object-cover"
                         />
                     ) : (
-                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-medium text-sm uppercase  ">
-                            {(adminName || user?.displayName || "User")
+                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-medium text-sm uppercase ">
+                            {(formData.firstName || "U")
                                 .split(" ")
                                 .map((word) => word.charAt(0))
                                 .join("")
@@ -126,7 +169,7 @@ export default function Topbar({ toggleSidebar }) {
                         </div>
                     )}
                     <span className="text-gray-700   truncate max-w-[100px] hidden md:block text-sm">
-                        {adminName}
+                        {formData.firstName || "User"} {formData.lastName || ""}
                     </span>
                     <ChevronDown className="w-4 h-4 text-gray-600  " />
                 </div>
@@ -147,26 +190,28 @@ export default function Topbar({ toggleSidebar }) {
                         {/* Mobile user info */}
 
                         <div className="flex items-center gap-3 sm:hidden mb-4">
-                            {user?.photoURL ? (
+
+                            {imageUrl ? (
                                 <img
-                                    src={user.photoURL}
-                                    alt={adminName || "User Avatar"}
+                                    alt="Profile"
+                                    src={imageUrl}
                                     className="w-10 h-10 rounded-full object-cover border"
                                 />
                             ) : (
                                 <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-semibold text-sm uppercase">
-                                    {(adminName || user?.displayName || "User")
+                                    {(formData.firstName || "U")
                                         .split(" ")
-                                        .map((word) => word[0])
+                                        .map((word) => word.charAt(0))
                                         .join("")
                                         .toUpperCase()
                                         .substring(0, 2)}
                                 </div>
                             )}
 
+
                             <div className="flex flex-col">
                                 <span className="text-sm font-semibold text-gray-900">
-                                    {adminName || "Admin"}
+                                    {formData.firstName || "Admin"}
                                 </span>
                                 <span className="text-xs text-gray-600 truncate max-w-[200px]">
                                     {adminEmail || "example@email.com"}
@@ -179,7 +224,7 @@ export default function Topbar({ toggleSidebar }) {
                         <ul className="flex flex-col text-sm text-gray-700  ">
                             <li
                                 className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100  cursor-pointer"
-                                onClick={() => navigate("/profile")}
+                                onClick={() => navigate("/admin-dashboard/profile")}
                             >
                                 <UserCircle className="w-4 h-4" />
                                 Profile

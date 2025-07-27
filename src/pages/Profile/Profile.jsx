@@ -2,6 +2,7 @@ import React from 'react';
 import PageBreadcrumb from '../../component/common/PageBreadCrumb';
 import UserAddressCard from '../../component/Profile/UserAddressCard';
 import UserInfoCard from '../../component/Profile/UserInfoCard';
+import UserMetaCard from '../../component/Profile/UserMetaCard';
 
 
 const Profile = () => {
@@ -14,6 +15,7 @@ const Profile = () => {
                     Profile
                 </h3>
                 <div className="space-y-6">
+                    <UserMetaCard />
                     <UserInfoCard />
                     <UserAddressCard />
                 </div>

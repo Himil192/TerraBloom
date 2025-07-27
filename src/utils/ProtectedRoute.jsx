@@ -43,7 +43,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
-
+import EcoSpinner from "../component/ui/EcoSpinner";
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     const [user, loading] = useAuthState(auth);
     const [role, setRole] = useState(localStorage.getItem("role")); // use cached role
@@ -70,7 +70,8 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     const token = localStorage.getItem("token");
     const localRole = localStorage.getItem("role");
 
-    if (loading || checkingRole) return <p>Loading...</p>;
+    if (loading || checkingRole) return <EcoSpinner />;
+
 
     // ✅ If not logged in by Firebase or token is missing, redirect to login
     if (!user && !token) return <Navigate to="/login" replace />;
