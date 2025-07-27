@@ -154,7 +154,7 @@ const Navbar = ({ links }) => {
         return () => unsubscribe();
     }, []);
 
-    if (isLoggedIn) return null; // Show nothing if logged in
+
 
     return (
 
