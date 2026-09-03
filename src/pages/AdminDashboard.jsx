@@ -83,24 +83,31 @@ const AdminDashboard = () => {
         };
     }, [sidebarOpen]);
 
-    return (
+        return (
         <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
+            {/* Sidebar - off-canvas on mobile, inline on md+ */}
+            <div
+                ref={sidebarRef}
+                className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:transform-none ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+            >
+                <Sidebar />
+            </div>
+
+            {/* Mobile overlay */}
             {sidebarOpen && (
                 <div
-                    ref={sidebarRef}
-                    className=" bg-white border-t border-gray-300 h-full  "
-                >
-                    <Sidebar />
-                </div>
+                    className="fixed inset-0 bg-black opacity-40 z-30 md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                    aria-hidden="true"
+                />
             )}
 
             {/* Main content area */}
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 overflow-hidden">
                 <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
                 {/* Scrollable main */}
-                <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
+                <main className="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6">
                     <Outlet />
                 </main>
             </div>
