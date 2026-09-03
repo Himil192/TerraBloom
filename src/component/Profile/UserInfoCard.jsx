@@ -249,7 +249,7 @@ export default function UserInfoCard() {
     if (!userData) return <div className="p-5">Loading...</div>;
 
     return (
-        <div className="p-5 border border-gray-200 rounded-2xl lg:p-6">
+        <div className="card-surface p-5 rounded-2xl border border-color-border lg:p-6">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                     <h4 className="text-lg font-semibold text-gray-800 lg:mb-6">Personal Information</h4>
