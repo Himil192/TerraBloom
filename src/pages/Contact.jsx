@@ -110,7 +110,7 @@ const Contact = () => {
                 <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                         {/* Map card */}
-                        <div className="card-surface rounded-2xl shadow-md border border-color-border overflow-hidden" data-aos="fade-right">
+                        <div className="card-surface rounded-2xl shadow-md border border-color-border overflow-hidden" data-aos="fade-up">
                             <div className="aspect-video w-full">
                                 <iframe
                                     title="TerraBloom location"
@@ -138,7 +138,7 @@ const Contact = () => {
                         <form
                             onSubmit={handleSubmit}
                             className="card-surface rounded-2xl shadow-lg border border-color-border p-6 sm:p-8 flex flex-col gap-5"
-                            data-aos="fade-left"
+                            data-aos="fade-up"
                         >
                             <div>
                                 <h2 className="text-xl sm:text-2xl font-extrabold">Send us a message</h2>

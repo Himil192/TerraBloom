@@ -325,3 +325,13 @@ html.dark .glass-input:focus {
     transform: translateY(-2px);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 }
+
+/* ===== Global horizontal-overflow guard ===== */
+/* Decorative blobs and entrance animations must never widen the document on mobile
+   (causes a blank strip on the right + left-shifted content on phones). `clip` is
+   preferred (does not create a scroll container); `hidden` is the legacy fallback. */
+html,
+body {
+    overflow-x: hidden;
+    overflow-x: clip;
+}

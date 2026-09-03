@@ -40,9 +40,9 @@ const NewsLetter = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="border border-color-border rounded-l-lg p-3 w-full sm:w-1/3 mb-4 sm:mb-0"
-                        data-aos="zoom-in-right"
+                        data-aos="zoom-in-up"
                     />
-                    <button type="submit" className="btn-primary px-6 py-3 sm:ml-4" data-aos="zoom-in-left">
+                    <button type="submit" className="btn-primary px-6 py-3 sm:ml-4" data-aos="zoom-in-up">
                         {submitted ? 'Thanks!' : 'Subscribe'}
                     </button>
                 </form>

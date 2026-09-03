@@ -179,7 +179,7 @@ const Home = () => {
                         </div>
 
                         {/* Right - visual */}
-                        <div className="relative order-1 lg:order-2 w-full" data-aos="fade-left" data-aos-delay="150">
+                        <div className="relative order-1 lg:order-2 w-full overflow-hidden" data-aos="fade-up" data-aos-delay="150">
                             <div
                                 className="absolute -top-10 -right-6 w-48 h-48 sm:w-64 sm:h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
                                 style={{ backgroundColor: 'var(--secondary-color)' }}
@@ -230,7 +230,7 @@ const Home = () => {
             <section className="bg-color-background text-color-text py-16 lg:py-24">
                 <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     {/* Image collage */}
-                    <div className="relative" data-aos="fade-right">
+                    <div className="relative" data-aos="fade-up">
                         <div className="grid grid-cols-2 gap-4">
                             <img
                                 src="/PurposeOne.jpg"
