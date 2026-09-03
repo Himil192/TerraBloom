@@ -15,7 +15,7 @@ const BlogCard = ({ blog, featured = false, variant = 'grid' }) => {
 
     if (featured) {
         return (
-            <article className="group relative overflow-hidden rounded-2xl bg-color-background shadow-lg border border-color-border transition-all duration-300 hover:shadow-xl h-full" data-aos="fade-up">
+            <article className="group relative overflow-hidden rounded-2xl card-surface shadow-lg border border-color-border transition-all duration-300 hover:shadow-xl h-full" data-aos="fade-up">
                 <div className="flex flex-col lg:flex-row">
                     <div className="relative lg:w-1/2 overflow-hidden">
                         <img src={image} alt={title} className="w-full aspect-square lg:aspect-auto lg:h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
@@ -45,7 +45,7 @@ const BlogCard = ({ blog, featured = false, variant = 'grid' }) => {
 
     if (variant === 'list') {
         return (
-            <article className="group flex h-full flex-row overflow-hidden rounded-2xl bg-color-background shadow-md border border-color-border transition-all duration-300 hover:shadow-lg" data-aos="fade-up">
+            <article className="group flex h-full flex-row overflow-hidden rounded-2xl card-surface shadow-md border border-color-border transition-all duration-300 hover:shadow-lg" data-aos="fade-up">
                 {/* Left - Image (fixed square thumb) */}
                 <div className="relative w-32 sm:w-44 lg:w-56 flex-shrink-0 overflow-hidden">
                     <img src={image} alt={title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
@@ -65,7 +65,7 @@ const BlogCard = ({ blog, featured = false, variant = 'grid' }) => {
     }
 
     return (
-        <article className="group flex flex-col h-full overflow-hidden rounded-2xl bg-color-background shadow-md border border-color-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1" data-aos="fade-up">
+        <article className="group flex flex-col h-full overflow-hidden rounded-2xl card-surface shadow-md border border-color-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1" data-aos="fade-up">
             <div className="relative overflow-hidden">
                 <img src={image} alt={title} className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                 <div className="absolute top-3 left-3">

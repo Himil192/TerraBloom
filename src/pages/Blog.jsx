@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import BlogCard from '../component/BlogCard';
 import { blogs, getCategories } from '../data/blogs';
-import { Search, LayoutGrid, List, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, LayoutGrid, List, ChevronLeft, ChevronRight, SearchX, BookOpen, Tags, RefreshCw } from 'lucide-react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
@@ -63,108 +63,140 @@ const Blog = () => {
     const pageStart = regularBlogs.length === 0 ? 0 : (safePage - 1) * POSTS_PER_PAGE + 1;
     const pageEnd = Math.min(safePage * POSTS_PER_PAGE, regularBlogs.length);
 
+    const clearFilters = () => {
+        setSelectedCategory('All');
+        setSearchTerm('');
+    };
+
     return (
         <div className="min-h-screen bg-color-background text-color-text">
-            {/* Hero Section */}
-            <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-color-background">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-5xl font-extrabold mb-4" data-aos="fade-up">
-                        Our <span className="text-highlight">Blog</span>
+            {/* Hero */}
+            <section className="relative pt-28 pb-10 overflow-hidden">
+                <div
+                    className="absolute -top-24 -left-24 w-80 h-80 rounded-full blur-3xl pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(136,183,59,0.18), transparent 70%)' }}
+                />
+                <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+                    <span className="text-highlight text-sm font-bold uppercase tracking-widest" data-aos="fade-up">
+                        The TerraBloom Journal
+                    </span>
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mt-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+                        Stories for a <span className="text-highlight">Greener Life</span>
                     </h1>
-                    <p className="text-lg text-color-text opacity-80 max-w-2xl mx-auto mb-8" data-aos="fade-up" data-aos-delay="100">
+                    <p className="text-lg text-color-text opacity-80 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
                         Insights, tips, and stories about sustainable living, eco-friendly products, and making the world a greener place.
                     </p>
-
-                    {/* Search Bar */}
-                    <div className="max-w-xl mx-auto relative" data-aos="fade-up" data-aos-delay="200">
-                        <input
-                            type="text"
-                            placeholder="Search articles..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full px-4 py-3 pl-12 rounded-full border border-color-border bg-color-background text-color-text placeholder:text-color-text placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-highlight shadow-sm"
-                        />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-color-text opacity-50" size={20} />
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-semibold" data-aos="fade-up" data-aos-delay="300">
+                        <span className="px-4 py-1.5 rounded-full border border-color-border inline-flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 text-highlight" />{blogs.length} articles
+                        </span>
+                        <span className="px-4 py-1.5 rounded-full border border-color-border inline-flex items-center gap-1.5">
+                            <Tags className="w-3.5 h-3.5 text-highlight" />{categories.length} topics
+                        </span>
+                        <span className="px-4 py-1.5 rounded-full border border-color-border">New posts weekly</span>
                     </div>
                 </div>
             </section>
 
-            {/* Category Filter */}
-            <section className="py-8 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
-                        {categories.map((category, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSelectedCategory(category)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedCategory === category
-                                    ? 'btn-primary text-white shadow-md'
-                                    : 'bg-color-background border border-color-border text-color-text hover:opacity-80'
+            {/* Search + categories toolbar */}
+            <section className="pb-10">
+                <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="card-surface rounded-2xl shadow-md border border-color-border p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center gap-4" data-aos="fade-up">
+                        <div className="relative w-full lg:max-w-sm shrink-0">
+                            <input
+                                type="text"
+                                placeholder="Search articles..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full px-4 py-2.5 pl-10 rounded-full border border-color-border bg-color-background text-color-text placeholder:text-color-text placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-highlight text-sm"
+                            />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-color-text opacity-50" size={16} />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {categories.map((category, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                                        selectedCategory === category
+                                            ? 'btn-primary text-white shadow-md'
+                                            : 'border border-color-border hover:opacity-80'
                                     }`}
-                                data-aos="fade-up"
-                                data-aos-delay={index * 50}
-                            >
-                                {category}
-                            </button>
-                        ))}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-
-                    {/* View Toggle moved into listing toolbar */}
                 </div>
             </section>
 
             {/* Featured Blog */}
             {featuredBlog && selectedCategory === 'All' && !searchTerm && safePage === 1 && (
-                <section className="px-4 sm:px-6 lg:px-8 pb-12">
-                    <div className="max-w-7xl mx-auto">
-                        <BlogCard blog={featuredBlog} featured />
+                <section className="pb-12">
+                    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <span className="text-highlight text-sm font-bold uppercase tracking-widest" data-aos="fade-up">
+                            Editor&apos;s Pick
+                        </span>
+                        <div className="mt-4">
+                            <BlogCard blog={featuredBlog} featured />
+                        </div>
                     </div>
                 </section>
             )}
 
             {/* Blog Listing */}
-            <section className="px-4 sm:px-6 lg:px-8 pb-20">
-                <div className="max-w-7xl mx-auto">
+            <section className="pb-16 lg:pb-24">
+                <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
                     {regularBlogs.length === 0 ? (
-                        <div className="text-center py-16">
+                        <div className="card-surface rounded-2xl border border-color-border shadow-md py-16 text-center" data-aos="fade-up">
+                            <SearchX className="w-12 h-12 mx-auto text-highlight mb-4" />
                             <h3 className="text-2xl font-bold mb-2">No articles found</h3>
-                            <p className="text-color-text opacity-70">Try adjusting your search or filter criteria.</p>
+                            <p className="text-color-text opacity-70 mb-6">Try adjusting your search or filter criteria.</p>
+                            <button
+                                onClick={clearFilters}
+                                className="btn-primary rounded-full px-7 py-3 text-sm font-semibold inline-flex items-center gap-2"
+                            >
+                                <RefreshCw className="w-4 h-4" /> Clear Filters
+                            </button>
                         </div>
                     ) : (
                         <>
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-                            <p className="text-sm text-color-text opacity-70" data-aos="fade-right">Showing <span className="font-semibold text-highlight">{pageStart}–{pageEnd}</span> of {regularBlogs.length} articles</p>
-                            <div className="flex items-center gap-1 bg-color-background border border-color-border rounded-lg p-1" data-aos="fade-left">
-                                <button onClick={() => setViewMode('grid')} title="Grid View" className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'btn-primary text-white shadow-sm' : 'text-color-text opacity-60 hover:opacity-100'}`}><LayoutGrid size={18} /></button>
-                                <button onClick={() => setViewMode('list')} title="List View" className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'btn-primary text-white shadow-sm' : 'text-color-text opacity-60 hover:opacity-100'}`}><List size={18} /></button>
-                            </div>
-                        </div>
-                        <div className={viewMode === 'grid'
-                            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr'
-                            : 'flex flex-col gap-5'
-                        }>
-                            {pageBlogs.map((blog, index) => (
-                                <div
-                                    key={blog.id}
-                                    data-aos="fade-up"
-                                    data-aos-delay={(index % 3) * 100}
-                                    className={viewMode === 'list' ? 'w-full' : 'h-full'}
-                                >
-                                    <BlogCard blog={blog} variant={viewMode} />
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                                <p className="text-sm text-color-text opacity-70" data-aos="fade-right">
+                                    Showing <span className="font-semibold text-highlight">{pageStart}{'\u2013'}{pageEnd}</span> of {regularBlogs.length} articles
+                                </p>
+                                <div className="flex items-center gap-1 card-surface border border-color-border rounded-full p-1" data-aos="fade-left">
+                                    <button onClick={() => setViewMode('grid')} title="Grid View" className={`p-2 rounded-full transition-all ${viewMode === 'grid' ? 'btn-primary text-white shadow-sm' : 'text-color-text opacity-60 hover:opacity-100'}`}><LayoutGrid size={18} /></button>
+                                    <button onClick={() => setViewMode('list')} title="List View" className={`p-2 rounded-full transition-all ${viewMode === 'list' ? 'btn-primary text-white shadow-sm' : 'text-color-text opacity-60 hover:opacity-100'}`}><List size={18} /></button>
                                 </div>
-                            ))}
-                        </div>
-
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <nav className="flex flex-wrap items-center justify-center gap-2 mt-12" aria-label="Blog pagination">
-                                <button onClick={() => setCurrentPage(Math.max(1, safePage - 1))} disabled={safePage === 1} className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium btn-primary text-white shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"><ChevronLeft size={16} /> Prev</button>
-                                {pageNumbers.map((num) => (
-                                    <button key={num} onClick={() => setCurrentPage(num)} aria-label={`Go to page ${num}`} aria-current={num === safePage ? 'page' : undefined} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${num === safePage ? 'btn-primary text-white shadow-md' : 'bg-color-background border border-color-border text-color-text opacity-70 hover:opacity-100'}`}>{num}</button>
+                            </div>
+                            <div className={viewMode === 'grid'
+                                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr'
+                                : 'flex flex-col gap-5'
+                            }>
+                                {pageBlogs.map((blog, index) => (
+                                    <div
+                                        key={blog.id}
+                                        data-aos="fade-up"
+                                        data-aos-delay={(index % 3) * 100}
+                                        className={viewMode === 'list' ? 'w-full' : 'h-full'}
+                                    >
+                                        <BlogCard blog={blog} variant={viewMode} />
+                                    </div>
                                 ))}
-                                <button onClick={() => setCurrentPage(Math.min(totalPages, safePage + 1))} disabled={safePage === totalPages} className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium btn-primary text-white shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-opacity">Next <ChevronRight size={16} /></button>
-                            </nav>
-                        )}
+                            </div>
+
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <nav className="flex flex-wrap items-center justify-center gap-2 mt-12" aria-label="Blog pagination">
+                                    <button onClick={() => setCurrentPage(Math.max(1, safePage - 1))} disabled={safePage === 1} className="inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium btn-primary text-white shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"><ChevronLeft size={16} /> Prev</button>
+                                    {pageNumbers.map((num) => (
+                                        <button key={num} onClick={() => setCurrentPage(num)} aria-label={`Go to page ${num}`} aria-current={num === safePage ? 'page' : undefined} className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${num === safePage ? 'btn-primary text-white shadow-md' : 'border border-color-border opacity-70 hover:opacity-100'}`}>{num}</button>
+                                    ))}
+                                    <button onClick={() => setCurrentPage(Math.min(totalPages, safePage + 1))} disabled={safePage === totalPages} className="inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium btn-primary text-white shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-opacity">Next <ChevronRight size={16} /></button>
+                                </nav>
+                            )}
                         </>
                     )}
                 </div>
