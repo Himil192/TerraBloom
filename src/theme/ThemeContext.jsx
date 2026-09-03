@@ -1,4 +1,5 @@
 // src/context/ThemeContext.js
+/* eslint-disable react-refresh/only-export-components -- Provider component and its hook intentionally share this module */
 import { createContext, useContext, useState } from 'react';
 
 const ThemeContext = createContext();

@@ -15,17 +15,22 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import app from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { showSuccess, showError } from "../../utils/toastUtils";
+import { showError } from "../../utils/toastUtils";
+
+// Firebase singletons — module scope keeps references stable across renders
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 export default function Topbar({ toggleSidebar }) {
     const [user, setUser] = useState(null);
-    const [adminName, setAdminName] = useState("Loading...");
+    const [, setAdminName] = useState("Loading...");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
-    const [userData, setUserData] = useState(null);
+    const [, setUserData] = useState(null);
 
-    const [uid, setUid] = useState(null);
+    const [, setUid] = useState(null);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -34,8 +39,6 @@ export default function Topbar({ toggleSidebar }) {
         profilePicture: "",
 
     });
-    const auth = getAuth(app);
-    const db = getFirestore(app);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
