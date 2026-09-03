@@ -1,8 +1,9 @@
 import React from 'react';
+import { Quote } from 'lucide-react';
 
 const TestimonialCard = ({ image, name, title, message }) => {
     return (
-        <div className="bg-white rounded-lg shadow-md p-6 m-4 w-full max-w-xs"> {/* Fixed max width */}
+        <div className="card-surface rounded-2xl shadow-md border p-6 w-full h-full flex flex-col">
             <div className="flex items-center mb-4">
                 <img
                     src={image}  // Replace with the actual image URL
@@ -15,7 +16,8 @@ const TestimonialCard = ({ image, name, title, message }) => {
                     <p className="text-gray-500 text-sm ">{title}</p>
                 </div>
             </div>
-            <p className="text-gray-700 text-sm">{message}</p>
+            <Quote className="h-6 w-6 mb-2" style={{ color: 'var(--secondary-color)' }} />
+            <p className="text-gray-700 text-sm mt-auto">{message}</p>
         </div>
     );
 };

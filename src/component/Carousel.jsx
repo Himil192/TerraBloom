@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const Carousel = ({ images, intervel = 3000 }) => {
+const Carousel = ({ images, interval = 3000 }) => {
     // images is an array of image URLs
     //state to hold the current image index
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -8,9 +8,9 @@ const Carousel = ({ images, intervel = 3000 }) => {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-        }, intervel);
-        return () => clearInterval(timer); // Cleanup the interval on component unmount   
-    }, [images.length, intervel]); // Add images.length and intervel as dependencies
+        }, interval);
+        return () => clearInterval(timer); // Cleanup the interval on component unmount
+    }, [images.length, interval]); // Add images.length and interval as dependencies
     return (
         <div className="w-full overflow-hidden py-4 px-2">
             <img
