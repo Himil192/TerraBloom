@@ -163,10 +163,10 @@ const Blog = () => {
                     ) : (
                         <>
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-                                <p className="text-sm text-color-text opacity-70" data-aos="fade-right">
+                                <p className="text-sm text-color-text opacity-70" data-aos="fade-up">
                                     Showing <span className="font-semibold text-highlight">{pageStart}{'\u2013'}{pageEnd}</span> of {regularBlogs.length} articles
                                 </p>
-                                <div className="flex items-center gap-1 card-surface border border-color-border rounded-full p-1" data-aos="fade-left">
+                                <div className="flex items-center gap-1 card-surface border border-color-border rounded-full p-1" data-aos="fade-up">
                                     <button onClick={() => setViewMode('grid')} title="Grid View" className={`p-2 rounded-full transition-all ${viewMode === 'grid' ? 'btn-primary text-white shadow-sm' : 'text-color-text opacity-60 hover:opacity-100'}`}><LayoutGrid size={18} /></button>
                                     <button onClick={() => setViewMode('list')} title="List View" className={`p-2 rounded-full transition-all ${viewMode === 'list' ? 'btn-primary text-white shadow-sm' : 'text-color-text opacity-60 hover:opacity-100'}`}><List size={18} /></button>
                                 </div>
