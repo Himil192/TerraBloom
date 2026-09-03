@@ -1,4 +1,4 @@
-/* src/App.css */
+﻿/* src/App.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 @import "tailwindcss";
@@ -113,20 +113,215 @@
 /* Footer Styles */
 @layer utilities {
     .footer {
-        background-color: var(--primary-color);
-        color: black;
-        padding: 20px;
-        text-align: center;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, #1b2a1b 0%, #121712 100%);
+        color: #ffffff;
     }
 }
 
-/* Header Styles */
+/* Header Styles - solid floating pill */
 @layer utilities {
     .header {
-        background-color: var(--primary-color);
-        color: white;
-
+        background: #ffffff;
+        border: 1px solid #eef1ec;
+        box-shadow: 0 8px 30px rgba(17, 31, 17, 0.12);
+        color: #1d1f1f;
     }
+}
 
+html.dark .header {
+    background: #262927;
+    border-color: #3a3d3a;
+    color: #f3f4f1;
+}
 
+/* ===== Redesign Utilities ===== */
+.card-surface {
+    background-color: #ffffff;
+    border-color: #f3f4f6;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+html.dark .card-surface {
+    background-color: #262927;
+    border-color: #3a3d3a;
+}
+
+html.dark .card-surface h4,
+html.dark .card-surface h5 {
+    color: #eef4e4;
+}
+
+html.dark .card-surface .text-gray-500,
+html.dark .card-surface .text-gray-700,
+html.dark .card-surface .text-slate-900 {
+    color: #b9c0b3;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1.5px solid var(--primary-color);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/* ===== Solid Surface Utilities (glass look rolled back to flat colors).
+   Class names kept so the style can be flipped back in one place. ===== */
+.glass-card {
+    background: #ffffff;
+    border: 1px solid #eef1ec;
+    box-shadow: 0 24px 60px -12px rgba(29, 31, 31, 0.28);
+}
+
+html.dark .glass-card {
+    background: #262927;
+    border-color: #3a3d3a;
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
+}
+
+.glass-input {
+    width: 100%;
+    color: var(--text-color-text);
+    background: #f4f6f2;
+    border: 1px solid #e2e7df;
+    border-radius: 0.9rem;
+    padding: 0.8rem 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.glass-input::placeholder {
+    color: rgba(59, 52, 55, 0.45);
+}
+
+.glass-input:focus {
+    background: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(74, 155, 75, 0.18);
+}
+
+html.dark .glass-input {
+    background: #1e211e;
+    border-color: #3a3d3a;
+}
+
+html.dark .glass-input::placeholder {
+    color: rgba(240, 247, 216, 0.45);
+}
+
+html.dark .glass-input:focus {
+    background: #262927;
+    box-shadow: 0 0 0 4px rgba(162, 199, 62, 0.22);
+}
+
+/* Padded variants (unlayered so they win over Tailwind padding utilities) */
+.glass-input-icon {
+    padding-left: 2.75rem;
+}
+
+.glass-input-eye {
+    padding-right: 2.75rem;
+}
+
+.btn-glass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.75rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #ffffff;
+    background: #1d1f1f;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-glass:hover {
+    background: #2b2e2b;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px -10px rgba(29, 31, 31, 0.35);
+}
+
+.btn-glass:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-glass-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.75rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #ffffff;
+    cursor: pointer;
+    background-image: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: 1px solid transparent;
+    box-shadow: 0 14px 34px -12px rgba(74, 155, 75, 0.55);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.btn-glass-solid:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 18px 40px -12px rgba(74, 155, 75, 0.6);
+}
+
+.btn-glass-solid:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.glass-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 9999px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #1D1F1F;
+    background: #ffffff;
+    border: 1px solid #ffffff;
+}
+/* Solid-white button for use on gradient/colored backgrounds */
+.btn-glass-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1D1F1F;
+    background: #ffffff;
+    border: 1px solid #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-glass-light:hover {
+    background: #eef4e6;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 }

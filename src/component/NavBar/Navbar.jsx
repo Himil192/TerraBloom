@@ -1,134 +1,11 @@
-// import React, { useState, useEffect } from 'react';
-// import { Link, useLocation } from 'react-router-dom';
-// import { Menu, X } from 'lucide-react';
-// import { useTheme } from '../../theme/ThemeContext';
-// import SvgComponent from '../SvgComponent';
-
-
-
-// const Navbar = ({ links }) => {
-//     const [isOpen, setIsOpen] = useState(false);
-//     const location = useLocation(); // Get the current location of the link
-//     const { isDark, toggleTheme } = useTheme();
-//     useEffect(() => {
-//         if (isDark) {
-//             document.documentElement.classList.add('dark');
-//         } else {
-//             document.documentElement.classList.remove('dark');
-//         }
-//     }, [isDark]);
-
-//     return (
-//         <header className="pt-2 pl-2 pr-2">
-//             <nav className="  flex items-center justify-between mt-5 mx-auto max-w-screen-xl rounded-full  header fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md bg-white/70 dark:bg-black/30   ">
-//                 {/* Logo or brand name */}
-//                 <div className="text-2xl p-4 font-bold">
-//                     <Link to='/'>
-//                         <SvgComponent />
-//                     </Link>
-//                 </div>
-
-
-
-//                 {/* Desktop Menu */}
-//                 <div className="hidden md:flex p-4 space-x-4">
-//                     {links.map((link, index) => {
-//                         const isActive = location.pathname === link.href; // Check if link is active by comparing href with the current pathname
-//                         return (
-//                             <Link
-//                                 key={index}
-//                                 to={link.href}
-//                                 className={`${isActive ? 'text-highlight-color font-semibold  bg-[#A4D79B]' : 'hover:text-highlight-color '} hover:bg-[#A4D79B]    focus:ring-1 focus:ring-highlight-color rounded px-2 py-1 transition-colors duration-200`}
-//                             >
-//                                 {link.name}
-//                             </Link>
-//                         );
-//                     })}
-//                 </div>
-//                 <div className="hidden md:flex items-center space-x-4 pr-4">
-//                     <button className="btn-primary px-4 py-1 rounded-full">
-//                         Login
-//                     </button>
-
-//                     {/* 🌞/🌙 Theme Toggle */}
-//                     <button
-//                         onClick={toggleTheme}
-//                         className="text-xl px-3 py-1 rounded-full hover:bg-[#A4D79B] transition-colors"
-//                         aria-label="Toggle Theme"
-//                     >
-//                         {isDark ? '🌙' : '🌞'}
-//                     </button>
-//                 </div>
-//                 {/* Mobile Hamburger Menu */}
-//                 <div className="md:hidden flex items-center space-x-2">
-//                     {/* Theme Toggle */}
-//                     <button
-//                         onClick={toggleTheme}
-//                         className="text-xl px-2 py-1 rounded-full hover:bg-[#A4D79B] dark:hover:bg-gray-800 transition-colors"
-//                         aria-label="Toggle Theme"
-//                     >
-//                         {isDark ? '🌙' : '🌞'}
-//                     </button>
-
-//                     {/* Menu Toggle */}
-//                     <button
-//                         onClick={() => setIsOpen(!isOpen)}
-//                         className="text-black dark:text-white focus:outline-none p-4"
-//                         aria-expanded={isOpen ? 'true' : 'false'}
-//                         aria-controls="mobile-menu"
-//                         aria-label="Toggle Navigation Menu"
-//                     >
-//                         {isOpen ? <X size={24} /> : <Menu size={24} />}
-//                     </button>
-//                 </div>
-
-
-//                 {/* Mobile Menu */}
-//                 {isOpen && (
-//                     <div className="absolute top-16 left-0 right-0 rounded-b-lg  header text-black p-4 md:hidden z-10 shadow-lg">
-//                         {links.map((link, index) => {
-//                             const isActive = location.pathname === link.href;
-//                             return (
-//                                 <Link
-//                                     key={index}
-//                                     to={link.href}
-//                                     className={`${isActive ? 'text-highlight-color font-semibold' : 'hover:text-highlight-color'} hover:bg-[#A4D79B]   block py-2 focus:ring-1 focus:ring-highlight-color rounded px-2 transition-colors duration-200`}
-//                                     onClick={() => setIsOpen(false)} // Close the menu when a link is clicked
-//                                 >
-//                                     {link.name}
-//                                 </Link>
-//                             );
-//                         })}
-//                     </div>
-//                 )}
-
-//                 {/* Mobile Menu Overlay */}
-//                 {isOpen && (
-//                     <div
-//                         className="fixed inset-0 bg-black opacity-50 md:hidden"
-//                         onClick={() => setIsOpen(false)} // Close menu when overlay is clicked
-//                         aria-hidden="true"
-//                     ></div>
-//                 )}
-//             </nav>
-
-//         </header>
-//     );
-// };
-
-// export default Navbar;
-
-
-//latest code
-
 import { useState, useEffect } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../theme/ThemeContext';
 import SvgComponent from '../SvgComponent';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import firebase, { auth } from '../../firebase'; // Adjust the path as needed 
+import { auth } from '../../firebase'; 
 
 const Navbar = ({ links }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -144,7 +21,7 @@ const Navbar = ({ links }) => {
 
 
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -158,13 +35,13 @@ const Navbar = ({ links }) => {
 
     return (
 
-        <header className="pt-2">
+        <header>
             <nav className="fixed top-0 left-0 right-0 z-50 w-auto  ">
                 <div className="mx-auto  max-w-screen-xl px-4">
                     {/* Top row: Logo + Desktop Links + Buttons + Hamburger */}
-                    <div className="flex items-center justify-between h-16 p-4 mt-5 rounded-full header space-x-4  md:space-x-6">
+                    <div className="header mt-4 flex h-16 items-center justify-between gap-4 rounded-full px-4 sm:px-5 md:mt-5">
                         {/* Logo */}
-                        <Link to="/">
+                        <Link to="/" className="flex h-10 items-center rounded-xl bg-white px-2.5 shadow-sm">
                             <SvgComponent />
                         </Link>
 
@@ -176,7 +53,7 @@ const Navbar = ({ links }) => {
                                     <Link
                                         key={index}
                                         to={link.href}
-                                        className={`${isActive ? 'text-highlight-color font-semibold bg-[#A4D79B]' : 'hover:text-highlight-color'} hover:bg-[#A4D79B] focus:ring-1 focus:ring-highlight-color rounded px-2 py-1 transition-colors duration-200`}
+                                        className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 ${isActive ? 'bg-[#4A9B4B] text-white shadow-sm' : 'text-color-text hover:bg-[#A4D79B]/60 hover:text-highlight-color'}`}
                                     >
                                         {link.name}
                                     </Link>
@@ -187,14 +64,14 @@ const Navbar = ({ links }) => {
                         {/* Desktop Buttons */}
                         <div className="hidden md:flex items-center space-x-4">
 
-                            <button className="btn-primary px-4 py-1 rounded-full" onClick={() => navigate('/login')}>Login/Signup</button>
+                            <Link to="/login" className="btn-primary rounded-full px-5 py-1.5 text-sm font-semibold">Login / Signup</Link>
 
                             <button
                                 onClick={toggleTheme}
-                                className="text-xl px-3 py-1 rounded-full hover:bg-[#A4D79B] transition-colors"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
                                 aria-label="Toggle Theme"
                             >
-                                {isDark ? '🌙' : '🌞'}
+                                {isDark ? <Moon size={18} /> : <Sun size={18} />}
                             </button>
                         </div>
 
@@ -202,10 +79,10 @@ const Navbar = ({ links }) => {
                         <div className="md:hidden flex items-center space-x-2">
                             <button
                                 onClick={toggleTheme}
-                                className="text-xl px-2 py-1 rounded-full hover:bg-[#A4D79B] dark:hover:bg-gray-800 transition-colors"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
                                 aria-label="Toggle Theme"
                             >
-                                {isDark ? '🌙' : '🌞'}
+                                {isDark ? <Moon size={18} /> : <Sun size={18} />}
                             </button>
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
@@ -222,14 +99,14 @@ const Navbar = ({ links }) => {
                     {/* Mobile Menu (below the top row) */}
                     {isOpen && (
                         <>
-                            <div className="absolute top-16 left-0 right-0 rounded-b-lg header k p-4 md:hidden z-10 shadow-lg mt-5">
+                            <div className="absolute left-4 right-4 top-24 z-10 rounded-2xl border border-black/5 bg-white p-4 shadow-2xl md:hidden dark:border-white/10 dark:bg-[#262927]">
                                 {links.map((link, index) => {
                                     const isActive = location.pathname === link.href;
                                     return (
                                         <Link
                                             key={index}
                                             to={link.href}
-                                            className={`${isActive ? 'text-highlight-color font-semibold' : 'hover:text-highlight-color'} hover:bg-[#A4D79B] block py-2 focus:ring-1 focus:ring-highlight-color rounded px-2 transition-colors duration-200`}
+                                            className={`${isActive ? 'bg-[#4A9B4B] font-semibold text-white' : 'text-color-text hover:bg-[#A4D79B]/60'} block rounded-full px-3 py-2 text-sm transition-colors duration-200`}
                                             onClick={() => setIsOpen(false)}
                                         >
                                             {link.name}
@@ -244,7 +121,7 @@ const Navbar = ({ links }) => {
                                             setIsOpen(false); // Close menu
                                             navigate('/login');
                                         }}
-                                        className="w-full bg-highlight-color text-white py-2 rounded-full font-semibold hover:bg-green-600 transition-colors"
+                                        className="btn-primary w-full rounded-full py-2.5 text-sm font-semibold"
                                     >
                                         Login / Signup
                                     </button>

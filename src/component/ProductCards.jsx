@@ -1,11 +1,12 @@
 import React from "react";
 
 const ProductCard = ({ product }) => {
+    const rating = Math.round(product.rating || 0);
     return (
-        <div className="relative m-5 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+        <div className="card-surface group relative flex w-full max-w-xs flex-col overflow-hidden rounded-2xl border shadow-md hover:-translate-y-1 hover:shadow-xl">
             <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
                 <img
-                    className="w-full h-full object-cover" loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"
                     srcSet={`${product.image} 2x`}
                     src={product.image}
                     alt={product.title}
@@ -37,7 +38,7 @@ const ProductCard = ({ product }) => {
                                 <svg
                                     key={i}
                                     aria-hidden="true"
-                                    className="h-5 w-5 text-yellow-300"
+                                    className={i < rating ? "h-4 w-4 text-yellow-400" : "h-4 w-4 text-gray-200"}
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +46,7 @@ const ProductCard = ({ product }) => {
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                 </svg>
                             ))}
-                        <span className="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-black text-xs font-semibold">5.0</span>
+                        <span className="ml-2 rounded bg-yellow-200 px-2.5 py-0.5 text-black text-xs font-semibold">{product.rating ? product.rating.toFixed(1) : "New"}</span>
                     </div>
                 </div>
 

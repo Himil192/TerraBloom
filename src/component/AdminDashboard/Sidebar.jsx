@@ -19,15 +19,15 @@ import SvgComponent from "../SvgComponent";
 import { Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Ensure this export exists
-import { showSuccess, showError } from "../../utils/toastUtils";
+import { showError } from "../../utils/toastUtils";
 
 
 export default function Sidebar() {
 
     const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
-    const [userData, setUserData] = useState(null);
+    const [, setUserData] = useState(null);
     const [user, setUser] = useState(null);
-    const [uid, setUid] = useState(null);
+    const [, setUid] = useState(null);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -91,7 +91,7 @@ export default function Sidebar() {
     };
 
     return (
-        <div className="flex h-screen flex-col justify-between border-e border-gray-100 bg-white  w-[290px]">
+                <div className="flex h-full flex-col justify-between border-e border-gray-100 bg-white w-64">
             <div className="px-4 py-6">
                 <span className="grid h-12 items-center w-45 place-content-center     ">
                     <SvgComponent />

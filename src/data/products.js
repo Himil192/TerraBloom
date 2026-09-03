@@ -1,0 +1,51 @@
+// Centralized product data - edit this file to add/update products
+export const products = [
+    {
+        id: 1,
+        image: "/FeatureProducts/BambooBrush.jpg",
+        title: "Bamboo Toothbrush",
+        price: 100,
+        description: "Eco-friendly bamboo toothbrush with soft bristles - a sustainable alternative to plastic brushes.",
+        rating: 4.8,
+    },
+    {
+        id: 2,
+        image: "/FeatureProducts/gorrilaSocks.jpg",
+        title: "Gorilla Socks",
+        price: 120,
+        description: "Soft, breathable socks made from organic cotton - kind to your feet and the planet.",
+        rating: 4.6,
+    },
+    {
+        id: 3,
+        image: "/FeatureProducts/Eco-Panda-facial-removal.jpg",
+        title: "Eco Panda Facial Removal Pads",
+        price: 250,
+        description: "Compostable facial pads for gentle, reusable cleansing without plastic waste.",
+        rating: 4.9,
+    },
+    {
+        id: 4,
+        image: "/carousel/Product2.png",
+        title: "Reusable Water Bottle",
+        price: 450,
+        description: "Insulated stainless-steel bottle that keeps drinks hot or cold for hours.",
+        rating: 4.7,
+    },
+    {
+        id: 5,
+        image: "/blog-images/eco-cleaning.jpg",
+        title: "Eco Cleaning Kit",
+        price: 799,
+        description: "Plastic-free, non-toxic cleaning supplies for a healthier home.",
+        rating: 4.5,
+    },
+    {
+        id: 6,
+        image: "/blog-images/plant-based.jpg",
+        title: "Plant-Based Care Set",
+        price: 320,
+        description: "All-natural skincare essentials packaged in recyclable materials.",
+        rating: 4.4,
+    },
+];
