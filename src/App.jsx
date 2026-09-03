@@ -1,4 +1,4 @@
-import ScrollToTop from './component/ScrollToTop';
+﻿import ScrollToTop from './component/ScrollToTop';
 import { Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Navbar from './component/NavBar/Navbar';
@@ -44,7 +44,7 @@ function AppContent() {
       {!hideHeaderFooter && <Navbar links={navLinks} />}
 
       <div className="flex flex-col min-h-screen">
-        <main className="flex-grow container">
+        <main className="flex-grow w-full">
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Home />} />
