@@ -86,7 +86,7 @@ const Navbar = ({ links }) => {
                             </button>
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
-                                className="text-black dark:text-white focus:outline-none p-4"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
                                 aria-expanded={isOpen ? 'true' : 'false'}
                                 aria-controls="mobile-menu"
                                 aria-label="Toggle Navigation Menu"
