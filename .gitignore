@@ -23,6 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables - NEVER commit
+.env
+.env.*
+!.env.example
+
 # Firebase
 .firebase/
 
