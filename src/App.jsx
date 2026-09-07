@@ -141,7 +141,8 @@ function AppContent() {
               />
             </Route>
 
-            {/* User Dashboard */}
+            {/* User Dashboard + Profile (standalone route - UserDashboard has
+                no <Outlet />, so a nested profile route could never render) */}
             <Route
               path="/user-dashboard"
               element={
@@ -149,16 +150,15 @@ function AppContent() {
                   <UserDashboard />
                 </ProtectedRoute>
               }
-            >
-              <Route
-                path="profile"
-                element={
-                  <ProtectedRoute allowedRoles={['user']}>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
+            />
+            <Route
+              path="/user-dashboard/profile"
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 fallback */}
             <Route path="*" element={<NotFound />} />
