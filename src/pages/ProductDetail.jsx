@@ -8,6 +8,8 @@ import {
     Truck,
     ShoppingCart,
     Heart,
+    Minus,
+    Plus,
     Loader2,
     PackageSearch,
 } from "lucide-react";
@@ -19,6 +21,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { showSuccess } from "../utils/toastUtils";
 import ProductCards from "../component/ProductCards";
 import ReviewSection from "../component/ReviewSection";
+import { recordRecentlyViewed } from "../component/RecentlyViewed";
 
 const PERKS = [
     { icon: Leaf, label: "100% eco-friendly materials" },
@@ -35,6 +38,7 @@ const ProductDetail = () => {
     const [related, setRelated] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [qty, setQty] = useState(1);
 
     useEffect(() => {
         let cancelled = false;
@@ -46,7 +50,11 @@ const ProductDetail = () => {
                 const data = await getProductById(id);
                 if (cancelled) return;
                 setProduct(data);
-                if (data) document.title = `${data.title} | TerraBloom`;
+                setQty(1);
+                if (data) {
+                    document.title = `${data.title} | TerraBloom`;
+                    recordRecentlyViewed(data);
+                }
                 // Live customer reviews power the header rating (Phase 6).
                 getReviews(id).then((rows) => {
                     if (!cancelled) setReviews(rows);
@@ -109,12 +117,12 @@ const ProductDetail = () => {
     const saved = has(product.id);
 
     const handleAddToCart = () => {
-        addItem(product, 1);
-        showSuccess("Added to cart");
+        addItem(product, qty);
+        showSuccess(`Added ${qty} to cart`);
     };
 
     const handleBuyNow = () => {
-        addItem(product, 1);
+        addItem(product, qty);
         navigate("/checkout");
     };
 
@@ -132,11 +140,11 @@ const ProductDetail = () => {
 
                 <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
                     {/* Image */}
-                    <div className="card-surface overflow-hidden rounded-3xl border shadow-lg" data-aos="fade-up">
+                    <div className="group card-surface overflow-hidden rounded-3xl border shadow-lg" data-aos="fade-up">
                         <img
                             src={product.image}
                             alt={product.title}
-                            className="aspect-square w-full object-cover"
+                            className="aspect-square w-full cursor-zoom-in object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                     </div>
 
@@ -200,6 +208,35 @@ const ProductDetail = () => {
                                 </li>
                             ))}
                         </ul>
+
+                        {/* Quantity stepper - capped by live stock */}
+                        <div className="mb-8 flex items-center gap-4">
+                            <span className="text-sm font-semibold">Quantity</span>
+                            <div className="inline-flex items-center rounded-full border border-color-border">
+                                <button
+                                    type="button"
+                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                    disabled={!inStock || qty <= 1}
+                                    aria-label="Decrease quantity"
+                                    className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[#A4D79B]/40 disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    <Minus className="h-4 w-4" />
+                                </button>
+                                <span className="w-10 text-center text-sm font-bold" aria-live="polite">{qty}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setQty((q) => Math.min(product.stock ?? 99, q + 1))}
+                                    disabled={!inStock || qty >= (product.stock ?? 99)}
+                                    aria-label="Increase quantity"
+                                    className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[#A4D79B]/40 disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                </button>
+                            </div>
+                            {inStock && product.stock !== undefined && (
+                                <span className="text-xs opacity-60">{product.stock} in stock</span>
+                            )}
+                        </div>
 
                         {/* Purchase CTAs */}
                         <div className="flex flex-col gap-3 sm:flex-row">

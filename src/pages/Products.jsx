@@ -3,7 +3,8 @@ import { useTheme } from "../theme/ThemeContext";
 import { Link } from "react-router-dom";
 import ProductCards from "../component/ProductCards";
 import { getAllProducts } from "../services/productService";
-import { Truck, Recycle, BadgeCheck, Leaf, SearchX, ArrowRight, SlidersHorizontal, Loader2 } from "lucide-react";
+import { Truck, Recycle, BadgeCheck, Leaf, SearchX, ArrowRight, SlidersHorizontal } from "lucide-react";
+import { SkeletonGrid } from "../component/common/Skeletons";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
@@ -213,10 +214,16 @@ const Products = () => {
                             Every purchase plants trees and removes plastic from the ocean. Small cart, big impact.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link to="/contact-us" className="btn-glass-solid">
+                            <Link
+                                to="/contact-us"
+                                className="inline-flex items-center gap-2 bg-white text-[#2F6A30] font-semibold px-6 py-3 rounded-full hover:bg-[#E6FAEB] transition-colors"
+                            >
                                 Talk to Us <ArrowRight className="w-4 h-4" />
                             </Link>
-                            <Link to="/blogs" className="btn-glass">
+                            <Link
+                                to="/blogs"
+                                className="inline-flex items-center gap-2 border border-white/70 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10 transition-colors"
+                            >
                                 Read Our Blog
                             </Link>
                         </div>

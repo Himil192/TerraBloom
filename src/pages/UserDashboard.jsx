@@ -284,7 +284,7 @@ const UserDashboard = () => {
             </section>
 
             {/* CTA band */}
-            <section className="pb-20">
+            <section className="pt-8 pb-20">
                 <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#4A9B4B] to-[#88B73B] text-white p-8 sm:p-10 text-center">
                         <Leaf className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 rotate-12 pointer-events-none" />

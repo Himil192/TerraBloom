@@ -1,4 +1,5 @@
 ﻿import ScrollToTop from './component/ScrollToTop';
+import ScrollTopButton from './component/ScrollTopButton';
 import { Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Navbar from './component/NavBar/Navbar';
@@ -184,6 +185,7 @@ function AppContent() {
           theme="colored"
         />
       </div>
+      {!hideHeaderFooter && <ScrollTopButton />}
     </ThemeProvider>
   );
 }

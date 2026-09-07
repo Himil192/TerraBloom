@@ -14,6 +14,11 @@
 const TOKEN_KEY = "token";
 const ROLE_KEY = "role";
 const UID_KEY = "uid";
+// Shopping state is device-local; wiping it on logout keeps a shared/borrowed
+// computer from showing the previous user's cart, wishlist and history.
+const CART_KEY = "terrabloom_cart_v1";
+const WISHLIST_KEY = "terrabloom_wishlist_v1";
+const RECENT_KEY = "terrabloom_recent_v1";
 
 /** Remove all locally-cached session values. Safe to call at any time. */
 export const clearSessionCache = () => {
@@ -21,6 +26,9 @@ export const clearSessionCache = () => {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(ROLE_KEY);
         localStorage.removeItem(UID_KEY);
+        localStorage.removeItem(CART_KEY);
+        localStorage.removeItem(WISHLIST_KEY);
+        localStorage.removeItem(RECENT_KEY);
     } catch {
         // localStorage unavailable (private mode, storage quota, ...) - nothing to do
     }

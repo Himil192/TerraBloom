@@ -9,8 +9,14 @@ import {
     Leaf,
     Loader2,
     Newspaper,
+    Share2,
+    Twitter,
+    Facebook,
+    MessageCircle,
+    Link2,
 } from "lucide-react";
 import { getAllBlogs, getBlogById } from "../services/blogService";
+import { showSuccess, showError } from "../utils/toastUtils";
 import BlogCard from "../component/BlogCard";
 
 // SECURITY: every block is rendered as a React text node, which is auto-escaped.
@@ -52,6 +58,31 @@ const renderBlock = (block, index) => {
         <p key={index} className="mb-5 leading-relaxed opacity-85">
             {block.text}
         </p>
+    );
+};
+
+// Thin gradient bar at the very top showing how far the reader has scrolled.
+const ReadingProgress = () => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const onScroll = () => {
+            const doc = document.documentElement;
+            const total = doc.scrollHeight - doc.clientHeight;
+            setProgress(total > 0 ? Math.min(100, (window.scrollY / total) * 100) : 0);
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+    return (
+        <div className="fixed left-0 right-0 top-0 z-50 h-1" aria-hidden="true">
+            <div
+                className="h-full bg-gradient-to-r from-[#4A9B4B] to-[#88B73B] transition-[width] duration-150"
+                style={{ width: `${progress}%` }}
+            />
+        </div>
     );
 };
 
@@ -123,8 +154,33 @@ const BlogDetail = () => {
         );
     }
 
+    const shareUrl = window.location.href;
+    const shareText = `${post.title} — TerraBloom`;
+
+    const copyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            showSuccess("Link copied to clipboard");
+        } catch {
+            showError("Could not copy the link");
+        }
+    };
+
+    const nativeShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: post.title, text: shareText, url: shareUrl });
+            } catch {
+                /* reader dismissed the share sheet - nothing to do */
+            }
+        } else {
+            copyLink();
+        }
+    };
+
     return (
         <div className="bg-color-background text-color-text">
+            <ReadingProgress />
             <article className="mx-auto max-w-3xl px-4 pt-28 pb-16 sm:px-6">
                 {/* Breadcrumb */}
                 <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm opacity-70" aria-label="Breadcrumb">
@@ -134,6 +190,54 @@ const BlogDetail = () => {
                     <span>/</span>
                     <span className="max-w-[16rem] truncate font-semibold text-highlight">{post.title}</span>
                 </nav>
+
+                {/* Share row - native share sheet with social fallbacks */}
+                <div className="mb-8 flex flex-wrap items-center justify-center gap-2 text-sm" data-aos="fade-up">
+                    <span className="mr-1 font-semibold opacity-70">Share this story:</span>
+                    <button
+                        type="button"
+                        onClick={nativeShare}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-color-border transition hover:border-[#4A9B4B] hover:bg-[#4A9B4B] hover:text-white"
+                        aria-label="Share"
+                    >
+                        <Share2 className="h-4 w-4" />
+                    </button>
+                    <a
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-color-border transition hover:border-[#4A9B4B] hover:bg-[#4A9B4B] hover:text-white"
+                        aria-label="Share on X (Twitter)"
+                    >
+                        <Twitter className="h-4 w-4" />
+                    </a>
+                    <a
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-color-border transition hover:border-[#4A9B4B] hover:bg-[#4A9B4B] hover:text-white"
+                        aria-label="Share on Facebook"
+                    >
+                        <Facebook className="h-4 w-4" />
+                    </a>
+                    <a
+                        href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-color-border transition hover:border-[#4A9B4B] hover:bg-[#4A9B4B] hover:text-white"
+                        aria-label="Share on WhatsApp"
+                    >
+                        <MessageCircle className="h-4 w-4" />
+                    </a>
+                    <button
+                        type="button"
+                        onClick={copyLink}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-color-border transition hover:border-[#4A9B4B] hover:bg-[#4A9B4B] hover:text-white"
+                        aria-label="Copy link"
+                    >
+                        <Link2 className="h-4 w-4" />
+                    </button>
+                </div>
 
                 {/* Header */}
                 <header className="mb-8 text-center" data-aos="fade-up">
