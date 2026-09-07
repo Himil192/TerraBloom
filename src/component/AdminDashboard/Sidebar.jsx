@@ -1,30 +1,39 @@
-
-
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import {
-    ChevronDown,
-    Home,
-    Users,
-    Calendar,
-    CreditCard,
+    LayoutDashboard,
+    Package,
     FileText,
+    ShoppingCart,
+    Users,
     Settings,
-    Lock,
     LogOut,
-    UserX,
 } from "lucide-react";
 import SvgComponent from "../SvgComponent";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase"; // Ensure this export exists
+import { db } from "../../firebase";
 import { showError } from "../../utils/toastUtils";
 import { clearSessionCache } from "../../utils/sessionCache";
 
+const baseNav =
+    "flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer";
+const activeNav = "bg-[#4A9B4B]/10 text-[#2F6A30] font-semibold";
+const inactiveNav = "text-gray-500 hover:bg-gray-100 hover:text-gray-700";
+
+const navItems = [
+    { to: "/admin-dashboard", label: "Overview", icon: LayoutDashboard, end: true },
+    { to: "/admin-dashboard/products", label: "Products", icon: Package },
+    { to: "/admin-dashboard/blogs", label: "Blog Articles", icon: FileText },
+];
+
+const soonItems = [
+    { label: "Orders", icon: ShoppingCart, to: "/admin-dashboard/orders" },
+    { label: "Customers", icon: Users, to: "/admin-dashboard/customers" },
+];
 
 export default function Sidebar() {
-
     const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
     const [, setUserData] = useState(null);
     const [user, setUser] = useState(null);
@@ -35,16 +44,7 @@ export default function Sidebar() {
         email: "",
         role: "",
         profilePicture: "",
-
     });
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, currentUser => {
-    //         setUser(currentUser);
-    //     });
-
-    //     return () => unsubscribe();
-    // }, []);
-
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -79,8 +79,6 @@ export default function Sidebar() {
         return () => unsubscribe();
     }, []);
 
-
-
     const handleLogout = async () => {
         try {
             await signOut(auth);
@@ -92,140 +90,78 @@ export default function Sidebar() {
     };
 
     return (
-                <div className="flex h-full flex-col justify-between border-e border-gray-100 bg-white w-64">
-            <div className="px-4 py-6">
-                <span className="grid h-12 items-center w-45 place-content-center     ">
+        <div className="flex h-full flex-col justify-between border-e border-gray-100 bg-white w-64">
+            <div className="px-4 py-6 overflow-y-auto">
+                <span className="grid h-12 items-center w-45 place-content-center">
                     <SvgComponent />
-
                 </span>
 
-                <ul className="mt-6 space-y-1">
-                    <li>
-                        <a
-                            href="#"
-                            className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                            <Home size={16} />
-                            General
-                        </a>
-                    </li>
+                <p className="mt-6 px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                    Manage Store
+                </p>
+                <ul className="mt-2 space-y-1">
+                    {navItems.map((item) => (
+                        <li key={item.to}>
+                            <NavLink
+                                to={item.to}
+                                end={item.end}
+                                className={({ isActive }) =>
+                                    `${baseNav} ${isActive ? activeNav : inactiveNav}`
+                                }
+                            >
+                                <item.icon size={16} />
+                                {item.label}
+                            </NavLink>
+                        </li>
+                    ))}
 
-                    <li>
-                        <details className="group [&_summary::-webkit-details-marker]:hidden">
-                            <summary className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-                                <span className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                                    <Users size={16} />
-                                    Teams
+                    <p className="mt-6 px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                        Coming Soon
+                    </p>
+                    {soonItems.map((item) => (
+                        <li key={item.to}>
+                            <span
+                                className={`${baseNav} ${inactiveNav} opacity-50 cursor-not-allowed`}
+                                title="Coming soon"
+                            >
+                                <item.icon size={16} />
+                                {item.label}
+                                <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+                                    Soon
                                 </span>
-                                <ChevronDown className="size-5 shrink-0 transition duration-300 group-open:-rotate-180" />
-                            </summary>
+                            </span>
+                        </li>
+                    ))}
 
-                            <ul className="mt-2 space-y-1 px-4">
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                                    >
-                                        <UserX size={16} />
-                                        Banned Users
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                                    >
-                                        <Calendar size={16} />
-                                        Calendar
-                                    </a>
-                                </li>
-                            </ul>
-                        </details>
-                    </li>
-
-                    <li>
-                        <a
-                            href="#"
-                            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                        >
-                            <CreditCard size={16} />
-                            Billing
-                        </a>
-                    </li>
-
-                    <li>
-                        <a
-                            href="#"
-                            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                        >
-                            <FileText size={16} />
-                            Invoices
-                        </a>
-                    </li>
-
-                    <li>
-                        <details className="group [&_summary::-webkit-details-marker]:hidden">
-                            <summary className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-                                <span className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                        <p className="px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                            Account
+                        </p>
+                        <ul className="mt-2 space-y-1">
+                            <li>
+                                <Link
+                                    to="/admin-dashboard/profile"
+                                    className={`${baseNav} ${inactiveNav}`}
+                                >
                                     <Settings size={16} />
-                                    Account
-                                </span>
-                                <ChevronDown className="size-5 shrink-0 transition duration-300 group-open:-rotate-180" />
-                            </summary>
-
-                            <ul className="mt-2 space-y-1 px-4">
-                                <li>
-                                    <Link
-                                        to="/admin-dashboard/profile"
-                                        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                                    >
-                                        <Settings size={16} />
-                                        Details
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                                    >
-                                        <Lock size={16} />
-                                        Security
-                                    </a>
-                                </li>
-                                <li>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-left text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-                                    >
-                                        <LogOut size={16} />
-                                        Logout
-                                    </button>
-                                </li>
-                            </ul>
-                        </details>
-                    </li>
+                                    Account Settings
+                                </Link>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={handleLogout}
+                                    className={`${baseNav} ${inactiveNav} text-left`}
+                                >
+                                    <LogOut size={16} />
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </ul>
             </div>
 
             {user && (
-                // <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-                //     <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50 cursor-pointer">
-                //         <img
-                //             alt="Profile"
-                //             src={user.photoURL || "https://via.placeholder.com/40"}
-                //             className="size-10 rounded-full object-cover"
-                //         />
-                //         <div>
-                //             <p className="text-xs">
-                //                 <strong className="block font-medium">
-                //                     {user.displayName || "Admin"}
-                //                 </strong>
-                //                 <span>{user.email}</span>
-                //             </p>
-                //         </div>
-                //     </div>
-                // </div>
                 <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
                     <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50 cursor-pointer">
                         {imageUrl ? (
@@ -255,8 +191,6 @@ export default function Sidebar() {
                         </div>
                     </div>
                 </div>
-
-
             )}
         </div>
     );
