@@ -61,6 +61,46 @@ service cloud.firestore {
     match /products/{productId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
+
+      // ---------------------------------------------------------------------
+      // products/{id}/reviews - GENUINE customer reviews (Phase 6).
+      // * read: public (reviews power the live rating shown on the page).
+      // * create: signed-in authors only, writing AS THEMSELVES (uid locked
+      //   to request.auth.uid), 1..5 integer rating, bounded text, full
+      //   field whitelist. 'verified' must be a bool - the client computes
+      //   it from the author's OWN order history (only the author can read
+      //   it per the orders rule). Rules cannot query collections to
+      //   re-verify this server-side on the free plan; a tampered client
+      //   could only fake the badge on its OWN review - it can never touch
+      //   another user's reviews or the rating math below.
+      // * update: NEVER. Reviews are immutable (delete + repost), so rating
+      //   aggregates computed from them cannot be rewritten post-hoc.
+      // * delete: the author, or an admin (moderation).
+      // ---------------------------------------------------------------------
+      match /reviews/{reviewId} {
+        allow read: if true;
+        allow create: if isSignedIn() &&
+          // One review per user per product: the review doc ID IS the uid,
+          // so a second review by the same author is structurally impossible.
+          reviewId == request.auth.uid &&
+          request.resource.data.keys().hasOnly(
+            ['uid', 'userName', 'rating', 'text', 'verified', 'createdAt']
+          ) &&
+          request.resource.data.uid == request.auth.uid &&
+          request.resource.data.rating is int &&
+          request.resource.data.rating >= 1 &&
+          request.resource.data.rating <= 5 &&
+          request.resource.data.text is string &&
+          request.resource.data.text.size() >= 1 &&
+          request.resource.data.text.size() <= 1000 &&
+          request.resource.data.userName is string &&
+          request.resource.data.userName.size() >= 1 &&
+          request.resource.data.userName.size() <= 80 &&
+          request.resource.data.verified is bool;
+        allow update: if false;
+        allow delete: if isAdmin() ||
+          (isSignedIn() && resource.data.uid == request.auth.uid);
+      }
     }
 
     match /blogs/{blogId} {
