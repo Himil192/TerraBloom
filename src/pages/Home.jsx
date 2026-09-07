@@ -17,6 +17,7 @@ import Carousel from '../component/Carousel';
 import ProductCards from '../component/ProductCards';
 import TestimonialCard from '../component/TestimonialCard';
 import NewsLetter from './NewsLetter';
+import RecentlyViewed from '../component/RecentlyViewed';
 import { getAllProducts } from '../services/productService';
 import { getAllBlogs } from '../services/blogService';
 
@@ -330,7 +331,7 @@ const Home = () => {
                             </div>
                         ) : featured.length === 0 ? (
                             <p className="col-span-full opacity-70 py-6">
-                                Our shelves are being restocked — check back soon.
+                                Our shelves are being restocked ï¿½ check back soon.
                             </p>
                         ) : (
                             featured.map((product, index) => (
@@ -488,7 +489,7 @@ const Home = () => {
                             </div>
                         ) : latestPosts.length === 0 ? (
                             <p className="col-span-full text-center opacity-70 py-6">
-                                Fresh articles are on the way — stay tuned.
+                                Fresh articles are on the way ï¿½ stay tuned.
                             </p>
                         ) : (
                             latestPosts.map((post, index) => (
@@ -519,6 +520,9 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* ================= Recently viewed ================= */}
+            <RecentlyViewed />
 
             {/* ================= Newsletter ================= */}
             <NewsLetter />
