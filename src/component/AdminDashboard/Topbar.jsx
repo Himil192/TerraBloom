@@ -16,6 +16,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import app from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { showError } from "../../utils/toastUtils";
+import { clearSessionCache } from "../../utils/sessionCache";
 
 // Firebase singletons — module scope keeps references stable across renders
 const auth = getAuth(app);
@@ -117,6 +118,7 @@ export default function Topbar({ toggleSidebar }) {
     const handleLogout = async () => {
         try {
             await signOut(auth);
+            clearSessionCache();
             navigate("/login");
         } catch (error) {
             console.error("Logout Error:", error);

@@ -1,0 +1,95 @@
+rules_version = '2';
+// =============================================================================
+// TerraBloom - Cloud Firestore Security Rules
+// -----------------------------------------------------------------------------
+// THE REAL AUTHENTICATION/AUTHORIZATION WALL FOR THIS APP.
+// Client-side route guards are UX only - these rules are enforced by Google's
+// servers on every single request, so a hacker cannot bypass them by editing
+// localStorage, React state, or the JS bundle.
+//
+// Model: roles live on the user's own doc at users/{uid}. Admin access is
+// established by reading that doc (get()) inside the rule - never by trusting
+// anything the client claims.
+//
+// Deploy:  firebase deploy --only firestore
+// -----------------------------------------------------------------------------
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // True only if the caller's own user doc says role == 'admin'.
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // -------------------------------------------------------------------------
+    // users/{uid} - each user manages their OWN profile only.
+    // * create: ONLY via signup, which must write role == 'user'
+    //   (a newly created account can never claim admin this way).
+    // * update: ONLY own doc, and the role field must stay UNCHANGED.
+    // * delete: admins only (no self-destruct / no user-deletes-others).
+    // * read: owner or admin.
+    // -------------------------------------------------------------------------
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+
+      allow create: if isSignedIn() &&
+        request.auth.uid == uid &&
+        request.resource.data.role == 'user' &&
+        request.resource.data.email is string;
+
+      allow update: if isSignedIn() &&
+        request.auth.uid == uid &&
+        request.resource.data.role == resource.data.role;
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // products, blogs - public READ (catalog), ADMIN-ONLY writes.
+    // -------------------------------------------------------------------------
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // orders - contains customer PII, so full access is admin-only.
+    // * create: any signed-in user (checkout flow - Pass 2).
+    // * read/update: admin only. update keeps order lifecycle (status etc.)
+    //   admin-owned; users never read others' orders client-side.
+    // -------------------------------------------------------------------------
+    match /orders/{orderId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------------------
+    // newsletter - any visitor may subscribe (append-only, field whitelisted).
+    // -------------------------------------------------------------------------
+    match /newsletter/{subscriberId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['email', 'timestamp']) &&
+        request.resource.data.email is string;
+    }
+
+    // -------------------------------------------------------------------------
+    // messages (contact form) - signed-in users may submit; admin manages.
+    // -------------------------------------------------------------------------
+    match /messages/{messageId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if isSignedIn();
+    }
+
+    // Explicitly deny everything we have not listed (default-deny).
+  }
+}

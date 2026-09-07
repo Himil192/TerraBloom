@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Ensure this export exists
 import { showError } from "../../utils/toastUtils";
+import { clearSessionCache } from "../../utils/sessionCache";
 
 
 export default function Sidebar() {
@@ -83,7 +84,7 @@ export default function Sidebar() {
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            localStorage.removeItem("token");
+            clearSessionCache();
             window.location.reload();
         } catch (error) {
             console.error("Logout Error:", error.message);
