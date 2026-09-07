@@ -6,11 +6,14 @@ import {
     Leaf,
     ShieldCheck,
     Truck,
-    MessageCircle,
+    ShoppingCart,
     Loader2,
     PackageSearch,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { getAllProducts, getProductById } from "../services/productService";
+import { useCart } from "../context/CartContext";
+import { showSuccess } from "../utils/toastUtils";
 import ProductCards from "../component/ProductCards";
 
 const PERKS = [
@@ -21,6 +24,8 @@ const PERKS = [
 
 const ProductDetail = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { addItem } = useCart();
     const [product, setProduct] = useState(null);
     const [related, setRelated] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -91,6 +96,16 @@ const ProductDetail = () => {
     const rating = Math.round(product.rating || 0);
     const inStock = product.stock === undefined || product.stock > 0;
 
+    const handleAddToCart = () => {
+        addItem(product, 1);
+        showSuccess("Added to cart");
+    };
+
+    const handleBuyNow = () => {
+        addItem(product, 1);
+        navigate("/checkout");
+    };
+
     return (
         <div className="bg-color-background text-color-text">
             <div className="mx-auto max-w-screen-xl px-4 pt-28 pb-16 sm:px-6 lg:px-8">
@@ -156,21 +171,32 @@ const ProductDetail = () => {
                             ))}
                         </ul>
 
-                        {/* CTAs - real cart & checkout arrive in the cart phase */}
+                        {/* Purchase CTAs */}
                         <div className="flex flex-col gap-3 sm:flex-row">
-                            <Link
-                                to="/contact-us"
-                                className="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold"
+                            <button
+                                type="button"
+                                onClick={handleAddToCart}
+                                disabled={!inStock}
+                                className="btn-primary inline-flex flex-1 items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                <MessageCircle className="h-4 w-4" /> Order via Contact
-                            </Link>
-                            <Link
-                                to="/products"
-                                className="btn-secondary inline-flex items-center justify-center rounded-full px-7 py-3 text-sm font-semibold"
+                                <ShoppingCart className="h-4 w-4" />
+                                {inStock ? "Add to Cart" : "Out of Stock"}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleBuyNow}
+                                disabled={!inStock}
+                                className="btn-secondary inline-flex flex-1 items-center justify-center rounded-full px-7 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                Browse More Products
-                            </Link>
+                                Buy Now
+                            </button>
                         </div>
+                        <Link
+                            to="/products"
+                            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-highlight hover:gap-2 transition-all"
+                        >
+                            <ArrowLeft className="h-3.5 w-3.5 rotate-180" /> Browse more products
+                        </Link>
                     </div>
                 </div>
 

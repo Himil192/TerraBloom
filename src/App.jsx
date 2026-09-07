@@ -28,6 +28,10 @@ import UserDashboard from './pages/UserDashboard';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
 import Profile from './pages/Profile/Profile';
+import { CartProvider } from './context/CartContext';
+import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
 
 function AppContent() {
   const location = useLocation();
@@ -60,6 +64,9 @@ function AppContent() {
             <Route path="/blogs/:id" element={<BlogDetail />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success/:orderId" element={<OrderSuccess />} />
             <Route path="/contact-us" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
@@ -182,7 +189,9 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </Router>
   );
 }

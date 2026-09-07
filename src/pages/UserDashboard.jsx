@@ -1,6 +1,9 @@
 ﻿import React, { useEffect, useState } from "react";
 import { useTheme } from "../theme/ThemeContext";
 import { Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
+import { getOrdersByUser } from "../services/orderService";
 import {
     Package,
     Clock,
@@ -14,11 +17,10 @@ import {
 
 const UserDashboard = () => {
     const { isDark } = useTheme();
-    const [recentOrders] = useState([
-        { id: "ORD-1001", date: "Sep 1, 2026", total: "\u20B91,299", status: "Delivered" },
-        { id: "ORD-1002", date: "Aug 28, 2026", total: "\u20B9750", status: "In Transit" },
-        { id: "ORD-1003", date: "Aug 20, 2026", total: "\u20B9320", status: "Processing" },
-    ]);
+    // Real orders from Firestore - scoped server-side to the signed-in user
+    // (firestore.rules: orders read requires userId == auth.uid).
+    const [orders, setOrders] = useState(null); // null = loading
+    const [loadError, setLoadError] = useState(false);
 
     useEffect(() => {
         if (isDark) {
@@ -28,11 +30,49 @@ const UserDashboard = () => {
         }
     }, [isDark]);
 
+    useEffect(() => {
+        let cancelled = false;
+        const unsub = onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                if (!cancelled) setOrders([]);
+                return;
+            }
+            try {
+                const rows = await getOrdersByUser(user.uid);
+                if (!cancelled) setOrders(rows);
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                if (!cancelled) {
+                    setOrders([]);
+                    setLoadError(true);
+                }
+            }
+        });
+        return () => {
+            cancelled = true;
+            unsub();
+        };
+    }, []);
+
+    const fmtDate = (value) => {
+        try {
+            const d = value?.toDate?.() || (value ? new Date(value) : null);
+            return d ? d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
+        } catch {
+            return "—";
+        }
+    };
+
+    const totalSpent = (orders || []).reduce(
+        (sum, o) => sum + (o.status === "Cancelled" ? 0 : Number(o.total) || 0),
+        0
+    );
+
     const stats = [
-        { label: "Total Orders", value: "3", icon: ShoppingBag },
-        { label: "In Transit", value: "1", icon: Clock },
-        { label: "Saved Items", value: "5", icon: Leaf },
-        { label: "Reviews", value: "2", icon: Package },
+        { label: "Total Orders", value: orders ? String(orders.length) : "…", icon: ShoppingBag },
+        { label: "In Transit", value: orders ? String(orders.filter((o) => o.status === "In Transit").length) : "…", icon: Clock },
+        { label: "Delivered", value: orders ? String(orders.filter((o) => o.status === "Delivered").length) : "…", icon: Leaf },
+        { label: "Total Spent", value: orders ? `₹${totalSpent.toLocaleString("en-IN")}` : "…", icon: Package },
     ];
 
     const quickActions = [
@@ -113,18 +153,47 @@ const UserDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {recentOrders.map((order) => (
-                                        <tr key={order.id} className="border-t border-color-border first:border-t-0">
-                                            <td className="px-4 sm:px-6 py-4 font-semibold">{order.id}</td>
-                                            <td className="px-4 sm:px-6 py-4 opacity-80">{order.date}</td>
-                                            <td className="px-4 sm:px-6 py-4 font-medium">{order.total}</td>
-                                            <td className="px-4 sm:px-6 py-4">
-                                                <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(order.status)}`}>
-                                                    {order.status}
-                                                </span>
+                                    {orders === null ? (
+                                        <tr>
+                                            <td colSpan="4" className="px-4 sm:px-6 py-10 text-center">
+                                                <Loader2 className="mx-auto h-6 w-6 animate-spin text-highlight" />
                                             </td>
                                         </tr>
-                                    ))}
+                                    ) : orders.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="4" className="px-4 sm:px-6 py-10 text-center">
+                                                <Package className="mx-auto mb-2 h-8 w-8 text-highlight" />
+                                                <p className="mb-4 opacity-70">
+                                                    {loadError
+                                                        ? "Couldn't load your orders right now."
+                                                        : "No orders yet - your eco journey starts with the first one!"}
+                                                </p>
+                                                <Link
+                                                    to="/products"
+                                                    className="btn-primary inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold"
+                                                >
+                                                    Shop Now <ArrowRight className="w-4 h-4" />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        orders.slice(0, 5).map((order) => (
+                                            <tr key={order.id} className="border-t border-color-border first:border-t-0">
+                                                <td className="px-4 sm:px-6 py-4 font-semibold">
+                                                    {String(order.id).slice(0, 8).toUpperCase()}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 opacity-80">{fmtDate(order.createdAt)}</td>
+                                                <td className="px-4 sm:px-6 py-4 font-medium">
+                                                    ₹{(Number(order.total) || 0).toLocaleString("en-IN")}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4">
+                                                    <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(order.status)}`}>
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
