@@ -63,14 +63,47 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------------
-    // orders - contains customer PII, so full access is admin-only.
-    // * create: any signed-in user (checkout flow - Pass 2).
-    // * read/update: admin only. update keeps order lifecycle (status etc.)
-    //   admin-owned; users never read others' orders client-side.
+    // orders - customer PII. Reads: admin OR the owning user only.
+    // * create: signed-in users (checkout), strictly validated:
+    //   - userId MUST equal the caller's uid (cannot order as someone else,
+    //     and can never read another user's orders afterwards)
+    //   - status must start as 'Processing' - the lifecycle is admin-owned
+    //   - paymentMethod locked to 'Cash on Delivery' (gateway comes later)
+    //   - field whitelist + length bounds on all PII strings
+    //   - items bounded 1..50
+    //   NOTE: the rules language has no per-list-item iteration, so line
+    //   prices are snapshot copies the admin Orders page re-verifies against
+    //   live product docs (mismatches are flagged). Payment is COD settled at
+    //   delivery, so admin review is the enforcement point until a Cloud
+    //   Function can price orders server-side.
+    // * update/delete: admin only.
     // -------------------------------------------------------------------------
     match /orders/{orderId} {
-      allow read, update, delete: if isAdmin();
-      allow create: if isSignedIn();
+      allow read: if isAdmin() ||
+        (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow update, delete: if isAdmin();
+      allow create: if isSignedIn() &&
+        request.resource.data.keys().hasOnly(
+          ['userId', 'status', 'items', 'total', 'customerName', 'phone', 'address', 'paymentMethod', 'createdAt']
+        ) &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'Processing' &&
+        request.resource.data.paymentMethod == 'Cash on Delivery' &&
+        request.resource.data.customerName is string &&
+        request.resource.data.customerName.size() >= 2 &&
+        request.resource.data.customerName.size() <= 80 &&
+        request.resource.data.phone is string &&
+        request.resource.data.phone.size() >= 8 &&
+        request.resource.data.phone.size() <= 15 &&
+        request.resource.data.address is string &&
+        request.resource.data.address.size() >= 10 &&
+        request.resource.data.address.size() <= 500 &&
+        request.resource.data.total is number &&
+        request.resource.data.total >= 0 &&
+        request.resource.data.total <= 1000000 &&
+        request.resource.data.items is list &&
+        request.resource.data.items.size() >= 1 &&
+        request.resource.data.items.size() <= 50;
     }
 
     // -------------------------------------------------------------------------

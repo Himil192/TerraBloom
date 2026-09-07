@@ -9,7 +9,10 @@ import {
     getDocs,
     getDoc,
     doc,
+    setDoc,
     updateDoc,
+    query,
+    where,
     serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebase";
@@ -45,4 +48,21 @@ export const updateOrderStatus = async (id, status) => {
     const orderRef = doc(db, "orders", String(id));
     await updateDoc(orderRef, { status, updatedAt: serverTimestamp() });
     return getOrderById(id);
+};
+
+// Checkout - called by the cart flow. Per firestore.rules the caller may only
+// create orders where userId == their own uid, with a validated shape; the
+// admin Orders page re-verifies line prices against live product docs.
+export const createOrder = async (orderData) => {
+    const newRef = doc(ref());
+    await setDoc(newRef, { ...orderData, createdAt: serverTimestamp() });
+    return newRef.id;
+};
+
+// "My orders" - returns ONLY the signed-in user's own orders. The security
+// rules require userId == auth.uid on every matched document, so this query
+// can never leak another user's orders even if the client is tampered with.
+export const getOrdersByUser = async (uid) => {
+    const snap = await getDocs(query(ref(), where("userId", "==", uid)));
+    return snap.docs.map(mapOrder).sort(byCreatedAt).reverse();
 };

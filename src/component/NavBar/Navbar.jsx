@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Sun, Moon, LogOut } from 'lucide-react';
+import { Menu, X, Sun, Moon, LogOut, ShoppingBag } from 'lucide-react';
 import { useTheme } from '../../theme/ThemeContext';
 import SvgComponent from '../SvgComponent';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { clearSessionCache } from '../../utils/sessionCache';
+import { useCart } from '../../context/CartContext';
 
 const Navbar = ({ links }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +25,7 @@ const Navbar = ({ links }) => {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [dashboardPath, setDashboardPath] = useState('/user-dashboard');
+    const { count: cartCount } = useCart();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -106,6 +108,19 @@ const Navbar = ({ links }) => {
                                 <Link to="/login" className="btn-primary rounded-full px-5 py-1.5 text-sm font-semibold">Login / Signup</Link>
                             )}
 
+                            <Link
+                                to="/cart"
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
+                                aria-label={`Shopping cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`}
+                            >
+                                <ShoppingBag size={18} />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A9B4B] px-1 text-[10px] font-bold text-white">
+                                        {cartCount > 9 ? '9+' : cartCount}
+                                    </span>
+                                )}
+                            </Link>
+
                             <button
                                 onClick={toggleTheme}
                                 className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
@@ -117,6 +132,18 @@ const Navbar = ({ links }) => {
 
                         {/* Mobile Hamburger + Theme Toggle */}
                         <div className="md:hidden flex items-center space-x-2">
+                            <Link
+                                to="/cart"
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
+                                aria-label={`Shopping cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`}
+                            >
+                                <ShoppingBag size={18} />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A9B4B] px-1 text-[10px] font-bold text-white">
+                                        {cartCount > 9 ? '9+' : cartCount}
+                                    </span>
+                                )}
+                            </Link>
                             <button
                                 onClick={toggleTheme}
                                 className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
