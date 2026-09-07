@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTheme } from "../theme/ThemeContext";
 import { Link } from "react-router-dom";
 import ProductCards from "../component/ProductCards";
-import { products } from "../data/products";
-import { Truck, Recycle, BadgeCheck, Leaf, SearchX, ArrowRight, SlidersHorizontal } from "lucide-react";
+import { getAllProducts } from "../services/productService";
+import { Truck, Recycle, BadgeCheck, Leaf, SearchX, ArrowRight, SlidersHorizontal, Loader2 } from "lucide-react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
@@ -32,6 +32,27 @@ const Products = () => {
     const { isDark } = useTheme();
     const [activeRange, setActiveRange] = useState("all");
     const [activeSort, setActiveSort] = useState("featured");
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const list = await getAllProducts();
+                if (!cancelled) setProducts(list);
+            } catch (error) {
+                console.error("Failed to load products:", error);
+                if (!cancelled) setProducts([]);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     useEffect(() => {
         if (isDark) {
@@ -53,7 +74,7 @@ const Products = () => {
         if (activeSort === "price-desc") sorted.sort((a, b) => b.price - a.price);
         if (activeSort === "rating") sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         return sorted;
-    }, [activeRange, activeSort]);
+    }, [activeRange, activeSort, products]);
 
     const clearFilters = () => {
         setActiveRange("all");
@@ -133,17 +154,28 @@ const Products = () => {
             {/* Product grid */}
             <section className="pb-16 lg:pb-24">
                 <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {visibleProducts.length === 0 ? (
+                    {loading ? (
+                        <div className="card-surface rounded-2xl border border-color-border shadow-md py-16 text-center" data-aos="fade-up">
+                            <Loader2 className="w-10 h-10 mx-auto animate-spin text-highlight" />
+                            <p className="text-color-text opacity-70 mt-4">Loading eco products...</p>
+                        </div>
+                    ) : visibleProducts.length === 0 ? (
                         <div className="card-surface rounded-2xl border border-color-border shadow-md py-16 text-center" data-aos="fade-up">
                             <SearchX className="w-12 h-12 mx-auto text-highlight mb-4" />
                             <h3 className="text-xl font-bold mb-2">No products found</h3>
-                            <p className="text-color-text opacity-70 mb-6">Try a different price range.</p>
-                            <button
-                                onClick={clearFilters}
-                                className="btn-primary rounded-full px-7 py-3 text-sm font-semibold inline-flex items-center gap-2"
-                            >
-                                Clear Filters
-                            </button>
+                            <p className="text-color-text opacity-70 mb-6">
+                                {products.length === 0
+                                    ? "The catalog is empty. Check back soon!"
+                                    : "Try a different price range."}
+                            </p>
+                            {products.length > 0 && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="btn-primary rounded-full px-7 py-3 text-sm font-semibold inline-flex items-center gap-2"
+                                >
+                                    Clear Filters
+                                </button>
+                            )}
                         </div>
                     ) : (
                         <>

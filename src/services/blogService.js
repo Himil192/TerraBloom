@@ -1,71 +1,57 @@
 // src/services/blogService.js
 // -----------------------------------------------------------------------------
-// Blog data service.
-// Pass 1: in-memory CRUD over the static posts (src/data/blogs.js).
-//         Admin edits live for the current session only.
-// Pass 2: swap the internals for Firestore (blogs collection). The public API
-//         below is intentionally the ONLY thing the UI depends on, so the
-//         migration will not touch any page component.
+// Blog data service - FIRESTORE BACKED.
+// Reads/writes the `blogs` collection live. Security is enforced server-side
+// by /firestore.rules (public read, admin-only writes).
 // -----------------------------------------------------------------------------
-import { blogs as seedBlogs } from "../data/blogs";
+import {
+    collection,
+    getDocs,
+    getDoc,
+    doc,
+    setDoc,
+    deleteDoc,
+    serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
-const cloneBlock = (block) => ({
-    ...block,
-    items: Array.isArray(block.items) ? [...block.items] : block.items,
-});
+const ref = () => collection(db, "blogs");
 
-const cloneBlog = (blog) => ({
-    ...blog,
-    tags: Array.isArray(blog.tags) ? [...blog.tags] : blog.tags,
-    content: Array.isArray(blog.content) ? blog.content.map(cloneBlock) : blog.content,
-});
+const mapBlog = (snap) => ({ id: snap.id, ...snap.data() });
 
-let blogs = seedBlogs.map(cloneBlog);
-let nextId = blogs.reduce((max, b) => Math.max(max, b.id), 0) + 1;
-
-const today = () =>
-    new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    });
-
-export const getAllBlogs = () => blogs.map(cloneBlog);
-
-export const getBlogById = (id) => {
-    const found = blogs.find((b) => b.id === Number(id));
-    return found ? cloneBlog(found) : null;
-};
-
-export const createBlog = (data) => {
-    const blog = {
-        id: nextId,
-        title: (data.title || "").trim(),
-        excerpt: (data.excerpt || "").trim(),
-        image: data.image || "",
-        author: (data.author || "TerraBloom Team").trim(),
-        date: data.date || today(),
-        readTime: data.readTime || "5 min read",
-        category: data.category || "Sustainability",
-        tags: Array.isArray(data.tags) ? data.tags.filter(Boolean) : [],
-        featured: Boolean(data.featured),
-        content: Array.isArray(data.content) ? data.content.map(cloneBlock) : [],
+const byCreatedAt = (a, b) => {
+    const at = (x) => {
+        try {
+            return (x.createdAt?.toDate?.() || new Date(0)).getTime();
+        } catch {
+            return 0;
+        }
     };
-    nextId += 1;
-    blogs.push(blog);
-    return cloneBlog(blog);
+    return at(a) - at(b);
 };
 
-export const updateBlog = (id, data) => {
-    const index = blogs.findIndex((b) => b.id === Number(id));
-    if (index === -1) return null;
-    blogs[index] = { ...cloneBlog(data), id: Number(id) };
-    return cloneBlog(blogs[index]);
+export const getAllBlogs = async () => {
+    const snap = await getDocs(ref());
+    return snap.docs.map(mapBlog).sort(byCreatedAt);
 };
 
-export const deleteBlog = (id) => {
-    const index = blogs.findIndex((b) => b.id === Number(id));
-    if (index === -1) return false;
-    blogs.splice(index, 1);
-    return true;
+export const getBlogById = async (id) => {
+    const snap = await getDoc(doc(db, "blogs", String(id)));
+    return snap.exists() ? mapBlog(snap) : null;
+};
+
+export const createBlog = async (data) => {
+    const newRef = doc(ref());
+    await setDoc(newRef, { ...data, createdAt: serverTimestamp() });
+    return { id: newRef.id, ...data };
+};
+
+export const updateBlog = async (id, data) => {
+    const blogRef = doc(db, "blogs", String(id));
+    await setDoc(blogRef, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+    return getBlogById(id);
+};
+
+export const deleteBlog = async (id) => {
+    await deleteDoc(doc(db, "blogs", String(id)));
 };

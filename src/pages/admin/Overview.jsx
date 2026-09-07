@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
     Package,
@@ -9,14 +9,17 @@ import {
     PenLine,
     ArrowRight,
     Sparkles,
+    Loader2,
 } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import { getAllProducts } from "../../services/productService";
 import { getAllBlogs } from "../../services/blogService";
+import { getAllOrders } from "../../services/orderService";
+import { showError } from "../../utils/toastUtils";
 
-const formatPrice = (n) => `₹${n.toLocaleString("en-IN")}`;
+const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
-// Sample sales figures until orders go live in a later phase.
+// Sample sales figures until the storefront checkout sends live orders.
 const salesSeries = {
     monthly: [42, 38, 55, 47, 62, 58, 71, 66, 82, 74, 90, 86],
     quarterly: [128, 156, 195, 182, 226, 249],
@@ -31,17 +34,54 @@ const rangeTabs = [
 
 const Overview = () => {
     const [range, setRange] = useState("monthly");
+    const [products, setProducts] = useState([]);
+    const [blogs, setBlogs] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const products = getAllProducts().slice(-6).reverse();
-    const blogs = getAllBlogs().slice(-5).reverse();
-    const topRated = [...getAllProducts()].sort((a, b) => b.rating - a.rating).slice(0, 3);
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const [productList, blogList, orderList] = await Promise.all([
+                    getAllProducts(),
+                    getAllBlogs(),
+                    getAllOrders(),
+                ]);
+                if (!cancelled) {
+                    setProducts(productList);
+                    setBlogs(blogList);
+                    setOrders(orderList);
+                }
+            } catch (error) {
+                console.error("Failed to load overview:", error);
+                if (!cancelled) showError("Failed to load dashboard data");
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const recentProducts = products.slice(-6).reverse();
+    const recentBlogs = blogs.slice(-5).reverse();
+    const topRated = [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
+
+    const revenue = orders
+        .filter((order) => order.status !== "Cancelled")
+        .reduce((sum, order) => sum + (Number(order.total) || 0), 0);
 
     const stats = [
-        { label: "Products", value: String(getAllProducts().length), icon: Package, to: "/admin-dashboard/products" },
-        { label: "Blog Posts", value: String(getAllBlogs().length), icon: FileText, to: "/admin-dashboard/blogs" },
-        { label: "Orders", value: "128", icon: ShoppingBag, to: null },
-        { label: "Revenue", value: formatPrice(240850), icon: IndianRupee, to: null },
+        { label: "Products", value: String(products.length), icon: Package, to: "/admin-dashboard/products" },
+        { label: "Blog Posts", value: String(blogs.length), icon: FileText, to: "/admin-dashboard/blogs" },
+        { label: "Orders", value: String(orders.length), icon: ShoppingBag, to: "/admin-dashboard/orders" },
+        { label: "Revenue", value: formatPrice(revenue), icon: IndianRupee, to: "/admin-dashboard/orders" },
     ];
+
+    const catalogEmpty = products.length === 0 && blogs.length === 0;
 
     const series = salesSeries[range];
     const max = Math.max(...series);
@@ -54,6 +94,34 @@ const Overview = () => {
     return (
         <div className="space-y-6">
             <PageBreadcrumb pageTitle="Overview" />
+
+            {loading ? (
+                <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                    </div>
+                </div>
+            ) : (
+                <>
+            {catalogEmpty && (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 rounded-2xl border border-[#4A9B4B]/30 bg-[#4A9B4B]/5 p-4 sm:p-5">
+                    <Package className="w-6 h-6 text-[#4A9B4B] shrink-0" />
+                    <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900">
+                            Your catalog is empty
+                        </p>
+                        <p className="text-sm text-gray-600 mt-0.5">
+                            Import the built-in sample products and articles, or add your own.
+                        </p>
+                    </div>
+                    <Link
+                        to="/admin-dashboard/settings"
+                        className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-[#4A9B4B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2F6A30] transition-colors"
+                    >
+                        Import Sample Data
+                    </Link>
+                </div>
+            )}
 
             {/* Stat cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
@@ -182,7 +250,7 @@ const Overview = () => {
                         </Link>
                     </div>
                     <ul className="divide-y divide-gray-100">
-                        {products.map((product) => (
+                        {recentProducts.map((product) => (
                             <li key={product.id} className="flex items-center gap-3 px-5 sm:px-6 py-3">
                                 <img
                                     src={product.image}
@@ -210,7 +278,7 @@ const Overview = () => {
                         </Link>
                     </div>
                     <ul className="divide-y divide-gray-100">
-                        {blogs.map((blog) => (
+                        {recentBlogs.map((blog) => (
                             <li key={blog.id} className="flex items-start gap-3 px-5 sm:px-6 py-3">
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-900 truncate">{blog.title}</p>
@@ -228,6 +296,8 @@ const Overview = () => {
                     </ul>
                 </div>
             </div>
+                </>
+            )}
         </div>
     );
 };

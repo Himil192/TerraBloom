@@ -1,24 +1,85 @@
-import { useState } from "react";
-import { Store, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Store, Save, Database, Loader2, Upload } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import Input from "../../form/input/InputField";
 import { getSettings, saveSettings } from "../../services/settingsService";
-import { showSuccess } from "../../utils/toastUtils";
+import { catalogStatus, seedCatalog } from "../../services/seedService";
+import { showError, showSuccess } from "../../utils/toastUtils";
 
 const labelClass =
     "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500";
 
 const Settings = () => {
-    const [form, setForm] = useState(getSettings());
+    const [form, setForm] = useState(null);
+    const [seeding, setSeeding] = useState(false);
+    const [status, setStatus] = useState(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const saved = await getSettings();
+                if (!cancelled) setForm(saved);
+            } catch (error) {
+                console.error("Failed to load settings:", error);
+                if (!cancelled) showError("Failed to load settings");
+            }
+            try {
+                const snapshot = await catalogStatus();
+                if (!cancelled) setStatus(snapshot);
+            } catch (error) {
+                console.error("Failed to load catalog status:", error);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const set = (field) => (e) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        saveSettings(form);
-        showSuccess("Store settings saved (this session)");
+        try {
+            const saved = await saveSettings(form);
+            setForm(saved);
+            showSuccess("Store settings saved");
+        } catch (error) {
+            console.error("Failed to save settings:", error);
+            showError("Failed to save settings.");
+        }
     };
+
+    const handleSeed = async () => {
+        setSeeding(true);
+        try {
+            const result = await seedCatalog();
+            showSuccess(
+                `Sample data imported: ${result.products} products, ${result.blogs} posts, ${result.orders} orders`
+            );
+            setStatus(await catalogStatus());
+        } catch (error) {
+            console.error("Failed to seed catalog:", error);
+            showError("Could not import sample data. Check permissions and that collections are empty.");
+        } finally {
+            setSeeding(false);
+        }
+    };
+
+    if (!form) {
+        return (
+            <div className="space-y-6">
+                <PageBreadcrumb pageTitle="Settings" />
+                <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -125,6 +186,61 @@ const Settings = () => {
                     </button>
                 </div>
             </form>
+
+            {/* Catalog data */}
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 sm:p-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#4A9B4B]/10 flex items-center justify-center shrink-0">
+                        <Database className="w-5 h-5 text-[#4A9B4B]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-semibold text-gray-900">Catalog Data</h3>
+                        <p className="text-sm text-gray-500 mt-0.5">
+                            Import the built-in sample products, articles and orders into Firestore.
+                            Only runs on empty collections, so repeated clicks are safe.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700">
+                    {status === null ? (
+                        <span className="inline-flex items-center gap-2 text-gray-400">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Checking collections...
+                        </span>
+                    ) : (
+                        <ul className="flex flex-wrap gap-2">
+                            {[
+                                { key: "products", label: "Products" },
+                                { key: "blogs", label: "Articles" },
+                                { key: "orders", label: "Orders" },
+                            ].map(({ key, label }) => (
+                                <li key={key} className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold">
+                                    {label}: <span className="text-gray-900">{status[key] >= 0 ? status[key] : "n/a"}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
+                <button
+                    onClick={handleSeed}
+                    disabled={seeding}
+                    className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[#4A9B4B]/40 bg-[#4A9B4B]/5 px-4 py-2.5 text-sm font-semibold text-[#2F6A30] hover:bg-[#4A9B4B]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {seeding ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Importing...
+                        </>
+                    ) : (
+                        <>
+                            <Upload className="w-4 h-4" />
+                            Import Sample Data
+                        </>
+                    )}
+                </button>
+            </div>
         </div>
     );
 };

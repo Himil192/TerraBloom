@@ -90,6 +90,15 @@ service cloud.firestore {
       allow create: if isSignedIn();
     }
 
+    // -------------------------------------------------------------------------
+    // settings/{docId} - public store info (name, contact, currency) shown on
+    // the storefront; writes are admin-only.
+    // -------------------------------------------------------------------------
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Explicitly deny everything we have not listed (default-deny).
   }
 }

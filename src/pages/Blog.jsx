@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import BlogCard from '../component/BlogCard';
-import { blogs, getCategories } from '../data/blogs';
-import { Search, LayoutGrid, List, ChevronLeft, ChevronRight, SearchX, BookOpen, Tags, RefreshCw } from 'lucide-react';
+import { getAllBlogs } from '../services/blogService';
+import { Search, LayoutGrid, List, ChevronLeft, ChevronRight, SearchX, BookOpen, Tags, RefreshCw, Loader2 } from 'lucide-react';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
@@ -14,6 +14,27 @@ const Blog = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('grid');
     const [currentPage, setCurrentPage] = useState(1);
+    const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const list = await getAllBlogs();
+                if (!cancelled) setBlogs(list);
+            } catch (error) {
+                console.error('Failed to load blogs:', error);
+                if (!cancelled) setBlogs([]);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     // Reset to first page whenever the filter or search changes
     useEffect(() => {
@@ -36,13 +57,13 @@ const Blog = () => {
         }
     }, [isDark]);
 
-    const categories = ['All', ...getCategories()];
+    const categories = ['All', ...new Set(blogs.map(blog => blog.category))];
 
     const filteredBlogs = blogs.filter(blog => {
         const matchesCategory = selectedCategory === 'All' || blog.category === selectedCategory;
-        const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesSearch = (blog.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (blog.excerpt || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (blog.tags || []).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
         return matchesCategory && matchesSearch;
     });
 
@@ -148,7 +169,12 @@ const Blog = () => {
             {/* Blog Listing */}
             <section className="pb-16 lg:pb-24">
                 <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {regularBlogs.length === 0 ? (
+                    {loading ? (
+                        <div className="card-surface rounded-2xl border border-color-border shadow-md py-16 text-center">
+                            <Loader2 className="w-10 h-10 mx-auto text-highlight mb-4 animate-spin" />
+                            <p className="text-color-text opacity-70">Loading articles…</p>
+                        </div>
+                    ) : regularBlogs.length === 0 ? (
                         <div className="card-surface rounded-2xl border border-color-border shadow-md py-16 text-center" data-aos="fade-up">
                             <SearchX className="w-12 h-12 mx-auto text-highlight mb-4" />
                             <h3 className="text-2xl font-bold mb-2">No articles found</h3>

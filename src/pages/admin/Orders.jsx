@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     ShoppingCart,
     Search,
     Eye,
+    Loader2,
 } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import { Modal } from "../../component/ui/model";
@@ -10,7 +11,7 @@ import {
     getAllOrders,
     updateOrderStatus,
 } from "../../services/orderService";
-import { showSuccess } from "../../utils/toastUtils";
+import { showError, showSuccess } from "../../utils/toastUtils";
 
 const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -32,19 +33,51 @@ const statusPill = (status) => {
 };
 
 const Orders = () => {
-    const [orders, setOrders] = useState(getAllOrders());
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [detail, setDetail] = useState(null);
 
-    const refresh = () => setOrders(getAllOrders());
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const list = await getAllOrders();
+                if (!cancelled) setOrders(list);
+            } catch (error) {
+                console.error("Failed to load orders:", error);
+                if (!cancelled) showError("Failed to load orders");
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
-    const changeStatus = (orderId, status) => {
-        updateOrderStatus(orderId, status);
-        showSuccess(`Order ${orderId} moved to ${status}`);
-        refresh();
-        if (detail?.id === String(orderId)) {
-            setDetail(getAllOrders().find((o) => o.id === String(orderId)));
+    const refresh = async () => {
+        try {
+            setOrders(await getAllOrders());
+        } catch (error) {
+            console.error("Failed to refresh orders:", error);
+            showError("Failed to refresh orders");
+        }
+    };
+
+    const changeStatus = async (orderId, status) => {
+        try {
+            await updateOrderStatus(orderId, status);
+            showSuccess(`Order ${orderId} moved to ${status}`);
+            await refresh();
+            if (detail?.id === String(orderId)) {
+                setDetail((await getAllOrders()).find((o) => o.id === String(orderId)));
+            }
+        } catch (error) {
+            console.error("Failed to update order:", error);
+            showError("Failed to update order status.");
         }
     };
 
@@ -102,7 +135,11 @@ const Orders = () => {
 
             {/* TABLE */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                {filtered.length === 0 ? (
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="px-6 py-14 text-center">
                         <ShoppingCart className="w-10 h-10 mx-auto text-gray-300" />
                         <p className="mt-3 text-sm font-medium text-gray-600">

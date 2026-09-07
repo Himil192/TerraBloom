@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     FileText,
     Plus,
@@ -6,6 +6,7 @@ import {
     PenLine,
     Trash2,
     Star,
+    Loader2,
 } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import { Modal } from "../../component/ui/model";
@@ -16,19 +17,46 @@ import {
     updateBlog,
     deleteBlog,
 } from "../../services/blogService";
-import { showSuccess } from "../../utils/toastUtils";
+import { showError, showSuccess } from "../../utils/toastUtils";
 
 const Blogs = () => {
-    const [blogs, setBlogs] = useState(getAllBlogs());
+    const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("all");
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleting, setDeleting] = useState(null);
 
-    const categories = [...new Set(getAllBlogs().map((blog) => blog.category))].sort();
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const list = await getAllBlogs();
+                if (!cancelled) setBlogs(list);
+            } catch (error) {
+                console.error("Failed to load blogs:", error);
+                if (!cancelled) showError("Failed to load blog articles");
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
-    const refresh = () => setBlogs(getAllBlogs());
+    const categories = [...new Set(blogs.map((blog) => blog.category))].sort();
+
+    const refresh = async () => {
+        try {
+            setBlogs(await getAllBlogs());
+        } catch (error) {
+            console.error("Failed to refresh blogs:", error);
+            showError("Failed to refresh blog articles");
+        }
+    };
 
     const openCreate = () => {
         setEditing(null);
@@ -40,29 +68,44 @@ const Blogs = () => {
         setFormOpen(true);
     };
 
-    const handleSubmit = (data) => {
-        if (editing) {
-            updateBlog(editing.id, data);
-            showSuccess("Blog post updated");
-        } else {
-            createBlog(data);
-            showSuccess("Blog post published");
+    const handleSubmit = async (data) => {
+        try {
+            if (editing) {
+                await updateBlog(editing.id, data);
+                showSuccess("Blog post updated");
+            } else {
+                await createBlog(data);
+                showSuccess("Blog post published");
+            }
+            await refresh();
+            setFormOpen(false);
+        } catch (error) {
+            console.error("Failed to save blog:", error);
+            showError("Failed to save article. Check your permissions.");
         }
-        refresh();
-        setFormOpen(false);
     };
 
-    const handleDelete = () => {
-        deleteBlog(deleting.id);
-        showSuccess("Blog post deleted");
-        refresh();
-        setDeleting(null);
+    const handleDelete = async () => {
+        try {
+            await deleteBlog(deleting.id);
+            showSuccess("Blog post deleted");
+            await refresh();
+            setDeleting(null);
+        } catch (error) {
+            console.error("Failed to delete blog:", error);
+            showError("Failed to delete article.");
+        }
     };
 
-    const toggleFeatured = (blog) => {
-        updateBlog(blog.id, { featured: !blog.featured });
-        showSuccess(blog.featured ? "Removed from featured" : "Marked as featured");
-        refresh();
+    const toggleFeatured = async (blog) => {
+        try {
+            await updateBlog(blog.id, { featured: !blog.featured });
+            showSuccess(blog.featured ? "Removed from featured" : "Marked as featured");
+            await refresh();
+        } catch (error) {
+            console.error("Failed to toggle featured:", error);
+            showError("Failed to update featured status.");
+        }
     };
 
     const filtered = blogs.filter((blog) => {
@@ -124,7 +167,11 @@ const Blogs = () => {
 
             {/* TABLE */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                {filtered.length === 0 ? (
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="px-6 py-14 text-center">
                         <FileText className="w-10 h-10 mx-auto text-gray-300" />
                         <p className="mt-3 text-sm font-medium text-gray-600">

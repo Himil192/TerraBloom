@@ -1,12 +1,15 @@
 // src/services/settingsService.js
 // -----------------------------------------------------------------------------
-// Lightweight store-settings service. Persists to localStorage so admin
-// preferences survive reloads locally. These are non-sensitive UI preferences
-// (NOT credentials) - safe for localStorage. Will move to Firestore `settings`
-// in the Phase 6 migration.
+// Store settings service - FIRESTORE BACKED with a localStorage cache.
+// Reads the `settings/store` doc (public read per rules) and writes it back as
+// an admin. Non-sensitive store preferences only - credentials never touch
+// localStorage.
 // -----------------------------------------------------------------------------
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const KEY = "terrabloom-store-settings";
+const SETTINGS_DOC = "store";
 
 const DEFAULT_SETTINGS = {
     storeName: "TerraBloom",
@@ -19,7 +22,7 @@ const DEFAULT_SETTINGS = {
 
 const merge = (saved) => ({ ...DEFAULT_SETTINGS, ...(saved || {}) });
 
-export const getSettings = () => {
+const fromLocalCache = () => {
     try {
         const raw = localStorage.getItem(KEY);
         return raw ? merge(JSON.parse(raw)) : merge(null);
@@ -28,12 +31,28 @@ export const getSettings = () => {
     }
 };
 
-export const saveSettings = (settings) => {
+export const getSettings = async () => {
+    // Prefer the Firestore doc, fall back to the local cache / defaults.
+    try {
+        const snap = await getDoc(doc(db, "settings", SETTINGS_DOC));
+        if (snap.exists()) return merge(snap.data());
+    } catch (error) {
+        console.error("Settings read from Firestore failed, using local cache:", error);
+    }
+    return fromLocalCache();
+};
+
+export const saveSettings = async (settings) => {
     const next = merge(settings);
     try {
         localStorage.setItem(KEY, JSON.stringify(next));
     } catch {
-        /* storage unavailable - settings stay in-memory for the session */
+        /* storage unavailable */
+    }
+    try {
+        await setDoc(doc(db, "settings", SETTINGS_DOC), next, { merge: true });
+    } catch (error) {
+        console.error("Failed to persist settings to Firestore:", error);
     }
     return next;
 };

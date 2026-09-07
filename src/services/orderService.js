@@ -1,30 +1,46 @@
 // src/services/orderService.js
 // -----------------------------------------------------------------------------
-// Order data service.
-// Pass 1: in-memory CRUD over seed orders (src/data/orders.js). The storefront
-//         checkout doesn't exist yet, so this is sample data for the admin UI.
-// Pass 2: swap the internals for Firestore (orders collection). The public API
-//         below is the only thing the UI depends on.
+// Order data service - FIRESTORE BACKED.
+// Reads/writes the `orders` collection. Per /firestore.rules orders are
+// admin-only for read/update and any signed-in user may create (checkout).
 // -----------------------------------------------------------------------------
-import { seedOrders } from "../data/orders";
+import {
+    collection,
+    getDocs,
+    getDoc,
+    doc,
+    updateDoc,
+    serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
-const cloneOrder = (order) => ({
-    ...order,
-    items: Array.isArray(order.items) ? order.items.map((item) => ({ ...item })) : [],
-});
+const ref = () => collection(db, "orders");
 
-let orders = seedOrders.map(cloneOrder);
+const mapOrder = (snap) => ({ id: snap.id, ...snap.data() });
 
-export const getAllOrders = () => orders.map(cloneOrder);
-
-export const getOrderById = (id) => {
-    const found = orders.find((order) => order.id === String(id));
-    return found ? cloneOrder(found) : null;
+const byCreatedAt = (a, b) => {
+    const at = (x) => {
+        try {
+            return (x.createdAt?.toDate?.() || new Date(0)).getTime();
+        } catch {
+            return 0;
+        }
+    };
+    return at(a) - at(b);
 };
 
-export const updateOrderStatus = (id, status) => {
-    const index = orders.findIndex((order) => order.id === String(id));
-    if (index === -1) return null;
-    orders[index] = { ...orders[index], status };
-    return cloneOrder(orders[index]);
+export const getAllOrders = async () => {
+    const snap = await getDocs(ref());
+    return snap.docs.map(mapOrder).sort(byCreatedAt);
+};
+
+export const getOrderById = async (id) => {
+    const snap = await getDoc(doc(db, "orders", String(id)));
+    return snap.exists() ? mapOrder(snap) : null;
+};
+
+export const updateOrderStatus = async (id, status) => {
+    const orderRef = doc(db, "orders", String(id));
+    await updateDoc(orderRef, { status, updatedAt: serverTimestamp() });
+    return getOrderById(id);
 };

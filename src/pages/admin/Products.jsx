@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Package,
     Plus,
     Search,
     PenLine,
     Trash2,
+    Loader2,
 } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import { Modal } from "../../component/ui/model";
@@ -15,7 +16,7 @@ import {
     updateProduct,
     deleteProduct,
 } from "../../services/productService";
-import { showSuccess } from "../../utils/toastUtils";
+import { showError, showSuccess } from "../../utils/toastUtils";
 
 const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -25,14 +26,41 @@ const statusPill = (status) =>
         : "bg-green-100 text-green-800";
 
 const Products = () => {
-    const [products, setProducts] = useState(getAllProducts());
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [formOpen, setFormOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleting, setDeleting] = useState(null);
 
-    const refresh = () => setProducts(getAllProducts());
+    useEffect(() => {
+        let cancelled = false;
+        const load = async () => {
+            try {
+                const list = await getAllProducts();
+                if (!cancelled) setProducts(list);
+            } catch (error) {
+                console.error("Failed to load products:", error);
+                if (!cancelled) showError("Failed to load products");
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const refresh = async () => {
+        try {
+            setProducts(await getAllProducts());
+        } catch (error) {
+            console.error("Failed to refresh products:", error);
+            showError("Failed to refresh products");
+        }
+    };
 
     const openCreate = () => {
         setEditing(null);
@@ -44,23 +72,33 @@ const Products = () => {
         setFormOpen(true);
     };
 
-    const handleSubmit = (data) => {
-        if (editing) {
-            updateProduct(editing.id, data);
-            showSuccess("Product updated");
-        } else {
-            createProduct(data);
-            showSuccess("Product added");
+    const handleSubmit = async (data) => {
+        try {
+            if (editing) {
+                await updateProduct(editing.id, data);
+                showSuccess("Product updated");
+            } else {
+                await createProduct(data);
+                showSuccess("Product added");
+            }
+            await refresh();
+            setFormOpen(false);
+        } catch (error) {
+            console.error("Failed to save product:", error);
+            showError("Failed to save product. Check your permissions.");
         }
-        refresh();
-        setFormOpen(false);
     };
 
-    const handleDelete = () => {
-        deleteProduct(deleting.id);
-        showSuccess("Product deleted");
-        refresh();
-        setDeleting(null);
+    const handleDelete = async () => {
+        try {
+            await deleteProduct(deleting.id);
+            showSuccess("Product deleted");
+            await refresh();
+            setDeleting(null);
+        } catch (error) {
+            console.error("Failed to delete product:", error);
+            showError("Failed to delete product.");
+        }
     };
 
     const filtered = products.filter((product) => {
@@ -120,7 +158,11 @@ const Products = () => {
 
             {/* PART2: Table */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                {filtered.length === 0 ? (
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="px-6 py-14 text-center">
                         <Package className="w-10 h-10 mx-auto text-gray-300" />
                         <p className="mt-3 text-sm font-medium text-gray-600">
