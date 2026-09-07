@@ -4,6 +4,7 @@ import './App.css';
 import Navbar from './component/NavBar/Navbar';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
+import BlogDetail from './pages/BlogDetail';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Contact from './pages/Contact';
@@ -56,6 +57,7 @@ function AppContent() {
             {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/blogs" element={<Blog />} />
+            <Route path="/blogs/:id" element={<BlogDetail />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/contact-us" element={<Contact />} />
