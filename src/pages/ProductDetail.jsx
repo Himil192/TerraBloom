@@ -13,10 +13,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllProducts, getProductById } from "../services/productService";
+import { getReviews, ratingSummary } from "../services/reviewService";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { showSuccess } from "../utils/toastUtils";
 import ProductCards from "../component/ProductCards";
+import ReviewSection from "../component/ReviewSection";
 
 const PERKS = [
     { icon: Leaf, label: "100% eco-friendly materials" },
@@ -31,6 +33,7 @@ const ProductDetail = () => {
     const { has, toggle: toggleWishlist } = useWishlist();
     const [product, setProduct] = useState(null);
     const [related, setRelated] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,6 +47,10 @@ const ProductDetail = () => {
                 if (cancelled) return;
                 setProduct(data);
                 if (data) document.title = `${data.title} | TerraBloom`;
+                // Live customer reviews power the header rating (Phase 6).
+                getReviews(id).then((rows) => {
+                    if (!cancelled) setReviews(rows);
+                });
                 const all = await getAllProducts();
                 if (cancelled) return;
                 setRelated(
@@ -96,7 +103,8 @@ const ProductDetail = () => {
     }
 
     // Main render - reached only when `product` is a valid product object.
-    const rating = Math.round(product.rating || 0);
+    const summary = ratingSummary(reviews, product.rating);
+    const rating = Math.round(summary.average);
     const inStock = product.stock === undefined || product.stock > 0;
     const saved = has(product.id);
 
@@ -161,8 +169,13 @@ const ProductDetail = () => {
                                     ))}
                             </div>
                             <span className="text-sm font-semibold">
-                                {product.rating ? product.rating.toFixed(1) : "New"}
+                                {summary.average ? summary.average.toFixed(1) : "New"}
                             </span>
+                            <a href="#reviews" className="text-sm text-highlight hover:underline">
+                                {summary.source === "reviews"
+                                    ? `${summary.count} review${summary.count === 1 ? "" : "s"}`
+                                    : "Write a review"}
+                            </a>
                         </div>
 
                         <p className="mb-5 text-4xl font-bold text-highlight">
@@ -216,6 +229,14 @@ const ProductDetail = () => {
                         </Link>
                     </div>
                 </div>
+
+                {/* Genuine customer reviews (Phase 6) */}
+                <ReviewSection
+                    productId={product.id}
+                    reviews={reviews}
+                    onReviewsChange={setReviews}
+                    catalogRating={product.rating}
+                />
 
                 {/* Related */}
                 {related.length > 0 && (

@@ -66,3 +66,17 @@ export const getOrdersByUser = async (uid) => {
     const snap = await getDocs(query(ref(), where("userId", "==", uid)));
     return snap.docs.map(mapOrder).sort(byCreatedAt).reverse();
 };
+
+// Verified Purchase check (reviews) - reads ONLY the caller's own orders.
+// The rules force userId == auth.uid on every matched document, so this can
+// never leak or even inspect another user's purchase history.
+export const userPurchasedProduct = async (uid, productId) => {
+    try {
+        const orders = await getOrdersByUser(uid);
+        return orders.some((o) =>
+            (o.items || []).some((it) => String(it.productId) === String(productId))
+        );
+    } catch {
+        return false;
+    }
+};
