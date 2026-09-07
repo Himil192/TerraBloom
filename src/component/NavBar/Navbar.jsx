@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, Sun, Moon, LogOut } from 'lucide-react';
 import { useTheme } from '../../theme/ThemeContext';
 import SvgComponent from '../SvgComponent';
-import { useNavigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase'; 
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../../firebase';
+import { clearSessionCache } from '../../utils/sessionCache';
 
 const Navbar = ({ links }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,15 +22,42 @@ const Navbar = ({ links }) => {
 
 
     const navigate = useNavigate();
-    const [, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [dashboardPath, setDashboardPath] = useState('/user-dashboard');
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setIsLoggedIn(!!user);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setIsLoggedIn(true);
+                // SECURITY: the role is fetched live from Firestore on every auth
+                // change and is never read from localStorage (same fail-closed
+                // philosophy as ProtectedRoute). It only picks which dashboard
+                // link to show - real authorization stays server-side.
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    const role = userDoc.exists() ? userDoc.data().role : '';
+                    setDashboardPath(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
+                } catch (error) {
+                    console.error('Error fetching user role:', error);
+                    setDashboardPath('/user-dashboard');
+                }
+            } else {
+                setIsLoggedIn(false);
+            }
         });
 
         return () => unsubscribe();
     }, []);
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            clearSessionCache();
+            navigate('/');
+        } catch (error) {
+            console.error('Logout Error:', error.message);
+        }
+    };
 
 
 
@@ -63,8 +91,20 @@ const Navbar = ({ links }) => {
 
                         {/* Desktop Buttons */}
                         <div className="hidden md:flex items-center space-x-4">
-
-                            <Link to="/login" className="btn-primary rounded-full px-5 py-1.5 text-sm font-semibold">Login / Signup</Link>
+                            {isLoggedIn ? (
+                                <>
+                                    <Link to={dashboardPath} className="btn-primary rounded-full px-5 py-1.5 text-sm font-semibold">My Dashboard</Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="btn-secondary inline-flex items-center gap-1.5 rounded-full px-5 py-1.5 text-sm font-semibold"
+                                        aria-label="Log out"
+                                    >
+                                        <LogOut size={16} /> Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <Link to="/login" className="btn-primary rounded-full px-5 py-1.5 text-sm font-semibold">Login / Signup</Link>
+                            )}
 
                             <button
                                 onClick={toggleTheme}
@@ -114,17 +154,40 @@ const Navbar = ({ links }) => {
                                     );
                                 })}
 
-                                {/* Login/Signup Button for Mobile */}
+                                {/* Auth Buttons for Mobile */}
                                 <div className="mt-4">
-                                    <button
-                                        onClick={() => {
-                                            setIsOpen(false); // Close menu
-                                            navigate('/login');
-                                        }}
-                                        className="btn-primary w-full rounded-full py-2.5 text-sm font-semibold"
-                                    >
-                                        Login / Signup
-                                    </button>
+                                    {isLoggedIn ? (
+                                        <div className="flex flex-col gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    setIsOpen(false); // Close menu
+                                                    navigate(dashboardPath);
+                                                }}
+                                                className="btn-primary w-full rounded-full py-2.5 text-sm font-semibold"
+                                            >
+                                                My Dashboard
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setIsOpen(false); // Close menu
+                                                    handleLogout();
+                                                }}
+                                                className="btn-secondary inline-flex w-full items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-semibold"
+                                            >
+                                                <LogOut size={16} /> Logout
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => {
+                                                setIsOpen(false); // Close menu
+                                                navigate('/login');
+                                            }}
+                                            className="btn-primary w-full rounded-full py-2.5 text-sm font-semibold"
+                                        >
+                                            Login / Signup
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 

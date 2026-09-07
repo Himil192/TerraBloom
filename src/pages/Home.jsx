@@ -494,7 +494,7 @@ const Home = () => {
                             latestPosts.map((post, index) => (
                                 <Link
                                     key={post.id || post.title}
-                                    to="/blog"
+                                    to="/blogs"
                                     className="card-surface group rounded-2xl border shadow-md overflow-hidden hover:-translate-y-1 hover:shadow-xl transition"
                                     data-aos="fade-up"
                                     data-aos-delay={index * 120}
@@ -515,7 +515,7 @@ const Home = () => {
                         )}
                     </div>
                     <div className="mt-12 text-center" data-aos="fade-up">
-                        <Link to="/blog" className="btn-secondary px-7 py-3 text-sm font-semibold">View All Articles</Link>
+                        <Link to="/blogs" className="btn-secondary px-7 py-3 text-sm font-semibold">View All Articles</Link>
                     </div>
                 </div>
             </section>

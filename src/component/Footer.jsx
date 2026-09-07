@@ -1,7 +1,7 @@
 ﻿import { useEffect } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import { Link } from 'react-router-dom';
-import { Github, Twitter, Instagram, Mail, Heart, Leaf } from 'lucide-react';
+import { Github, Mail, Heart, Leaf } from 'lucide-react';
 import SvgComponent from './SvgComponent';
 
 const Footer = () => {
@@ -33,8 +33,6 @@ const Footer = () => {
     ];
     const socials = [
         { icon: Github, href: 'https://github.com/Himil192/TerraBloom', label: 'GitHub account', external: true },
-        { icon: Twitter, href: '#', label: 'Twitter', external: false },
-        { icon: Instagram, href: '#', label: 'Instagram', external: false },
         { icon: Mail, href: 'mailto:hello@terrabloom.com', label: 'Email us', external: false },
     ];
 
