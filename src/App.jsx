@@ -29,6 +29,8 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
 import Profile from './pages/Profile/Profile';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
+import Wishlist from './pages/Wishlist';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
@@ -67,6 +69,7 @@ function AppContent() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/contact-us" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
@@ -190,7 +193,9 @@ function App() {
     <Router>
       <ScrollToTop />
       <CartProvider>
-        <AppContent />
+        <WishlistProvider>
+          <AppContent />
+        </WishlistProvider>
       </CartProvider>
     </Router>
   );

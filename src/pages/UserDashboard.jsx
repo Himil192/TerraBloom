@@ -5,7 +5,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { getOrdersByUser } from "../services/orderService";
+import { useWishlist } from "../context/WishlistContext";
 import {
+    Heart,
     Package,
     Clock,
     ShoppingBag,
@@ -21,6 +23,7 @@ import {
 
 const UserDashboard = () => {
     const { isDark } = useTheme();
+    const { items: wishlistItems } = useWishlist();
     // Real orders from Firestore - scoped server-side to the signed-in user
     // (firestore.rules: orders read requires userId == auth.uid).
     const [orders, setOrders] = useState(null); // null = loading
@@ -136,6 +139,13 @@ const UserDashboard = () => {
                         Track your orders, manage your profile, and continue your sustainable journey.
                     </p>
                     <div className="mt-4 flex flex-wrap items-center gap-3">
+                        <Link
+                            to="/wishlist"
+                            className="btn-secondary inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold"
+                        >
+                            <Heart className="h-3.5 w-3.5 text-highlight" />
+                            Wishlist ({wishlistItems.length})
+                        </Link>
                         {memberSince && (
                             <span className="inline-flex items-center gap-1.5 rounded-full border border-color-border px-3 py-1 text-xs font-semibold opacity-80">
                                 <CalendarDays className="h-3.5 w-3.5 text-highlight" />

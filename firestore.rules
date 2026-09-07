@@ -44,7 +44,13 @@ service cloud.firestore {
 
       allow update: if isSignedIn() &&
         request.auth.uid == uid &&
-        request.resource.data.role == resource.data.role;
+        request.resource.data.role == resource.data.role &&
+        // wishlist mirror (Phase 5): owner may save a bounded product list on
+        // their OWN doc. Bounds stop abuse (1MiB doc cap); snapshots in the
+        // list are display-only and never trusted for pricing.
+        (!('wishlist' in request.resource.data) ||
+          (request.resource.data.wishlist is list &&
+            request.resource.data.wishlist.size() <= 50));
 
       allow delete: if isAdmin();
     }

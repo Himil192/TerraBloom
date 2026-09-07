@@ -1,24 +1,48 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
+import { useWishlist } from "../context/WishlistContext";
+
+export const WishlistHeart = ({ product, className = "" }) => {
+    const { has, toggle } = useWishlist();
+    const saved = has(product.id);
+    return (
+        <button
+            type="button"
+            onClick={() => toggle(product)}
+            aria-label={saved ? `Remove ${product.title} from wishlist` : `Save ${product.title} to wishlist`}
+            aria-pressed={saved}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border shadow-md backdrop-blur transition-all duration-200 hover:scale-110 ${
+                saved
+                    ? "border-red-200 bg-red-50 text-red-500 dark:bg-red-950/60"
+                    : "border-color-border bg-white/85 text-color-text"
+            } ${className}`}
+        >
+            <Heart size={18} className={saved ? "fill-current" : ""} />
+        </button>
+    );
+};
 
 const ProductCard = ({ product }) => {
     const rating = Math.round(product.rating || 0);
     const detailPath = `/products/${product.id}`;
     return (
         <div className="card-surface group relative flex w-full max-w-xs flex-col overflow-hidden rounded-2xl border shadow-md hover:-translate-y-1 hover:shadow-xl">
-            <Link
-                to={detailPath}
-                className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
-                aria-label={`View details for ${product.title}`}
-            >
-                <img
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"
-                    srcSet={`${product.image} 2x`}
-                    src={product.image}
-                    alt={product.title}
-                />
-            </Link>
+            <div className="relative mx-3 mt-3">
+                <Link
+                    to={detailPath}
+                    className="flex h-60 overflow-hidden rounded-xl"
+                    aria-label={`View details for ${product.title}`}
+                >
+                    <img
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"
+                        srcSet={`${product.image} 2x`}
+                        src={product.image}
+                        alt={product.title}
+                    />
+                </Link>
+                <WishlistHeart product={product} className="absolute right-2 top-2" />
+            </div>
             <div className="flex flex-col justify-between flex-grow mt-4 px-5 pb-5">
                 <Link to={detailPath}>
                     <h5 className="text-xl tracking-tight text-color-text min-h-[48px]">

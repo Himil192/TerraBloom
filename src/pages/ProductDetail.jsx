@@ -7,12 +7,14 @@ import {
     ShieldCheck,
     Truck,
     ShoppingCart,
+    Heart,
     Loader2,
     PackageSearch,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllProducts, getProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { showSuccess } from "../utils/toastUtils";
 import ProductCards from "../component/ProductCards";
 
@@ -26,6 +28,7 @@ const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { addItem } = useCart();
+    const { has, toggle: toggleWishlist } = useWishlist();
     const [product, setProduct] = useState(null);
     const [related, setRelated] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -95,6 +98,7 @@ const ProductDetail = () => {
     // Main render - reached only when `product` is a valid product object.
     const rating = Math.round(product.rating || 0);
     const inStock = product.stock === undefined || product.stock > 0;
+    const saved = has(product.id);
 
     const handleAddToCart = () => {
         addItem(product, 1);
@@ -130,7 +134,20 @@ const ProductDetail = () => {
 
                     {/* Info */}
                     <div className="flex flex-col justify-center" data-aos="fade-up" data-aos-delay="100">
-                        <h1 className="mb-3 text-3xl font-extrabold sm:text-4xl">{product.title}</h1>
+                        <div className="mb-3 flex items-start justify-between gap-4">
+                            <h1 className="text-3xl font-extrabold sm:text-4xl">{product.title}</h1>
+                            <button
+                                type="button"
+                                onClick={() => toggleWishlist(product)}
+                                aria-pressed={saved}
+                                aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+                                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-color-border transition hover:bg-red-50 dark:hover:bg-red-500/10"
+                            >
+                                <Heart
+                                    className={`h-5 w-5 transition ${saved ? "fill-red-500 text-red-500" : "text-color-text"}`}
+                                />
+                            </button>
+                        </div>
 
                         <div className="mb-5 flex items-center gap-3">
                             <div className="flex items-center" aria-hidden="true">

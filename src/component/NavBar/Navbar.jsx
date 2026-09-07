@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Sun, Moon, LogOut, ShoppingBag } from 'lucide-react';
+import { Menu, X, Sun, Moon, LogOut, ShoppingBag, Heart } from 'lucide-react';
 import { useTheme } from '../../theme/ThemeContext';
 import SvgComponent from '../SvgComponent';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -8,6 +8,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { clearSessionCache } from '../../utils/sessionCache';
 import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 const Navbar = ({ links }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +27,8 @@ const Navbar = ({ links }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [dashboardPath, setDashboardPath] = useState('/user-dashboard');
     const { count: cartCount } = useCart();
+    const { items: wishlistItems } = useWishlist();
+    const wishlistCount = wishlistItems.length;
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -128,10 +131,35 @@ const Navbar = ({ links }) => {
                             >
                                 {isDark ? <Moon size={18} /> : <Sun size={18} />}
                             </button>
+
+                            <Link
+                                to="/wishlist"
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
+                                aria-label={`Wishlist, ${wishlistCount} item${wishlistCount === 1 ? '' : 's'}`}
+                            >
+                                <Heart size={18} />
+                                {wishlistCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A9B4B] px-1 text-[10px] font-bold text-white">
+                                        {wishlistCount > 9 ? '9+' : wishlistCount}
+                                    </span>
+                                )}
+                            </Link>
                         </div>
 
                         {/* Mobile Hamburger + Theme Toggle */}
                         <div className="md:hidden flex items-center space-x-2">
+                            <Link
+                                to="/wishlist"
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
+                                aria-label={`Wishlist, ${wishlistCount} item${wishlistCount === 1 ? '' : 's'}`}
+                            >
+                                <Heart size={18} />
+                                {wishlistCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A9B4B] px-1 text-[10px] font-bold text-white">
+                                        {wishlistCount > 9 ? '9+' : wishlistCount}
+                                    </span>
+                                )}
+                            </Link>
                             <Link
                                 to="/cart"
                                 className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
