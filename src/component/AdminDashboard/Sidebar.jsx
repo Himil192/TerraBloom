@@ -9,6 +9,7 @@ import {
     Users,
     Settings,
     LogOut,
+    ClipboardList,
 } from "lucide-react";
 import SvgComponent from "../SvgComponent";
 import { Link, NavLink } from "react-router-dom";
@@ -26,11 +27,13 @@ const navItems = [
     { to: "/admin-dashboard", label: "Overview", icon: LayoutDashboard, end: true },
     { to: "/admin-dashboard/products", label: "Products", icon: Package },
     { to: "/admin-dashboard/blogs", label: "Blog Articles", icon: FileText },
+    { to: "/admin-dashboard/orders", label: "Orders", icon: ShoppingCart },
+    { to: "/admin-dashboard/customers", label: "Customers", icon: Users },
 ];
 
-const soonItems = [
-    { label: "Orders", icon: ShoppingCart, to: "/admin-dashboard/orders" },
-    { label: "Customers", icon: Users, to: "/admin-dashboard/customers" },
+const accountItems = [
+    { to: "/admin-dashboard/profile", label: "Account Settings", icon: Settings, end: true },
+    { to: "/admin-dashboard/settings", label: "Store Settings", icon: ClipboardList, end: true },
 ];
 
 export default function Sidebar() {
@@ -115,38 +118,22 @@ export default function Sidebar() {
                         </li>
                     ))}
 
-                    <p className="mt-6 px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
-                        Coming Soon
-                    </p>
-                    {soonItems.map((item) => (
-                        <li key={item.to}>
-                            <span
-                                className={`${baseNav} ${inactiveNav} opacity-50 cursor-not-allowed`}
-                                title="Coming soon"
-                            >
-                                <item.icon size={16} />
-                                {item.label}
-                                <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-                                    Soon
-                                </span>
-                            </span>
-                        </li>
-                    ))}
-
                     <div className="mt-6 pt-4 border-t border-gray-100">
                         <p className="px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
                             Account
                         </p>
-                        <ul className="mt-2 space-y-1">
-                            <li>
-                                <Link
-                                    to="/admin-dashboard/profile"
-                                    className={`${baseNav} ${inactiveNav}`}
-                                >
-                                    <Settings size={16} />
-                                    Account Settings
-                                </Link>
-                            </li>
+                        <ul className="mt-1 space-y-1">
+                            {accountItems.map((item) => (
+                                <li key={item.to}>
+                                    <Link
+                                        to={item.to}
+                                        className={`${baseNav} ${inactiveNav}`}
+                                    >
+                                        <item.icon size={16} />
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
                             <li>
                                 <button
                                     onClick={handleLogout}

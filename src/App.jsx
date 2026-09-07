@@ -19,6 +19,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import Overview from './pages/admin/Overview';
 import AdminProducts from './pages/admin/Products';
 import AdminBlogs from './pages/admin/Blogs';
+import AdminOrders from './pages/admin/Orders';
+import AdminCustomers from './pages/admin/Customers';
+import AdminSettings from './pages/admin/Settings';
 import UserDashboard from './pages/UserDashboard';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
@@ -90,6 +93,30 @@ function AppContent() {
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <AdminBlogs />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="orders"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminOrders />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="customers"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminCustomers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminSettings />
                   </ProtectedRoute>
                 }
               />
