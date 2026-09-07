@@ -1,34 +1,35 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { Eye } from "lucide-react";
 
 const ProductCard = ({ product }) => {
     const rating = Math.round(product.rating || 0);
+    const detailPath = `/products/${product.id}`;
     return (
         <div className="card-surface group relative flex w-full max-w-xs flex-col overflow-hidden rounded-2xl border shadow-md hover:-translate-y-1 hover:shadow-xl">
-            <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
+            <Link
+                to={detailPath}
+                className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
+                aria-label={`View details for ${product.title}`}
+            >
                 <img
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"
                     srcSet={`${product.image} 2x`}
                     src={product.image}
                     alt={product.title}
                 />
-                <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
-                    20% OFF
-                </span>
-            </a>
+            </Link>
             <div className="flex flex-col justify-between flex-grow mt-4 px-5 pb-5">
-                <a href="#">
-                    <h5 className="text-xl tracking-tight text-slate-900 min-h-[48px]">
+                <Link to={detailPath}>
+                    <h5 className="text-xl tracking-tight text-color-text min-h-[48px]">
                         {product.title}
                     </h5>
-                </a>
+                </Link>
 
                 <div className="mt-2 mb-5 flex items-center justify-between">
                     <p>
-                        <span className="text-3xl font-bold text-slate-900">
+                        <span className="text-3xl font-bold text-color-text">
                             ₹{product.price.toLocaleString('en-IN')}
-                        </span>
-                        <span className="text-sm text-slate-900 line-through ml-2">
-                            ₹{(product.price * 1.2).toFixed(0).toLocaleString('en-IN')}
                         </span>
                     </p>
                     <div className="flex items-center">
@@ -51,26 +52,13 @@ const ProductCard = ({ product }) => {
                 </div>
 
                 {/* Push button to bottom */}
-                <a
-                    href="#"
-                    className="mt-auto flex items-center justify-center rounded-md px-5 py-4 text-center text-sm font-medium btn-primary focus:outline-none focus:ring-4 focus:ring-blue-300"
+                <Link
+                    to={detailPath}
+                    className="mt-auto flex items-center justify-center rounded-md px-5 py-4 text-center text-sm font-medium btn-primary focus:outline-none focus:ring-4 focus:ring-[#4A9B4B]/40"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="mr-2 h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                    </svg>
-                    Add to cart
-                </a>
+                    <Eye className="mr-2 h-5 w-5" />
+                    View Details
+                </Link>
 
             </div>
         </div>
