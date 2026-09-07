@@ -17,6 +17,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminDashboard from './pages/AdminDashboard';
 import Overview from './pages/admin/Overview';
+import AdminProducts from './pages/admin/Products';
 import UserDashboard from './pages/UserDashboard';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
@@ -72,6 +73,14 @@ function AppContent() {
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <Overview />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="products"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminProducts />
                   </ProtectedRoute>
                 }
               />
