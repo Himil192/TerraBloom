@@ -8,9 +8,10 @@ import { createOrder } from "../services/orderService";
 import { showError } from "../utils/toastUtils";
 
 const Checkout = () => {
-    const { items, clearCart, subtotal } = useCart();
+        const { items, clearCart, subtotal } = useCart();
     const shipping = computeShipping(subtotal);
-    const total = subtotal + shipping;
+    const tax = Math.round(subtotal * 0.05); // 5% tax (GST-style)
+    const total = subtotal + shipping + tax;
     const navigate = useNavigate();
 
     const [user, setUser] = useState(undefined); // undefined = checking, null = signed out
@@ -86,8 +87,10 @@ const Checkout = () => {
         if (!validate() || submitting) return;
         setSubmitting(true);
         try {
-            const orderId = await createOrder({
+            const order = await createOrder({
                 userId: user.uid,
+                customerEmail: user.email,
+                customerName: form.customerName.trim(),
                 status: "Processing",
                 paymentMethod: "Cash on Delivery",
                 items: items.map((i) => ({
@@ -96,13 +99,14 @@ const Checkout = () => {
                     price: Number(i.price),
                     qty: Number(i.qty),
                 })),
+                subtotal: Number(subtotal),
+                tax: Number(tax),
                 total: Number(total),
-                customerName: form.customerName.trim(),
                 phone: form.phone.trim(),
                 address: form.address.trim(),
             });
             clearCart();
-            navigate(`/order-success/${orderId}`);
+            navigate(`/order-success/${order.id}`);
         } catch (error) {
             console.error("Checkout failed:", error);
             showError("Could not place the order. Please try again.");
@@ -173,9 +177,13 @@ const Checkout = () => {
                                     <dt className="opacity-70">Subtotal</dt>
                                     <dd className="font-semibold">₹{subtotal.toLocaleString("en-IN")}</dd>
                                 </div>
-                                <div className="flex justify-between">
+                                                                <div className="flex justify-between">
                                     <dt className="opacity-70">Shipping</dt>
                                     <dd className="font-semibold">{shipping === 0 ? <span className="text-green-600">FREE</span> : `₹${shipping}`}</dd>
+                                </div>
+                                <div className="flex justify-between">
+                                    <dt className="opacity-70">Tax (5%)</dt>
+                                    <dd className="font-semibold">₹{tax.toLocaleString("en-IN")}</dd>
                                 </div>
                                 <div className="flex justify-between border-t border-color-border pt-2 text-base">
                                     <dt className="font-bold">Total (COD)</dt>

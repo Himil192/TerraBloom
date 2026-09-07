@@ -237,7 +237,7 @@ const UserDashboard = () => {
                                         orders.slice(0, 5).map((order) => (
                                             <tr key={order.id} className="border-t border-color-border first:border-t-0">
                                                 <td className="px-4 sm:px-6 py-4 font-semibold">
-                                                    {String(order.id).slice(0, 8).toUpperCase()}
+                                                    {order.orderNumber || String(order.id).slice(0, 8).toUpperCase()}
                                                 </td>
                                                 <td className="px-4 sm:px-6 py-4 opacity-80">{fmtDate(order.createdAt)}</td>
                                                 <td className="px-4 sm:px-6 py-4 font-medium">

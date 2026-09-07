@@ -10,10 +10,20 @@ import { Modal } from "../../component/ui/model";
 import {
     getAllOrders,
     updateOrderStatus,
+    normalizeOrder,
 } from "../../services/orderService";
 import { showError, showSuccess } from "../../utils/toastUtils";
 
 const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
+const formatDate = (d) => {
+    if (!d) return "—";
+    if (typeof d === "string") return d;
+    try {
+        return d.toDate().toLocaleDateString("en-IN", { day: "short", month: "short", year: "numeric" });
+    } catch {
+        return d;
+    }
+};
 
 const ORDER_STATUSES = ["Processing", "In Transit", "Delivered", "Cancelled"];
 
@@ -43,8 +53,8 @@ const Orders = () => {
         let cancelled = false;
         const load = async () => {
             try {
-                const list = await getAllOrders();
-                if (!cancelled) setOrders(list);
+                                const list = await getAllOrders();
+                if (!cancelled) setOrders(list.map(normalizeOrder));
             } catch (error) {
                 console.error("Failed to load orders:", error);
                 if (!cancelled) showError("Failed to load orders");
@@ -60,7 +70,7 @@ const Orders = () => {
 
     const refresh = async () => {
         try {
-            setOrders(await getAllOrders());
+                        setOrders((await getAllOrders()).map(normalizeOrder));
         } catch (error) {
             console.error("Failed to refresh orders:", error);
             showError("Failed to refresh orders");
@@ -83,10 +93,11 @@ const Orders = () => {
 
     const filtered = orders.filter((order) => {
         const needle = query.trim().toLowerCase();
-        const matchesQuery =
+                const matchesQuery =
             !needle ||
-            order.id.toLowerCase().includes(needle) ||
-            order.customer.toLowerCase().includes(needle);
+            order.orderNumber?.toLowerCase().includes(needle) ||
+            order.customerName?.toLowerCase().includes(needle) ||
+            order.customerEmail?.toLowerCase().includes(needle);
         const matchesStatus =
             statusFilter === "all" || order.status === statusFilter;
         return matchesQuery && matchesStatus;
@@ -164,15 +175,15 @@ const Orders = () => {
                         <tbody className="divide-y divide-gray-100">
                             {filtered.map((order) => (
                                 <tr key={order.id} className="hover:bg-gray-50">
-                                    <td className="px-5 py-3.5 font-semibold text-gray-900">
-                                        #{order.id}
+                                                                        <td className="px-5 py-3.5 font-mono text-xs font-semibold text-gray-900">
+                                        #{order.orderNumber}
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <p className="text-gray-900 font-medium">{order.customer}</p>
-                                        <p className="text-xs text-gray-500">{order.email}</p>
+                                        <p className="text-gray-900 font-medium">{order.customerName}</p>
+                                        <p className="text-xs text-gray-500">{order.customerEmail}</p>
                                     </td>
                                     <td className="px-5 py-3.5 text-gray-700">
-                                        {order.date}
+                                        {formatDate(order.createdAt)}
                                     </td>
                                     <td className="px-5 py-3.5 text-gray-700">
                                         {order.items.reduce((sum, i) => sum + i.qty, 0)}
@@ -222,10 +233,10 @@ const Orders = () => {
                         <div className="flex items-start justify-between">
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-900">
-                                    Order #{detail.id}
+                                    Order #{detail.orderNumber}
                                 </h3>
                                 <p className="text-sm text-gray-500 mt-0.5">
-                                    {detail.date} · {detail.payment}
+                                    {formatDate(detail.createdAt)} · {detail.paymentMethod}
                                 </p>
                             </div>
                             <span
@@ -241,8 +252,8 @@ const Orders = () => {
                             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
                                 Customer
                             </p>
-                            <p className="text-sm font-medium text-gray-900">{detail.customer}</p>
-                            <p className="text-sm text-gray-600">{detail.email}</p>
+                            <p className="text-sm font-medium text-gray-900">{detail.customerName}</p>
+                            <p className="text-sm text-gray-600">{detail.customerEmail}</p>
                             <p className="text-sm text-gray-600 mt-1">{detail.address}</p>
                         </div>
 
