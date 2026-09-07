@@ -2,7 +2,8 @@
 import { useTheme } from "../theme/ThemeContext";
 import { Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import { getOrdersByUser } from "../services/orderService";
 import {
     Package,
@@ -13,6 +14,9 @@ import {
     Sparkles,
     BookOpen,
     LifeBuoy,
+    Loader2,
+    UserCog,
+    CalendarDays,
 } from "lucide-react";
 
 const UserDashboard = () => {
@@ -21,6 +25,7 @@ const UserDashboard = () => {
     // (firestore.rules: orders read requires userId == auth.uid).
     const [orders, setOrders] = useState(null); // null = loading
     const [loadError, setLoadError] = useState(false);
+    const [profile, setProfile] = useState(null);
 
     useEffect(() => {
         if (isDark) {
@@ -34,10 +39,17 @@ const UserDashboard = () => {
         let cancelled = false;
         const unsub = onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                if (!cancelled) setOrders([]);
+                if (!cancelled) {
+                    setOrders([]);
+                    setProfile(null);
+                }
                 return;
             }
             try {
+                // Own profile doc - firestore.rules allow reading only your own
+                // user document, so this can never expose another member's data.
+                const profileSnap = await getDoc(doc(db, "users", user.uid));
+                if (!cancelled) setProfile(profileSnap.exists() ? profileSnap.data() : null);
                 const rows = await getOrdersByUser(user.uid);
                 if (!cancelled) setOrders(rows);
             } catch (error) {
@@ -63,6 +75,24 @@ const UserDashboard = () => {
         }
     };
 
+    const toJsDate = (value) => {
+        try {
+            return value?.toDate?.() || (value ? new Date(value) : null);
+        } catch {
+            return null;
+        }
+    };
+
+    const memberSince = profile ? toJsDate(profile.createdAt) : null;
+    const firstName =
+        (profile?.fullName || "").trim().split(/\s+/)[0] ||
+        (profile?.email || "").split("@")[0] ||
+        "Eco Friend";
+    const createdAt = memberSince ? toJsDate(profile.createdAt) : null;
+    const isNewMember =
+        Boolean(createdAt) &&
+        Date.now() - createdAt.getTime() < 7 * 24 * 60 * 60 * 1000;
+
     const totalSpent = (orders || []).reduce(
         (sum, o) => sum + (o.status === "Cancelled" ? 0 : Number(o.total) || 0),
         0
@@ -79,6 +109,7 @@ const UserDashboard = () => {
         { title: "Shop New Arrivals", desc: "Fresh eco-essentials for everyday living.", href: "/products", icon: Sparkles },
         { title: "Read the Journal", desc: "Tips and stories for a greener life.", href: "/blogs", icon: BookOpen },
         { title: "Get Support", desc: "Real humans reply within 24 hours.", href: "/contact-us", icon: LifeBuoy },
+        { title: "Manage Profile", desc: "Update your name, phone and address.", href: "/user-dashboard/profile", icon: UserCog },
     ];
 
     const statusPill = (status) =>
@@ -98,11 +129,27 @@ const UserDashboard = () => {
                         <Sparkles className="w-3.5 h-3.5" /> Your Eco Hub
                     </span>
                     <h1 className="text-3xl sm:text-4xl font-extrabold mb-2">
-                        Welcome back, <span className="text-highlight">Eco Friend</span>
+                        {isNewMember ? "Welcome to TerraBloom," : "Welcome back,"}{" "}
+                        <span className="text-highlight">{firstName}</span>
                     </h1>
                     <p className="opacity-80 max-w-xl">
                         Track your orders, manage your profile, and continue your sustainable journey.
                     </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                        {memberSince && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-color-border px-3 py-1 text-xs font-semibold opacity-80">
+                                <CalendarDays className="h-3.5 w-3.5 text-highlight" />
+                                Member since{" "}
+                                {memberSince.toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
+                            </span>
+                        )}
+                        <Link
+                            to="/user-dashboard/profile"
+                            className="btn-secondary inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold"
+                        >
+                            <UserCog className="h-3.5 w-3.5" /> Manage Profile
+                        </Link>
+                    </div>
                 </div>
             </section>
 
@@ -205,7 +252,7 @@ const UserDashboard = () => {
             <section className="pb-12">
                 <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         {quickActions.map((action) => (
                             <Link
                                 key={action.title}
