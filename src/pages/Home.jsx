@@ -1,4 +1,4 @@
-ï»¿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Leaf,
@@ -185,7 +185,7 @@ const Home = () => {
                                     <ArrowRight className="h-4 w-4" />
                                 </Link>
                                 <Link
-                                    to="/blog"
+                                    to="/blogs"
                                     className="btn-secondary w-full sm:w-auto px-7 py-3 text-sm font-semibold"
                                 >
                                     Read Our Story
@@ -330,7 +330,7 @@ const Home = () => {
                             </div>
                         ) : featured.length === 0 ? (
                             <p className="col-span-full opacity-70 py-6">
-                                Our shelves are being restocked â€” check back soon.
+                                Our shelves are being restocked — check back soon.
                             </p>
                         ) : (
                             featured.map((product, index) => (
@@ -488,7 +488,7 @@ const Home = () => {
                             </div>
                         ) : latestPosts.length === 0 ? (
                             <p className="col-span-full text-center opacity-70 py-6">
-                                Fresh articles are on the way â€” stay tuned.
+                                Fresh articles are on the way — stay tuned.
                             </p>
                         ) : (
                             latestPosts.map((post, index) => (
