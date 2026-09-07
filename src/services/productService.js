@@ -19,7 +19,9 @@ import { db } from "../firebase";
 
 const ref = () => collection(db, "products");
 
-const mapProduct = (snap) => ({ id: snap.id, ...snap.data() });
+// NOTE: id MUST come after the spread - seeded docs contain a legacy numeric
+// `id` field that would otherwise shadow the real Firestore document ID.
+const mapProduct = (snap) => ({ ...snap.data(), id: snap.id });
 
 const byCreatedAt = (a, b) => {
     const at = (x) => {
@@ -45,7 +47,7 @@ export const getProductById = async (id) => {
 export const createProduct = async (data) => {
     const newRef = doc(ref());
     await setDoc(newRef, { ...data, createdAt: serverTimestamp() });
-    return { id: newRef.id, ...data };
+    return { ...data, id: newRef.id };
 };
 
 export const updateProduct = async (id, data) => {

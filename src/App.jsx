@@ -5,6 +5,7 @@ import Navbar from './component/NavBar/Navbar';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
 import Products from './pages/Products';
+import ProductDetail from './pages/ProductDetail';
 import Contact from './pages/Contact';
 import { ThemeProvider } from './theme/ThemeContext';
 import Footer from './component/Footer';
@@ -56,6 +57,7 @@ function AppContent() {
             <Route path="/" element={<Home />} />
             <Route path="/blogs" element={<Blog />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/contact-us" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />

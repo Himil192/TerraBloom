@@ -16,7 +16,9 @@ import { db } from "../firebase";
 
 const ref = () => collection(db, "orders");
 
-const mapOrder = (snap) => ({ id: snap.id, ...snap.data() });
+// NOTE: id MUST come after the spread - seeded docs may contain a legacy
+// numeric `id` field that would otherwise shadow the real Firestore document ID.
+const mapOrder = (snap) => ({ ...snap.data(), id: snap.id });
 
 const byCreatedAt = (a, b) => {
     const at = (x) => {
