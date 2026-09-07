@@ -40,8 +40,10 @@ const Login = () => {
                 const userData = userDoc.data();
                 const role = userData.role;
 
-                const token = await user.getIdToken();
-                localStorage.setItem("token", token);
+                // Security: deliberately do NOT persist the raw Firebase ID token
+                // in localStorage (XSS exfiltration risk). Firebase Auth manages
+                // its own session storage. role/uid below are non-authoritative
+                // UI caches only - real authorization happens in Firestore rules.
                 localStorage.setItem("role", role);
                 localStorage.setItem("uid", user.uid);
 
