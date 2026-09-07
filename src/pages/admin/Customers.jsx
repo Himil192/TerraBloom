@@ -44,7 +44,20 @@ const Customers = () => {
                         createdAt: data.createdAt,
                     };
                 });
-                rows.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+                // Newest signups first (admin cares about latest members),
+                // alphabetical as a tiebreaker for identical timestamps.
+                const joined = (x) => {
+                    try {
+                        return x.createdAt?.toDate?.() || 0;
+                    } catch {
+                        return 0;
+                    }
+                };
+                rows.sort(
+                    (a, b) =>
+                        joined(b) - joined(a) ||
+                        (a.name || "").localeCompare(b.name || "")
+                );
                 setCustomers(rows);
             } catch (err) {
                 if (!cancelled) {

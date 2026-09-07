@@ -23,7 +23,9 @@ const ref = () => collection(db, "orders");
 // numeric `id` field that would otherwise shadow the real Firestore document ID.
 const mapOrder = (snap) => ({ ...snap.data(), id: snap.id });
 
-const byCreatedAt = (a, b) => {
+// Newest first - admins care about the latest activity. Used by both the
+// admin Orders list and the user's own "My orders" list.
+const byCreatedAtDesc = (a, b) => {
     const at = (x) => {
         try {
             return (x.createdAt?.toDate?.() || new Date(0)).getTime();
@@ -31,12 +33,12 @@ const byCreatedAt = (a, b) => {
             return 0;
         }
     };
-    return at(a) - at(b);
+    return at(b) - at(a);
 };
 
 export const getAllOrders = async () => {
     const snap = await getDocs(ref());
-    return snap.docs.map(mapOrder).sort(byCreatedAt);
+    return snap.docs.map(mapOrder).sort(byCreatedAtDesc);
 };
 
 export const getOrderById = async (id) => {
@@ -64,7 +66,7 @@ export const createOrder = async (orderData) => {
 // can never leak another user's orders even if the client is tampered with.
 export const getOrdersByUser = async (uid) => {
     const snap = await getDocs(query(ref(), where("userId", "==", uid)));
-    return snap.docs.map(mapOrder).sort(byCreatedAt).reverse();
+    return snap.docs.map(mapOrder).sort(byCreatedAtDesc);
 };
 
 // Verified Purchase check (reviews) - reads ONLY the caller's own orders.

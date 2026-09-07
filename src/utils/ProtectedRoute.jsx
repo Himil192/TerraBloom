@@ -22,34 +22,45 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     const [user, loading] = useAuthState(auth);
     const [role, setRole] = useState(null);
     const [checkingRole, setCheckingRole] = useState(true);
+    // The uid the currently-held role was fetched FOR. Authorization may only
+    // be evaluated when resolvedFor === user.uid - otherwise a role fetched
+    // for a previous/absent session could be applied to the current one.
+    const [resolvedFor, setResolvedFor] = useState(null);
 
     useEffect(() => {
+        // While Firebase restores the session (hard refresh) user is null.
+        // We deliberately WAIT here (spinner) instead of deciding - deciding
+        // now would poison the state for the authenticated render that follows.
+        if (!user) return undefined;
+
         let cancelled = false;
 
-        const fetchRole = async () => {
-            try {
-                if (user) {
-                    const userRef = doc(db, "users", user.uid);
-                    const userSnap = await getDoc(userRef);
+        const finish = (fetchedRole) => {
+            setRole(typeof fetchedRole === "string" && fetchedRole ? fetchedRole : null);
+            setResolvedFor(user.uid);
+            setCheckingRole(false);
+        };
 
-                    if (userSnap.exists()) {
-                        const fetchedRole = userSnap.data().role;
-                        if (typeof fetchedRole === "string" && fetchedRole) {
-                            setRole(fetchedRole);
-                            cacheRole(fetchedRole); // display cache only
-                            return;
-                        }
-                    }
-                    // User doc missing or role missing/invalid => deny (fail-closed)
-                    setRole(null);
-                } else {
-                    setRole(null);
+        const fetchRole = async (attempt = 0) => {
+            try {
+                const userSnap = await getDoc(doc(db, "users", user.uid));
+                if (cancelled) return;
+                const fetchedRole = userSnap.exists() ? userSnap.data().role : null;
+                if (typeof fetchedRole === "string" && fetchedRole) {
+                    setRole(fetchedRole);
+                    cacheRole(fetchedRole); // display cache only
                 }
+                finish(fetchedRole); // missing doc/role => null => deny (fail-closed)
             } catch {
-                // Network/permission error => deny rather than allow (fail-closed)
-                setRole(null);
-            } finally {
-                if (!cancelled) setCheckingRole(false);
+                if (cancelled) return;
+                // Transient token/network timing: retry ONCE, still fail-closed.
+                if (attempt < 1) {
+                    setTimeout(() => {
+                        if (!cancelled) fetchRole(attempt + 1);
+                    }, 700);
+                    return;
+                }
+                finish(null); // network/permission error => deny rather than allow
             }
         };
 
@@ -59,7 +70,9 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         };
     }, [user]);
 
-    if (loading || checkingRole) return <EcoSpinner />;
+    if (loading || checkingRole || (user && user.uid !== resolvedFor)) {
+        return <EcoSpinner />;
+    }
 
     // AUTH - must be a genuine Firebase-authenticated session.
     if (!user) return <Navigate to="/login" replace />;
