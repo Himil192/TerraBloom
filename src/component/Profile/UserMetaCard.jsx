@@ -369,10 +369,10 @@ export default function UserMetaCard() {
 
     return (
         <>
-            <div className="card-surface p-5 rounded-2xl border border-color-border lg:p-6">
+            <div className="glass p-5 rounded-2xl border border-subtle lg:p-6">
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                     <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
-                        <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full relative group">
+                        <div className="w-20 h-20 overflow-hidden border border-subtle rounded-full relative group">
                             {imageUrl ? (
                                 <img
                                     src={imageUrl}
@@ -381,7 +381,7 @@ export default function UserMetaCard() {
                                     onClick={() => setShowImagePreview(true)}
                                 />
                             ) : (
-                                <div className="flex items-center justify-center w-full h-full bg-gray-200 text-gray-700">
+                                <div className="flex items-center justify-center w-full h-full bg-[var(--glass-highlight)] text-secondary font-semibold">
                                     {(formData.firstName || "U")
                                         .split(" ")
                                         .map((word) => word.charAt(0))
@@ -405,20 +405,20 @@ export default function UserMetaCard() {
                         </div>
 
                         <div className="order-3 xl:order-2">
-                            <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 xl:text-left">
+                            <h4 className="mb-2 text-lg font-semibold text-center text-strong xl:text-left">
                                 {formData.firstName} {formData.lastName}
                             </h4>
                             <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
-                                <p className="text-sm text-gray-500">{formData.role}</p>
-                                <div className="hidden h-3.5 w-px bg-gray-300 xl:block"></div>
-                                <p className="text-sm text-gray-500">{formData.email}</p>
+                                <p className="text-sm text-secondary">{formData.role}</p>
+                                <div className="hidden h-3.5 w-px bg-[var(--border-subtle)] xl:block"></div>
+                                <p className="text-sm text-secondary">{formData.email}</p>
                             </div>
                         </div>
                     </div>
 
                     <button
                         onClick={openModal}
-                        className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-100 hover:text-gray-800 cursor-pointer lg:inline-flex lg:w-auto"
+                        className="flex w-full items-center justify-center gap-2 rounded-full border border-subtle bg-[var(--glass-highlight)] px-4 py-3 text-sm font-medium text-strong shadow-theme-xs hover:bg-[var(--glass-highlight-strong)] cursor-pointer lg:inline-flex lg:w-auto"
                     >
                         <svg
                             className="fill-current"
@@ -439,12 +439,12 @@ export default function UserMetaCard() {
             </div>
 
             <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-                <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl lg:p-11">
+                <div className="relative w-full p-4 overflow-y-auto no-scrollbar lg:p-11">
                     <div className="px-2 pr-14">
-                        <h4 className="mb-2 text-2xl font-semibold text-gray-800">
+                        <h4 className="mb-2 text-2xl font-semibold text-strong">
                             Edit Personal Information
                         </h4>
-                        <p className="mb-6 text-sm text-gray-500 lg:mb-7">
+                        <p className="mb-6 text-sm text-secondary lg:mb-7">
                             Update your profile picture below.
                         </p>
 
@@ -472,7 +472,7 @@ export default function UserMetaCard() {
 
                             <div className="flex items-center justify-center w-full mt-6">
                                 <div
-                                    className="w-full max-w-sm h-[220px] flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-gray-400 rounded-3xl bg-gradient-to-r from-gray-100 to-gray-200 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                                    className="w-full max-w-sm h-[220px] flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-[var(--glass-border-strong)] rounded-3xl bg-[var(--glass-highlight)] hover:bg-[var(--glass-highlight-strong)] transition-colors duration-300 cursor-pointer"
                                     onDragOver={(e) => e.preventDefault()}
                                     onDrop={(e) => {
                                         e.preventDefault();
@@ -481,11 +481,11 @@ export default function UserMetaCard() {
                                     }}
                                     onClick={() => document.getElementById('file')?.click()}
                                 >
-                                    <svg viewBox="0 0 640 512" className="w-12 h-12 text-gray-600 fill-current">
+                                    <svg viewBox="0 0 640 512" className="w-12 h-12 text-secondary fill-current">
                                         <path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z" />
                                     </svg>
-                                    <p className="text-gray-700 font-medium text-base md:text-lg">Drag & Drop</p>
-                                    <p className="text-sm text-gray-600">or tap to upload</p>
+                                    <p className="text-strong font-medium text-base md:text-lg">Drag & Drop</p>
+                                    <p className="text-sm text-secondary">or tap to upload</p>
                                     <input
                                         id="file"
                                         type="file"
@@ -497,7 +497,7 @@ export default function UserMetaCard() {
                             </div>
 
                             {uploading && (
-                                <p className="mt-3 text-blue-500 text-sm font-medium animate-pulse">
+                                <p className="mt-3 text-[var(--primary-color)] text-sm font-medium animate-pulse">
                                     Uploading...
                                 </p>
                             )}
@@ -506,7 +506,7 @@ export default function UserMetaCard() {
                                 <img
                                     src={imageUrl}
                                     alt="Preview"
-                                    className="mt-6 w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-green-400 shadow-lg"
+                                    className="mt-6 w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-[var(--primary-color)] shadow-lg"
                                 />
                             )}
                         </div>
