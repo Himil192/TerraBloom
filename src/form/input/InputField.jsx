@@ -17,16 +17,16 @@ const Input = ({
     error = false,
     hint,
 }) => {
-    let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring ${className}`;
+    let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm ${className}`;
 
     if (disabled) {
-        inputClasses += ` text-gray-500 border-gray-300 opacity-40 bg-gray-100 cursor-not-allowed`;
+        inputClasses += ` text-muted border-subtle-strong opacity-50 cursor-not-allowed glass-field`;
     } else if (error) {
-        inputClasses += ` border-error-500 focus:border-error-300 focus:ring-error-500/20`;
+        inputClasses += ` border-red-500 focus:border-red-400 focus:ring-red-500/20 glass-field`;
     } else if (success) {
-        inputClasses += ` border-success-500 focus:border-success-300 focus:ring-success-500/20`;
+        inputClasses += ` border-green-500 focus:border-green-400 focus:ring-green-500/20 glass-field`;
     } else {
-        inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20`;
+        inputClasses += ` text-strong border-subtle-strong glass-field`;
     }
 
     return (
@@ -48,10 +48,10 @@ const Input = ({
             {hint && (
                 <p
                     className={`mt-1.5 text-xs ${error
-                        ? "text-error-500"
+                        ? "text-danger"
                         : success
-                            ? "text-success-500"
-                            : "text-gray-500"
+                            ? "text-green-600"
+                            : "text-muted"
                         }`}
                 >
                     {hint}

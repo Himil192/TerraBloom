@@ -24,9 +24,9 @@ const Button = ({
     // };
     const variantClasses = {
         primary:
-            " bg-blue-500 text-white shadow-theme-xs hover:bg-blue-600 disabled:bg-blue-300 cursor-pointer",
+            " bg-[var(--primary-color)] text-white shadow-theme-xs hover:bg-[var(--accent-color)] disabled:opacity-60 cursor-pointer",
         outline:
-            "bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 cursor-pointer",
+            "border border-subtle bg-[var(--glass-highlight)] text-strong hover:bg-[var(--glass-highlight-strong)] cursor-pointer",
     };
 
 

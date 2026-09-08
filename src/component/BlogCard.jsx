@@ -1,14 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, User, ArrowRight } from 'lucide-react';
+import { formatDate } from '../utils/dateUtils';
 
 const BlogCard = ({ blog, featured = false, variant = 'grid' }) => {
     const { id, title, excerpt, image, author, date, readTime, category, tags } = blog;
+    // `date` may be a Firestore Timestamp or {seconds, nanoseconds} object -
+    // it must never be rendered as a React child directly.
+    const dateLabel = formatDate(date);
 
     const Meta = ({ size = 14, className = '' }) => (
         <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-color-text opacity-70 ${className}`}>
             <span className="inline-flex items-center gap-1"><User size={size} />{author}</span>
-            <span className="inline-flex items-center gap-1"><Calendar size={size} />{date}</span>
+            <span className="inline-flex items-center gap-1"><Calendar size={size} />{dateLabel}</span>
             <span className="inline-flex items-center gap-1"><Clock size={size} />{readTime}</span>
         </div>
     );
@@ -31,7 +35,7 @@ const BlogCard = ({ blog, featured = false, variant = 'grid' }) => {
                         <p className="text-color-text opacity-80 mb-4 line-clamp-3">{excerpt}</p>
                         <div className="flex items-center gap-4 text-sm text-color-text opacity-70 mb-4">
                             <div className="flex items-center gap-1"><User size={14} /><span>{author}</span></div>
-                            <div className="flex items-center gap-1"><Calendar size={14} /><span>{date}</span></div>
+                            <div className="flex items-center gap-1"><Calendar size={14} /><span>{dateLabel}</span></div>
                             <div className="flex items-center gap-1"><Clock size={14} /><span>{readTime}</span></div>
                         </div>
                         <Link to={`/blogs/${id}`} className="inline-flex items-center gap-2 text-highlight font-semibold hover:opacity-80 transition-colors group/link">
@@ -85,7 +89,7 @@ const BlogCard = ({ blog, featured = false, variant = 'grid' }) => {
                 <div className="flex items-center justify-between text-xs text-color-text opacity-70 pt-4 border-t border-color-border">
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1"><User size={12} /><span>{author}</span></div>
-                        <div className="flex items-center gap-1"><Calendar size={12} /><span>{date}</span></div>
+                        <div className="flex items-center gap-1"><Calendar size={12} /><span>{dateLabel}</span></div>
                     </div>
                     <div className="flex items-center gap-1"><Clock size={12} /><span>{readTime}</span></div>
                 </div>

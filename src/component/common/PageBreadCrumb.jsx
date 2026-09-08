@@ -10,12 +10,12 @@ const PageBreadcrumb = ({ pageTitle, homePath }) => {
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-      <h2 className="text-xl font-semibold text-color-text">{pageTitle}</h2>
+      <h2 className="text-xl font-semibold text-strong">{pageTitle}</h2>
       <nav aria-label="Breadcrumb">
         <ol className="flex items-center gap-1.5">
           <li>
             <Link
-              className="inline-flex items-center gap-1.5 text-sm opacity-70 hover:opacity-100 transition-opacity"
+              className="inline-flex items-center gap-1.5 text-sm text-secondary hover:text-strong transition-colors"
               to={base}
             >
               Home
