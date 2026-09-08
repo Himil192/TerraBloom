@@ -148,30 +148,6 @@ const Navbar = ({ links }) => {
 
                         {/* Mobile Hamburger + Theme Toggle */}
                         <div className="md:hidden flex items-center space-x-2">
-                            <Link
-                                to="/wishlist"
-                                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
-                                aria-label={`Wishlist, ${wishlistCount} item${wishlistCount === 1 ? '' : 's'}`}
-                            >
-                                <Heart size={18} />
-                                {wishlistCount > 0 && (
-                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A9B4B] px-1 text-[10px] font-bold text-white">
-                                        {wishlistCount > 9 ? '9+' : wishlistCount}
-                                    </span>
-                                )}
-                            </Link>
-                            <Link
-                                to="/cart"
-                                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
-                                aria-label={`Shopping cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`}
-                            >
-                                <ShoppingBag size={18} />
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A9B4B] px-1 text-[10px] font-bold text-white">
-                                        {cartCount > 9 ? '9+' : cartCount}
-                                    </span>
-                                )}
-                            </Link>
                             <button
                                 onClick={toggleTheme}
                                 className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#A4D79B]"
@@ -191,70 +167,128 @@ const Navbar = ({ links }) => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu (below the top row) */}
+                    {/* Mobile Menu Overlay */}
                     {isOpen && (
-                        <>
-                            <div className="absolute left-4 right-4 top-24 z-10 rounded-2xl border border-black/5 bg-white p-4 shadow-2xl md:hidden dark:border-white/10 dark:bg-[#262927]">
-                                {links.map((link, index) => {
-                                    const isActive = location.pathname === link.href;
-                                    return (
-                                        <Link
-                                            key={index}
-                                            to={link.href}
-                                            className={`${isActive ? 'bg-[#4A9B4B] font-semibold text-white' : 'text-color-text hover:bg-[#A4D79B]/60'} block rounded-full px-3 py-2 text-sm transition-colors duration-200`}
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            {link.name}
-                                        </Link>
-                                    );
-                                })}
+                        <div
+                            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                            onClick={() => setIsOpen(false)}
+                            aria-hidden="true"
+                        />
+                    )}
 
-                                {/* Auth Buttons for Mobile */}
-                                <div className="mt-4">
-                                    {isLoggedIn ? (
-                                        <div className="flex flex-col gap-2">
-                                            <button
-                                                onClick={() => {
-                                                    setIsOpen(false); // Close menu
-                                                    navigate(dashboardPath);
-                                                }}
-                                                className="btn-primary w-full rounded-full py-2.5 text-sm font-semibold"
+                    {/* Mobile Menu Panel */}
+                    <div
+                        className={`fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] transform transition-transform duration-300 ease-in-out md:hidden ${
+                            isOpen ? 'translate-x-0' : 'translate-x-full'
+                        }`}
+                    >
+                        <div className="h-full bg-white dark:bg-[#1D1F1F] shadow-xl flex flex-col">
+                            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                                <span className="text-lg font-semibold text-gray-900 dark:text-white">Menu</span>
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                    aria-label="Close menu"
+                                >
+                                    <X size={20} className="text-gray-600 dark:text-gray-300" />
+                                </button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-4">
+                                <nav className="space-y-1">
+                                    {links.map((link, index) => {
+                                        const isActive = location.pathname === link.href;
+                                        return (
+                                            <Link
+                                                key={index}
+                                                to={link.href}
+                                                onClick={() => setIsOpen(false)}
+                                                className={`flex items-center px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                                                    isActive
+                                                        ? 'bg-[#4A9B4B] text-white'
+                                                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                                }`}
                                             >
-                                                My Dashboard
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setIsOpen(false); // Close menu
-                                                    handleLogout();
-                                                }}
-                                                className="btn-secondary inline-flex w-full items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-semibold"
-                                            >
-                                                <LogOut size={16} /> Logout
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            onClick={() => {
-                                                setIsOpen(false); // Close menu
-                                                navigate('/login');
-                                            }}
-                                            className="btn-primary w-full rounded-full py-2.5 text-sm font-semibold"
+                                                {link.name}
+                                            </Link>
+                                        );
+                                    })}
+                                </nav>
+
+                                {/* Wishlist & Cart Quick Links */}
+                                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                                    <p className="px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Quick Links</p>
+                                    <div className="space-y-1">
+                                        <Link
+                                            to="/wishlist"
+                                            onClick={() => setIsOpen(false)}
+                                            className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                                         >
-                                            Login / Signup
-                                        </button>
-                                    )}
+                                            <span className="flex items-center gap-3">
+                                                <Heart size={18} />
+                                                Wishlist
+                                            </span>
+                                            {wishlistCount > 0 && (
+                                                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#4A9B4B] px-1.5 text-[10px] font-bold text-white">
+                                                    {wishlistCount > 9 ? '9+' : wishlistCount}
+                                                </span>
+                                            )}
+                                        </Link>
+                                        <Link
+                                            to="/cart"
+                                            onClick={() => setIsOpen(false)}
+                                            className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                        >
+                                            <span className="flex items-center gap-3">
+                                                <ShoppingBag size={18} />
+                                                Cart
+                                            </span>
+                                            {cartCount > 0 && (
+                                                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#4A9B4B] px-1.5 text-[10px] font-bold text-white">
+                                                    {cartCount > 9 ? '9+' : cartCount}
+                                                </span>
+                                            )}
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
 
-
-                            {/* Mobile Menu Overlay */}
-                            <div
-                                className="fixed inset-0 bg-black opacity-50 md:hidden"
-                                onClick={() => setIsOpen(false)}
-                                aria-hidden="true"
-                            ></div>
-                        </>
-                    )}
+                            {/* Auth Buttons */}
+                            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                                {isLoggedIn ? (
+                                    <div className="space-y-2">
+                                        <button
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                navigate(dashboardPath);
+                                            }}
+                                            className="w-full rounded-xl bg-[#4A9B4B] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#3d8a3e]"
+                                        >
+                                            My Dashboard
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                handleLogout();
+                                            }}
+                                            className="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-600 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                                        >
+                                            <LogOut size={16} /> Logout
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            navigate('/login');
+                                        }}
+                                        className="w-full rounded-xl bg-[#4A9B4B] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#3d8a3e]"
+                                    >
+                                        Login / Signup
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </nav>
