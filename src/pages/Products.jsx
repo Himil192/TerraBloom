@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import ProductCards from "../component/ProductCards";
 import { getAllProducts } from "../services/productService";
 import { Truck, Recycle, BadgeCheck, Leaf, SearchX, ArrowRight, SlidersHorizontal, Loader2 } from "lucide-react";
-import { SkeletonGrid } from "../component/common/Skeletons";
 import Aos from "aos";
 import "aos/dist/aos.css";
 

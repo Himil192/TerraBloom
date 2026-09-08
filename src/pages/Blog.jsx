@@ -3,7 +3,6 @@ import { useTheme } from '../theme/ThemeContext';
 import BlogCard from '../component/BlogCard';
 import { getAllBlogs } from '../services/blogService';
 import { Search, LayoutGrid, List, ChevronLeft, ChevronRight, SearchX, BookOpen, Tags, RefreshCw, Loader2 } from 'lucide-react';
-import { SkeletonGrid } from '../component/common/Skeletons';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
