@@ -1,8 +1,8 @@
-<div align="center">
+﻿<div align="center">
 
   <img src="./src/assets/terrabloom.png" alt="TerraBloom Logo" width="200"/>
 
-  # ?? TerraBloom
+  # 🌿 TerraBloom
 
   **Sustainable Living Platform | AI-Powered Eco Commerce**
 
@@ -14,59 +14,59 @@
   [![Firebase](https://img.shields.io/badge/Firebase-11-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com/)
   [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-  [?? View Live Demo](https://himil192.github.io/TerraBloom/) � [?? Documentation](#features) � [?? Getting Started](#installation)
+  [🌐 View Live Demo](https://terrabloom-8dc91.web.app/) • [📖 Documentation](#features) • [🚀 Getting Started](#installation)
 
   ---
 
 </div>
 
-## ?? Our Mission
+## 🌍 Our Mission
 
-**TerraBloom** is more than an e-commerce platform � it's a movement towards sustainable living. We're building an ecosystem where every purchase plants a tree, every product is plastic-free, and technology serves the planet.
+**TerraBloom** is more than an e-commerce platform — it is a movement towards sustainable living. We are building an ecosystem where every purchase plants a tree, every product is plastic-free, and technology serves the planet.
 
 > *"We believe in a world where commerce and conservation go hand in hand. Every transaction on TerraBloom is a step towards a greener future."*
 
 ---
 
-## ? Features
+## ✨ Features
 
-### ?? Eco Commerce
-- **100% Plastic-Free Packaging** � Every order ships in compostable materials
-- **Carbon Neutral Delivery** � We offset every shipment's carbon footprint
-- **Curated Sustainable Products** � Hand-picked eco-friendly items
-- **Tree Planting Program** � One tree planted with every order
+### 🛒 Eco Commerce
+- **100% Plastic-Free Packaging** — Every order ships in compostable materials
+- **Carbon Neutral Delivery** — We offset every shipment carbon footprint
+- **Curated Sustainable Products** — Hand-picked eco-friendly items
+- **Tree Planting Program** — One tree planted with every order
 
-### ?? Smart Blog Platform
-- **AI-Powered Content Creation** *(Coming Soon)* � Generate eco-tips and articles with AI
-- **Sustainability Guides** � Expert-curated content on green living
-- **Climate Action Articles** � Stay informed about environmental issues
+### 📝 Smart Blog Platform
+- **AI-Powered Content Creation** *(Coming Soon)* — Generate eco-tips and articles with AI
+- **Sustainability Guides** — Expert-curated content on green living
+- **Climate Action Articles** — Stay informed about environmental issues
 
-### ?? User Experience
-- **Beautiful Glassmorphism UI** � Modern, clean design with smooth animations
-- **Dark/Light Mode** � Eye-comfortable themes for any time of day
-- **Mobile-First Design** � Perfect experience on any device
-- **Real-time Order Tracking** � Know exactly where your eco-goodies are
+### 👤 User Experience
+- **Beautiful Glassmorphism UI** — Modern, clean design with smooth animations
+- **Dark/Light Mode** — Eye-comfortable themes for any time of day
+- **Mobile-First Design** — Perfect experience on any device
+- **Real-time Order Tracking** — Know exactly where your eco-goodies are
 
-### ?? Admin Dashboard
-- **Product Management** � Easy catalog management with AI-assisted descriptions *(Coming Soon)*
-- **Order Analytics** � Beautiful charts and insights
-- **Content Management** � Blog post editor with AI suggestions *(Coming Soon)*
-- **Customer Insights** � Understand your eco-community
+### 🔧 Admin Dashboard
+- **Product Management** — Easy catalog management with AI-assisted descriptions *(Coming Soon)*
+- **Order Analytics** — Beautiful charts and insights
+- **Content Management** — Blog post editor with AI suggestions *(Coming Soon)*
+- **Customer Insights** — Understand your eco-community
 
 ---
 
-## ?? Future Roadmap
+## 🚀 Future Roadmap
 
-### ?? AI Integration (Phase 2)
+### 🤖 AI Integration (Phase 2)
 | Feature | Description | Status |
 |---------|-------------|--------|
-| **AI Product Descriptions** | Auto-generate compelling, SEO-optimized product descriptions | ?? Coming Soon |
-| **Smart Blog Writer** | AI-assisted article generation with eco-fact checking | ?? Coming Soon |
-| **Eco Impact Calculator** | Show customers their personal environmental impact | ?? Planned |
-| **AI Recommendations** | Personalized product suggestions based on eco-preferences | ?? Planned |
-| **Chatbot Assistant** | 24/7 eco-living guidance and product recommendations | ?? Planned |
+| **AI Product Descriptions** | Auto-generate compelling, SEO-optimized product descriptions | 🔜 Coming Soon |
+| **Smart Blog Writer** | AI-assisted article generation with eco-fact checking | 🔜 Coming Soon |
+| **Eco Impact Calculator** | Show customers their personal environmental impact | 📋 Planned |
+| **AI Recommendations** | Personalized product suggestions based on eco-preferences | 📋 Planned |
+| **Chatbot Assistant** | 24/7 eco-living guidance and product recommendations | 📋 Planned |
 
-### ?? Sustainability Goals
+### 🌱 Sustainability Goals
 - [ ] Carbon-negative operations by 2026
 - [ ] 1 million trees planted through platform orders
 - [ ] Zero-waste supply chain certification
@@ -74,7 +74,7 @@
 
 ---
 
-## ??? Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
 | Technology | Purpose | Version |
@@ -95,7 +95,7 @@
 
 ---
 
-## ?? Getting Started
+## 🏁 Getting Started
 
 ### Prerequisites
 - Node.js 18+ installed
@@ -140,73 +140,73 @@ npm run preview
 
 ---
 
-## ?? Project Structure
+## 📁 Project Structure
 
 ```
 TerraBloom/
-+-- src/
-�   +-- components/          # Reusable UI components
-�   �   +-- AdminDashboard/  # Admin panel components
-�   �   +-- NavBar/          # Navigation components
-�   �   +-- Profile/         # User profile components
-�   �   +-- ui/              # Generic UI components
-�   +-- pages/               # Page components
-�   �   +-- admin/           # Admin dashboard pages
-�   �   +-- ...              # Public pages
-�   +-- services/            # Firebase/API services
-�   +-- context/             # React context providers
-�   +-- hooks/               # Custom React hooks
-�   +-- utils/               # Utility functions
-�   +-- assets/              # Images, fonts, etc.
-�   +-- theme/               # Theme configuration
-�   +-- App.css              # Global styles
-�   +-- App.jsx              # Main app component
-�   +-- main.jsx             # Entry point
-+-- public/                  # Static assets
-+-- .env.example             # Environment template
-+-- package.json
-+-- vite.config.js
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── AdminDashboard/  # Admin panel components
+│   │   ├── NavBar/          # Navigation components
+│   │   ├── Profile/         # User profile components
+│   │   └── ui/              # Generic UI components
+│   ├── pages/               # Page components
+│   │   ├── admin/           # Admin dashboard pages
+│   │   └── ...              # Public pages
+│   ├── services/            # Firebase/API services
+│   ├── context/             # React context providers
+│   ├── hooks/               # Custom React hooks
+│   ├── utils/               # Utility functions
+│   ├── assets/              # Images, fonts, etc.
+│   ├── theme/               # Theme configuration
+│   ├── App.css              # Global styles
+│   ├── App.jsx              # Main app component
+│   └── main.jsx             # Entry point
+├── public/                  # Static assets
+├── .env.example             # Environment template
+├── package.json
+└── vite.config.js
 ```
 
 ---
 
-## ?? Contributing
+## 🤝 Contributing
 
-We welcome contributions from the eco-community! Here's how you can help:
+We welcome contributions from the eco-community! Here is how you can help:
 
 ### Development Workflow
 1. **Fork** the repository
 2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+3. **Commit** your changes (`git commit -m Add amazing feature`)
 4. **Push** to the branch (`git push origin feature/amazing-feature`)
 5. **Open** a Pull Request
 
 ---
 
-## ?? License
+## 📜 License
 
-This project is licensed under the **MIT License** � see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## ?? Acknowledgments
+## 🙏 Acknowledgments
 
 ### Design Inspiration
 We draw inspiration from the amazing designs shared by the community on [Dribbble](https://dribbble.com/). The glassmorphism aesthetic and smooth animations were shaped by these creative works.
 
 ### Special Thanks
-- ?? **Our Planet** � For giving us a reason to build this
-- ?? **The Eco Community** � For inspiring sustainable innovation
-- ?? **Open Source Contributors** � For making this project better every day
+- 🌳 **Our Planet** — For giving us a reason to build this
+- 👥 **The Eco Community** — For inspiring sustainable innovation
+- 💚 **Open Source Contributors** — For making this project better every day
 
 ---
 
-## ?? Connect With Us
+## 📬 Connect With Us
 
 <div align="center">
 
   [![GitHub](https://img.shields.io/badge/GitHub-Himil192-181717?style=for-the-badge&logo=github)](https://github.com/Himil192)
-  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/himil192)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/himil-prajapati/)
 
 </div>
 
@@ -214,12 +214,10 @@ We draw inspiration from the amazing designs shared by the community on [Dribbbl
 
 <div align="center">
 
-  ### ?? *Every purchase on TerraBloom plants a tree. Join us in making the world greener.* ??
+  ### 🌿 *Every purchase on TerraBloom plants a tree. Join us in making the world greener.* 🌿
 
-  **Made with ?? by [Himil192](https://github.com/Himil192)**
+  **Made with 💚 by [Himil192](https://github.com/Himil192)**
 
-  � 2026 TerraBloom. All rights reserved.
+  © 2026 TerraBloom. All rights reserved.
 
 </div>
-
-
