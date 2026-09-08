@@ -246,18 +246,18 @@ export default function UserInfoCard() {
         }
     };
 
-    if (!userData) return <div className="p-5">Loading...</div>;
+    if (!userData) return <div className="p-5 text-secondary">Loading...</div>;
 
     return (
-        <div className="card-surface p-5 rounded-2xl border border-color-border lg:p-6">
+        <div className="glass p-5 rounded-2xl border border-subtle lg:p-6">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                    <h4 className="text-lg font-semibold text-gray-800 lg:mb-6">Personal Information</h4>
+                    <h4 className="text-lg font-semibold text-strong lg:mb-6">Personal Information</h4>
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                         {["firstName", "lastName", "email", "phone", "role"].map((field, index) => (
                             <div key={index}>
-                                <p className="mb-2 text-xs text-gray-500 capitalize">{field.replace(/([A-Z])/g, ' $1')}</p>
-                                <p className="text-sm font-medium text-gray-800">{formData[field]}</p>
+                                <p className="mb-2 text-xs text-muted capitalize">{field.replace(/([A-Z])/g, ' $1')}</p>
+                                <p className="text-sm font-medium text-strong">{formData[field]}</p>
                             </div>
                         ))}
                     </div>
@@ -265,7 +265,7 @@ export default function UserInfoCard() {
 
                 <button
                     onClick={openModal}
-                    className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium cursor-pointer text-gray-700 shadow-theme-xs hover:bg-gray-100 hover:text-gray-800  lg:inline-flex lg:w-auto"
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-subtle bg-[var(--glass-highlight)] px-4 py-3 text-sm font-medium cursor-pointer text-strong shadow-theme-xs hover:bg-[var(--glass-highlight-strong)] lg:inline-flex lg:w-auto"
                 >
                     <svg className="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none">
                         <path
@@ -280,15 +280,15 @@ export default function UserInfoCard() {
             </div>
 
             <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-                <div className="w-full max-w-[700px] rounded-3xl bg-white p-4 lg:p-11">
-                    <h4 className="mb-2 text-2xl font-semibold text-gray-800">Edit Personal Information</h4>
-                    <p className="mb-6 text-sm text-gray-500 lg:mb-7">
+                <div className="w-full max-w-[700px] p-4 lg:p-11">
+                    <h4 className="mb-2 text-2xl font-semibold text-strong">Edit Personal Information</h4>
+                    <p className="mb-6 text-sm text-secondary lg:mb-7">
                         Update your details to keep your profile up-to-date.
                     </p>
                     <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
                         {["firstName", "lastName", "phone"].map((field) => (
                             <div key={field}>
-                                <label className="block text-sm font-medium mb-1 text-gray-700 capitalize">
+                                <label className="block text-sm font-medium mb-1 text-strong capitalize">
                                     {field.replace(/([A-Z])/g, ' $1')}
                                 </label>
                                 <Input

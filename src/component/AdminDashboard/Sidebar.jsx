@@ -19,9 +19,9 @@ import { showError } from "../../utils/toastUtils";
 import { clearSessionCache } from "../../utils/sessionCache";
 
 const baseNav =
-    "flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer";
-const activeNav = "bg-[#4A9B4B]/10 text-[#2F6A30] font-semibold";
-const inactiveNav = "text-gray-500 hover:bg-gray-100 hover:text-gray-700";
+    "flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer";
+const activeNav = "nav-item-active font-semibold";
+const inactiveNav = "nav-item";
 
 const navItems = [
     { to: "/admin-dashboard", label: "Overview", icon: LayoutDashboard, end: true },
@@ -93,13 +93,13 @@ export default function Sidebar() {
     };
 
     return (
-        <div className="flex h-full flex-col justify-between border-e border-gray-100 bg-white w-64">
+        <div className="flex h-full flex-col justify-between border-e border-subtle w-64">
             <div className="px-4 py-6 overflow-y-auto">
                 <span className="grid h-12 items-center w-45 place-content-center">
                     <SvgComponent />
                 </span>
 
-                <p className="mt-6 px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                <p className="mt-6 px-4 text-[11px] font-semibold uppercase tracking-widest text-muted">
                     Manage Store
                 </p>
                 <ul className="mt-2 space-y-1">
@@ -112,14 +112,14 @@ export default function Sidebar() {
                                     `${baseNav} ${isActive ? activeNav : inactiveNav}`
                                 }
                             >
-                                <item.icon size={16} />
+                                <item.icon size={17} />
                                 {item.label}
                             </NavLink>
                         </li>
                     ))}
 
-                    <div className="mt-6 pt-4 border-t border-gray-100">
-                        <p className="px-4 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                    <div className="mt-6 pt-4 border-t border-subtle">
+                        <p className="px-4 text-[11px] font-semibold uppercase tracking-widest text-muted">
                             Account
                         </p>
                         <ul className="mt-1 space-y-1">
@@ -129,7 +129,7 @@ export default function Sidebar() {
                                         to={item.to}
                                         className={`${baseNav} ${inactiveNav}`}
                                     >
-                                        <item.icon size={16} />
+                                        <item.icon size={17} />
                                         {item.label}
                                     </Link>
                                 </li>
@@ -137,9 +137,9 @@ export default function Sidebar() {
                             <li>
                                 <button
                                     onClick={handleLogout}
-                                    className={`${baseNav} ${inactiveNav} text-left`}
+                                    className={`${baseNav} text-danger hover:bg-[#B3261E]/10 text-left`}
                                 >
-                                    <LogOut size={16} />
+                                    <LogOut size={17} />
                                     Logout
                                 </button>
                             </li>
@@ -149,16 +149,16 @@ export default function Sidebar() {
             </div>
 
             {user && (
-                <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-                    <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50 cursor-pointer">
+                <div className="sticky inset-x-0 bottom-0 border-t border-subtle">
+                    <div className="flex items-center gap-2 p-4 hover:bg-[var(--glass-highlight)] cursor-pointer">
                         {imageUrl ? (
                             <img
                                 alt="Profile"
                                 src={imageUrl}
-                                className="size-10 rounded-full object-cover"
+                                className="size-10 rounded-full object-cover ring-2 ring-[var(--glass-border)]"
                             />
                         ) : (
-                            <div className="size-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-medium text-sm uppercase">
+                            <div className="size-10 flex items-center justify-center rounded-full bg-[var(--glass-highlight-strong)] text-strong font-medium text-sm uppercase">
                                 {(formData.firstName || "U")
                                     .split(" ")
                                     .map((word) => word.charAt(0))
@@ -168,12 +168,12 @@ export default function Sidebar() {
                             </div>
                         )}
 
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <p className="text-xs">
-                                <strong className="block font-medium">
+                                <strong className="block font-medium text-strong truncate">
                                     {formData.firstName || formData.lastName || "User"}
                                 </strong>
-                                <span>{formData.email || user.email}</span>
+                                <span className="text-muted truncate block">{formData.email || user.email}</span>
                             </p>
                         </div>
                     </div>

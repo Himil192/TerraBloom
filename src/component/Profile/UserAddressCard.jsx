@@ -88,19 +88,19 @@ export default function UserAddressCard() {
         }
     };
 
-    if (!userData) return <div className="p-5">Loading...</div>;
+    if (!userData) return <div className="p-5 text-secondary">Loading...</div>;
 
     return (
         <>
-            <div className="card-surface p-5 rounded-2xl border border-color-border lg:p-6  pb-40">
+            <div className="glass p-5 rounded-2xl border border-subtle lg:p-6 pb-40">
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                        <h4 className="text-lg font-semibold text-gray-800 lg:mb-6">
+                        <h4 className="text-lg font-semibold text-strong lg:mb-6">
                             Address
                         </h4>
 
                         <div className="p-4 ">
-                            <p className="text-sm text-gray-800 leading-6">
+                            <p className="text-sm text-secondary leading-6">
                                 {formData.address1}<br />
                                 {formData.address2 && (<>{formData.address2}<br /></>)}
                                 {formData.city}, {formData.state} - {formData.postalCode}<br />
@@ -112,7 +112,7 @@ export default function UserAddressCard() {
 
                     <button
                         onClick={openModal}
-                        className="flex w-full items-center justify-center gap-2 rounded-full border cursor-pointer border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-100 hover:text-gray-800 lg:inline-flex lg:w-auto"
+                        className="flex w-full items-center justify-center gap-2 rounded-full border cursor-pointer border-subtle bg-[var(--glass-highlight)] px-4 py-3 text-sm font-medium text-strong shadow-theme-xs hover:bg-[var(--glass-highlight-strong)] lg:inline-flex lg:w-auto"
                     >
                         <svg
                             className="fill-current"
@@ -135,10 +135,10 @@ export default function UserAddressCard() {
             </div>
 
             <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-                <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl lg:p-11">
+                <div className="relative w-full p-4 overflow-y-auto no-scrollbar lg:p-11">
                     <div className="px-2 pr-14">
-                        <h4 className="mb-2 text-2xl font-semibold text-gray-800">Edit Address</h4>
-                        <p className="mb-6 text-sm text-gray-500 lg:mb-7">
+                        <h4 className="mb-2 text-2xl font-semibold text-strong">Edit Address</h4>
+                        <p className="mb-6 text-sm text-secondary lg:mb-7">
                             Update your details to keep your profile up-to-date.
                         </p>
                     </div>

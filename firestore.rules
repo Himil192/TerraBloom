@@ -1,4 +1,4 @@
-rules_version = '2';
+﻿rules_version = '2';
 // =============================================================================
 // TerraBloom - Cloud Firestore Security Rules
 // -----------------------------------------------------------------------------
@@ -130,7 +130,7 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
       allow create: if isSignedIn() &&
         request.resource.data.keys().hasOnly(
-          ['userId', 'status', 'items', 'total', 'customerName', 'phone', 'address', 'paymentMethod', 'createdAt']
+          ['orderNumber', 'userId', 'status', 'items', 'subtotal', 'tax', 'total', 'customerName', 'customerEmail', 'phone', 'address', 'paymentMethod', 'createdAt']
         ) &&
         request.resource.data.userId == request.auth.uid &&
         request.resource.data.status == 'Processing' &&

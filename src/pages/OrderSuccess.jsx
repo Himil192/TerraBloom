@@ -49,7 +49,7 @@ const OrderSuccess = () => {
                             <Package className="h-4 w-4 text-highlight" /> Order
                         </span>
                         <span className="rounded-full bg-color-background px-3 py-1 font-mono text-xs">
-                            {orderId}
+                            {order ? (order.orderNumber || orderId) : orderId}
                         </span>
                     </div>
 
