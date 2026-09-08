@@ -15,12 +15,46 @@
         --secondary-color: #88B73B;
         --accent-color: #FFB829;
 
+        /* Glassmorphism tokens — light */
+        --glass-bg: rgba(255, 255, 255, 0.55);
+        --glass-bg-strong: rgba(255, 255, 255, 0.8);
+        --glass-highlight: rgba(74, 155, 75, 0.14);
+        --glass-highlight-strong: rgba(74, 155, 75, 0.22);
+        --glass-border: rgba(255, 255, 255, 0.55);
+        --glass-border-strong: rgba(255, 255, 255, 0.85);
+        --glass-shadow-color: rgba(29, 31, 31, 0.22);
+        --border-subtle: rgba(20, 26, 20, 0.12);
+        --border-subtle-strong: rgba(20, 26, 20, 0.18);
+
+        /* Text contrast scale — light */
+        --text-strong: #1d1f1f;
+        --text-secondary: #4b5563;
+        --text-muted: #6b7280;
+        --text-danger: #b91c1c;
+
         /* Dark Theme Colors */
         --bg-color-background-dark: #1D1F1F;
         --text-color-text-dark: #F0F7D8;
         --primary-color-dark: #A2C73E;
         --secondary-color-dark: #7A9C2F;
         --accent-color-dark: #F6B700;
+
+        /* Glassmorphism tokens — dark */
+        --glass-bg-dark: rgba(32, 36, 32, 0.58);
+        --glass-bg-strong-dark: rgba(36, 40, 36, 0.84);
+        --glass-highlight-dark: rgba(162, 199, 62, 0.16);
+        --glass-highlight-strong-dark: rgba(162, 199, 62, 0.26);
+        --glass-border-dark: rgba(255, 255, 255, 0.14);
+        --glass-border-strong-dark: rgba(255, 255, 255, 0.22);
+        --glass-shadow-color-dark: rgba(0, 0, 0, 0.5);
+        --border-subtle-dark: rgba(255, 255, 255, 0.1);
+        --border-subtle-strong-dark: rgba(255, 255, 255, 0.16);
+
+        /* Text contrast scale — dark */
+        --text-strong-dark: #f0f7d8;
+        --text-secondary-dark: #ccd5cc;
+        --text-muted-dark: #9aa39a;
+        --text-danger-dark: #f87171;
     }
 
     html.dark {
@@ -29,6 +63,21 @@
         --primary-color: var(--primary-color-dark);
         --secondary-color: var(--secondary-color-dark);
         --accent-color: var(--accent-color-dark);
+
+        --glass-bg: var(--glass-bg-dark);
+        --glass-bg-strong: var(--glass-bg-strong-dark);
+        --glass-highlight: var(--glass-highlight-dark);
+        --glass-highlight-strong: var(--glass-highlight-strong-dark);
+        --glass-border: var(--glass-border-dark);
+        --glass-border-strong: var(--glass-border-strong-dark);
+        --glass-shadow-color: var(--glass-shadow-color-dark);
+        --border-subtle: var(--border-subtle-dark);
+        --border-subtle-strong: var(--border-subtle-strong-dark);
+
+        --text-strong: var(--text-strong-dark);
+        --text-secondary: var(--text-secondary-dark);
+        --text-muted: var(--text-muted-dark);
+        --text-danger: var(--text-danger-dark);
     }
 }
 
@@ -176,25 +225,33 @@ html.dark .card-surface .text-slate-900 {
     color: #ffffff;
 }
 
-/* ===== Solid Surface Utilities (glass look rolled back to flat colors).
-   Class names kept so the style can be flipped back in one place. ===== */
+/* =====================================================================
+   GLASSMORPHISM DESIGN SYSTEM
+   Frosted, theme-aware surfaces. Light + dark are driven by the CSS
+   variables below — never hardcode grays on glass.
+   ===================================================================== */
+
+/* Glass surfaces (true frosted glass with backdrop blur) */
 .glass-card {
-    background: #ffffff;
-    border: 1px solid #eef1ec;
-    box-shadow: 0 24px 60px -12px rgba(29, 31, 31, 0.28);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 24px 60px -12px var(--glass-shadow-color);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
 }
 
 html.dark .glass-card {
-    background: #262927;
-    border-color: #3a3d3a;
-    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    box-shadow: 0 24px 60px -12px var(--glass-shadow-color);
 }
 
+/* Frosted form fields */
 .glass-input {
     width: 100%;
     color: var(--text-color-text);
-    background: #f4f6f2;
-    border: 1px solid #e2e7df;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-subtle);
     border-radius: 0.9rem;
     padding: 0.8rem 1rem;
     outline: none;
@@ -202,27 +259,27 @@ html.dark .glass-card {
 }
 
 .glass-input::placeholder {
-    color: rgba(59, 52, 55, 0.45);
+    color: var(--text-muted);
 }
 
 .glass-input:focus {
-    background: #ffffff;
+    background: var(--glass-bg-strong);
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(74, 155, 75, 0.18);
+    box-shadow: 0 0 0 4px var(--glass-highlight);
 }
 
 html.dark .glass-input {
-    background: #1e211e;
-    border-color: #3a3d3a;
+    background: var(--glass-bg);
+    border-color: var(--border-subtle);
 }
 
 html.dark .glass-input::placeholder {
-    color: rgba(240, 247, 216, 0.45);
+    color: var(--text-muted);
 }
 
 html.dark .glass-input:focus {
-    background: #262927;
-    box-shadow: 0 0 0 4px rgba(162, 199, 62, 0.22);
+    background: var(--glass-bg-strong);
+    box-shadow: 0 0 0 4px var(--glass-highlight);
 }
 
 /* Padded variants (unlayered so they win over Tailwind padding utilities) */
@@ -326,6 +383,195 @@ html.dark .glass-input:focus {
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 }
 
+/* ===== Dashboard Glassmorphism Utilities ===== */
+@layer utilities {
+    /* Frosted panel base (compose with Tailwind radius/border/padding) */
+    .glass {
+        background: var(--glass-bg);
+        -webkit-backdrop-filter: blur(18px) saturate(150%);
+        backdrop-filter: blur(18px) saturate(150%);
+        box-shadow: 0 12px 40px -10px var(--glass-shadow-color), 0 2px 10px rgba(29, 31, 31, 0.08);
+    }
+
+    /* More opaque frosted panel — used for tables, forms and modals */
+    .glass-strong {
+        background: var(--glass-bg-strong);
+        -webkit-backdrop-filter: blur(22px) saturate(160%);
+        backdrop-filter: blur(22px) saturate(160%);
+        box-shadow: 0 12px 40px -10px var(--glass-shadow-color), 0 2px 10px rgba(29, 31, 31, 0.08);
+    }
+
+    /* Sidebar / topbar rail */
+    .glass-nav {
+        background: var(--glass-bg-strong);
+        -webkit-backdrop-filter: blur(20px) saturate(150%);
+        backdrop-filter: blur(20px) saturate(150%);
+        box-shadow: 0 8px 32px -8px var(--glass-shadow-color);
+    }
+
+    /* Modal surface */
+    .glass-modal {
+        background: var(--glass-bg-strong);
+        -webkit-backdrop-filter: blur(24px) saturate(160%);
+        backdrop-filter: blur(24px) saturate(160%);
+        border: 1px solid var(--glass-border-strong);
+        box-shadow: 0 24px 72px -12px var(--glass-shadow-color);
+        color: var(--text-strong);
+    }
+
+    /* Form fields (text, number, select, textarea).
+       NOTE: no padding on purpose — compose with Tailwind (e.g. px-3.5 py-2.5) */
+    .glass-field {
+        width: 100%;
+        color: var(--text-strong);
+        background: var(--glass-bg);
+        border: 1px solid var(--border-subtle-strong);
+        border-radius: 0.75rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .glass-field::placeholder {
+        color: var(--text-muted);
+    }
+
+    .glass-field:focus {
+        background: var(--glass-bg-strong);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px var(--glass-highlight);
+    }
+
+    .glass-field:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Table header + row hover + dividers that adapt to the theme */
+    .glass-th {
+        background: var(--glass-highlight);
+        color: var(--text-secondary);
+    }
+
+    .glass-tr:hover {
+        background: var(--glass-highlight);
+    }
+
+    /* Theme-aware borders */
+    .border-subtle {
+        border-color: var(--border-subtle);
+    }
+
+    .border-subtle-strong {
+        border-color: var(--border-subtle-strong);
+    }
+
+    .border-subtle-t {
+        border-top-color: var(--border-subtle);
+    }
+
+    .border-subtle-b {
+        border-bottom-color: var(--border-subtle);
+    }
+
+    /* Text contrast scale (never blend into the glass) */
+    .text-strong {
+        color: var(--text-strong);
+    }
+
+    .text-secondary {
+        color: var(--text-secondary);
+    }
+
+    .text-muted {
+        color: var(--text-muted);
+    }
+
+    .text-danger {
+        color: var(--text-danger);
+    }
+
+    /* Sidebar navigation states */
+    .nav-item {
+        color: var(--text-muted);
+        background: transparent;
+    }
+
+    .nav-item:hover {
+        background: var(--glass-highlight);
+        color: var(--text-secondary);
+    }
+
+    .nav-item-active {
+        background: var(--glass-highlight-strong);
+        color: var(--text-strong);
+        box-shadow: inset 3px 0 0 var(--primary-color);
+    }
+
+    /* Frosted status pill */
+    .glass-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 9999px;
+        padding: 0.2rem 0.7rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border: 1px solid var(--glass-border);
+    }
+
+    /* Dashboard backdrop — layered radial gradients so the frosted
+       panels have real color/shape to blur behind them */
+    .bg-dashboard {
+        background:
+            radial-gradient(110% 110% at 12% 0%, rgba(74, 155, 75, 0.16), transparent 55%),
+            radial-gradient(110% 110% at 88% 28%, rgba(255, 184, 41, 0.12), transparent 55%),
+            radial-gradient(100% 100% at 55% 100%, rgba(136, 183, 59, 0.14), transparent 60%),
+            var(--bg-color-background);
+    }
+
+    html.dark .bg-dashboard {
+        background:
+            radial-gradient(110% 110% at 12% 0%, rgba(162, 199, 62, 0.1), transparent 55%),
+            radial-gradient(110% 110% at 88% 28%, rgba(246, 183, 0, 0.08), transparent 55%),
+            radial-gradient(100% 100% at 55% 100%, rgba(122, 156, 47, 0.1), transparent 60%),
+            var(--bg-color-background);
+    }
+    /* Shared menu micro-animation. NOTE: `animate-fadeIn` was referenced by the
+       Topbar profile dropdown but never defined anywhere — this is the single
+       definition it (and the GlassSelect panels) resolve to. */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-4px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.15s ease-out both;
+    }
+
+    /* Bar chart grow-in (Overview sales chart). transform-origin bottom makes
+       bars rise from the baseline; `both` keeps the final state. */
+    @keyframes barGrow {
+        from {
+            transform: scaleY(0);
+        }
+        to {
+            transform: scaleY(1);
+        }
+    }
+
+    .animate-barGrow {
+        transform-origin: bottom;
+        animation: barGrow 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+}
+
 /* ===== Global horizontal-overflow guard ===== */
 /* Decorative blobs and entrance animations must never widen the document on mobile
    (causes a blank strip on the right + left-shifted content on phones). `clip` is
@@ -334,4 +580,72 @@ html,
 body {
     overflow-x: hidden;
     overflow-x: clip;
+}
+
+/* ===== Custom Scrollbar - Eco Theme ===== */
+/* Firefox */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        var(--primary-color) 0%,
+        var(--secondary-color) 50%,
+        #6b8e23 100%
+    );
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        180deg,
+        #3d8a3e 0%,
+        #7a9c2f 50%,
+        #5a7a1e 100%
+    );
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Dark mode scrollbar */
+html.dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        #6b8e23 0%,
+        #5a7a1e 50%,
+        #4a6a15 100%
+    );
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        180deg,
+        #7a9c2f 0%,
+        #6b8e23 50%,
+        #5a7a1e 100%
+    );
+}
+
+html.dark {
+    scrollbar-color: #6b8e23 transparent;
 }
