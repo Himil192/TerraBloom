@@ -1,44 +1,42 @@
 import { useEffect, useState } from "react";
 import {
     ShoppingCart,
-    Search,
     Eye,
     Loader2,
 } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import { Modal } from "../../component/ui/model";
+import SearchInput from "../../component/ui/SearchInput";
+import GlassSelect from "../../component/ui/GlassSelect";
 import {
     getAllOrders,
     updateOrderStatus,
     normalizeOrder,
 } from "../../services/orderService";
 import { showError, showSuccess } from "../../utils/toastUtils";
+import { formatDate as formatDateValue } from "../../utils/dateUtils";
 
 const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
-const formatDate = (d) => {
-    if (!d) return "—";
-    if (typeof d === "string") return d;
-    try {
-        return d.toDate().toLocaleDateString("en-IN", { day: "short", month: "short", year: "numeric" });
-    } catch {
-        return d;
-    }
-};
+// Delegate to the shared util: the old local version returned the raw object in
+// its catch block, which crashed React for JSON-serialized {seconds, nanoseconds}.
+// NOTE: Intl only allows "numeric" | "2-digit" for `day` ("short" throws RangeError).
+const formatDate = (d) =>
+    formatDateValue(d, { day: "numeric", month: "short", year: "numeric" });
 
 const ORDER_STATUSES = ["Processing", "In Transit", "Delivered", "Cancelled"];
 
 const statusPill = (status) => {
     switch (status) {
         case "Delivered":
-            return "bg-green-100 text-green-800";
+            return "bg-green-100 text-green-800 border border-green-200";
         case "In Transit":
-            return "bg-blue-100 text-blue-800";
+            return "bg-blue-100 text-blue-700 border border-blue-200";
         case "Processing":
-            return "bg-yellow-100 text-yellow-800";
+            return "bg-yellow-100 text-yellow-800 border border-yellow-200";
         case "Cancelled":
-            return "bg-red-100 text-red-700";
+            return "bg-red-100 text-red-600 border border-red-200";
         default:
-            return "bg-gray-100 text-gray-600";
+            return "bg-[var(--glass-highlight)] text-secondary border border-subtle";
     }
 };
 
@@ -110,10 +108,10 @@ const Orders = () => {
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-strong">
                         All Orders ({orders.length})
                     </h3>
-                    <p className="text-sm text-gray-500 mt-0.5">
+                    <p className="text-sm text-muted mt-0.5">
                         Track and update orders from your storefront.
                     </p>
                 </div>
@@ -121,83 +119,82 @@ const Orders = () => {
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
-                    <input
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search by order ID or customer..."
-                        className="w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#4A9B4B] focus:ring focus:ring-[#4A9B4B]/20"
-                    />
-                </div>
-                <select
+                <SearchInput
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search by order ID or customer..."
+                    className="sm:flex-1 sm:max-w-md"
+                />
+                <GlassSelect
                     value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4A9B4B] focus:ring focus:ring-[#4A9B4B]/20 sm:w-48"
-                >
-                    <option value="all">All statuses</option>
-                    {ORDER_STATUSES.map((status) => (
-                        <option key={status} value={status}>
-                            {status}
-                        </option>
-                    ))}
-                </select>
+                    onChange={setStatusFilter}
+                    ariaLabel="Filter orders by status"
+                    options={[
+                        { value: "all", label: "All statuses" },
+                        ...ORDER_STATUSES.map((status) => ({
+                            value: status,
+                            label: status,
+                        })),
+                    ]}
+                    className="sm:w-48"
+                />
             </div>
 
             {/* TABLE */}
-            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="glass-strong rounded-2xl border border-subtle shadow-sm overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-16">
-                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary-color)]" />
                     </div>
                 ) : filtered.length === 0 ? (
                     <div className="px-6 py-14 text-center">
-                        <ShoppingCart className="w-10 h-10 mx-auto text-gray-300" />
-                        <p className="mt-3 text-sm font-medium text-gray-600">
+                        <ShoppingCart className="w-10 h-10 mx-auto text-muted" />
+                        <p className="mt-3 text-sm font-medium text-secondary">
                             {orders.length === 0
                                 ? "No orders yet."
                                 : "No orders match your filters."}
                         </p>
                     </div>
                 ) : (
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    <div className="overflow-x-auto">
+                    <table className="min-w-[760px] w-full text-sm">
+                        <thead className="glass-th text-left text-xs font-semibold uppercase tracking-wider">
                             <tr>
                                 <th className="px-5 py-3.5">Order</th>
                                 <th className="px-5 py-3.5">Customer</th>
-                                <th className="px-5 py-3.5">Date</th>
-                                <th className="px-5 py-3.5">Items</th>
+                                <th className="px-5 py-3.5 hidden sm:table-cell">Date</th>
+                                <th className="px-5 py-3.5 hidden md:table-cell">Items</th>
                                 <th className="px-5 py-3.5 text-right">Total</th>
                                 <th className="px-5 py-3.5">Status</th>
                                 <th className="px-5 py-3.5 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-solid border-subtle-t">
                             {filtered.map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50">
-                                                                        <td className="px-5 py-3.5 font-mono text-xs font-semibold text-gray-900">
+                                <tr key={order.id} className="glass-tr">
+                                    <td className="px-5 py-3.5 font-mono text-xs font-semibold text-strong">
                                         #{order.orderNumber}
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <p className="text-gray-900 font-medium">{order.customerName}</p>
-                                        <p className="text-xs text-gray-500">{order.customerEmail}</p>
+                                        <p className="text-strong font-medium">{order.customerName}</p>
+                                        <p className="text-xs text-muted">{order.customerEmail}</p>
                                     </td>
-                                    <td className="px-5 py-3.5 text-gray-700">
+                                    <td className="px-5 py-3.5 text-secondary hidden sm:table-cell">
                                         {formatDate(order.createdAt)}
                                     </td>
-                                    <td className="px-5 py-3.5 text-gray-700">
+                                    <td className="px-5 py-3.5 text-secondary hidden md:table-cell">
                                         {order.items.reduce((sum, i) => sum + i.qty, 0)}
                                     </td>
-                                    <td className="px-5 py-3.5 text-right font-semibold text-gray-900">
+                                    <td className="px-5 py-3.5 text-right font-semibold text-strong">
                                         {formatPrice(order.total)}
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <select
                                             value={order.status}
                                             onChange={(e) => changeStatus(order.id, e.target.value)}
-                                            className={`rounded-full text-xs font-semibold border-0 bg-transparent pr-7 py-1 pl-2.5 ${statusPill(
+                                            className={`rounded-full text-xs font-semibold border pr-7 py-1 pl-2.5 ${statusPill(
                                                 order.status
-                                            )} focus:outline-none focus:ring-1 focus:ring-[#4A9B4B] cursor-pointer`}
+                                            )} focus:outline-none focus:ring-1 focus:ring-[var(--primary-color)] cursor-pointer`}
                                         >
                                             {ORDER_STATUSES.map((status) => (
                                                 <option key={status} value={status}>
@@ -210,7 +207,8 @@ const Orders = () => {
                                         <button
                                             onClick={() => setDetail(order)}
                                             title="View order"
-                                            className="p-2 rounded-lg text-gray-500 hover:bg-[#4A9B4B]/10 hover:text-[#2F6A30] transition-colors"
+                                            aria-label={`View order ${order.orderNumber}`}
+                                            className="p-2 rounded-lg text-secondary hover:bg-[var(--glass-highlight)] hover:text-[var(--primary-color)] transition-colors"
                                         >
                                             <Eye className="w-4 h-4" />
                                         </button>
@@ -219,6 +217,7 @@ const Orders = () => {
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 )}
             </div>
 
@@ -230,17 +229,17 @@ const Orders = () => {
             >
                 {detail && (
                     <>
-                        <div className="flex items-start justify-between">
+                        <div className="flex items-start justify-between pr-14">
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900">
+                                <h3 className="text-lg font-semibold text-strong">
                                     Order #{detail.orderNumber}
                                 </h3>
-                                <p className="text-sm text-gray-500 mt-0.5">
+                                <p className="text-sm text-muted mt-0.5">
                                     {formatDate(detail.createdAt)} · {detail.paymentMethod}
                                 </p>
                             </div>
                             <span
-                                className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(
+                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(
                                     detail.status
                                 )}`}
                             >
@@ -248,28 +247,28 @@ const Orders = () => {
                             </span>
                         </div>
 
-                        <div className="mt-5 rounded-xl border border-gray-100 bg-gray-50 p-4">
-                            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
+                        <div className="mt-5 glass rounded-xl border border-subtle p-4">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-1">
                                 Customer
                             </p>
-                            <p className="text-sm font-medium text-gray-900">{detail.customerName}</p>
-                            <p className="text-sm text-gray-600">{detail.customerEmail}</p>
-                            <p className="text-sm text-gray-600 mt-1">{detail.address}</p>
+                            <p className="text-sm font-medium text-strong">{detail.customerName}</p>
+                            <p className="text-sm text-secondary">{detail.customerEmail}</p>
+                            <p className="text-sm text-secondary mt-1">{detail.address}</p>
                         </div>
 
                         <div className="mt-4">
-                            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-muted mb-2">
                                 Items
                             </p>
                             <table className="w-full text-sm">
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-solid border-subtle-t">
                                     {detail.items.map((item, i) => (
                                         <tr key={i}>
-                                            <td className="py-2 text-gray-800">{item.title}</td>
-                                            <td className="py-2 text-gray-500 text-right">
+                                            <td className="py-2 text-strong">{item.title}</td>
+                                            <td className="py-2 text-muted text-right">
                                                 {item.qty} × {formatPrice(item.price)}
                                             </td>
-                                            <td className="py-2 text-gray-800 font-medium text-right">
+                                            <td className="py-2 text-strong font-medium text-right">
                                                 {formatPrice(item.qty * item.price)}
                                             </td>
                                         </tr>
@@ -277,11 +276,11 @@ const Orders = () => {
                                     <tr>
                                         <td
                                             colSpan="2"
-                                            className="py-2.5 text-sm font-semibold text-gray-700 text-right"
+                                            className="py-2.5 text-sm font-semibold text-secondary text-right"
                                         >
                                             Total
                                         </td>
-                                        <td className="py-2.5 font-bold text-gray-900 text-right">
+                                        <td className="py-2.5 font-bold text-strong text-right">
                                             {formatPrice(detail.total)}
                                         </td>
                                     </tr>
@@ -292,7 +291,7 @@ const Orders = () => {
                         <div className="mt-5">
                             <label
                                 htmlFor={`od-status-${detail.id}`}
-                                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500"
+                                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted"
                             >
                                 Update Status
                             </label>
@@ -300,7 +299,7 @@ const Orders = () => {
                                 id={`od-status-${detail.id}`}
                                 value={detail.status}
                                 onChange={(e) => changeStatus(detail.id, e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4A9B4B] focus:ring focus:ring-[#4A9B4B]/20"
+                                className="glass-field px-3.5 py-2.5 text-sm"
                             >
                                 {ORDER_STATUSES.map((status) => (
                                     <option key={status} value={status}>

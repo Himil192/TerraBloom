@@ -1,13 +1,12 @@
 import { useState } from "react";
 import Input from "../../form/input/InputField";
 import { showError } from "../../utils/toastUtils";
-import { Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, ArrowUp, ArrowDown, FileText } from "lucide-react";
 
 const labelClass =
-    "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500";
+    "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted";
 
-const inputClass =
-    "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:border-brand-300 focus:ring-brand-500/20";
+const inputClass = "glass-field px-3.5 py-2.5 text-sm";
 
 const BLOCK_TYPES = [
     { value: "paragraph", label: "Paragraph" },
@@ -101,38 +100,58 @@ const BlogForm = ({ initial, categories = [], onSubmit, onCancel }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            {/* FIELDS: title, excerpt, meta */}
-            <div>
-                <label htmlFor="bf-title" className={labelClass}>
-                    Title
-                </label>
-                <Input
-                    id="bf-title"
-                    value={form.title}
-                    onChange={set("title")}
-                    placeholder="10 Simple Ways to Reduce Plastic..."
-                />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+            {/* FIELDS: title + cover preview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+                <div className="md:col-span-2 space-y-4">
+                    <div>
+                        <label htmlFor="bf-title" className={labelClass}>
+                            Title
+                        </label>
+                        <Input
+                            id="bf-title"
+                            value={form.title}
+                            onChange={set("title")}
+                            placeholder="10 Simple Ways to Reduce Plastic..."
+                        />
+                    </div>
 
-            <div>
-                <label htmlFor="bf-excerpt" className={labelClass}>
-                    Excerpt
-                </label>
-                <textarea
-                    id="bf-excerpt"
-                    rows="2"
-                    value={form.excerpt}
-                    onChange={set("excerpt")}
-                    placeholder="Short summary shown on blog cards..."
-                    className={inputClass}
-                />
+                    <div>
+                        <label htmlFor="bf-excerpt" className={labelClass}>
+                            Excerpt
+                        </label>
+                        <textarea
+                            id="bf-excerpt"
+                            rows="2"
+                            value={form.excerpt}
+                            onChange={set("excerpt")}
+                            placeholder="Short summary shown on blog cards..."
+                            className={`${inputClass} resize-none`}
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <span className={labelClass}>Cover Preview</span>
+                    {form.image ? (
+                        <img
+                            src={form.image}
+                            alt="Blog cover preview"
+                            className="aspect-square w-full rounded-xl border border-subtle object-cover glass"
+                            onError={(e) => { e.currentTarget.style.opacity = "0.25"; }}
+                        />
+                    ) : (
+                        <div className="aspect-square w-full rounded-xl border border-subtle glass flex items-center justify-center">
+                            <FileText className="w-9 h-9 text-muted" />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="bf-image" className={labelClass}>
-                        Image URL
+                        Cover Image URL
                     </label>
                     <Input
                         id="bf-image"
@@ -184,29 +203,29 @@ const BlogForm = ({ initial, categories = [], onSubmit, onCancel }) => {
             </div>
 
             {/* FEATURED + BLOCKS */}
-            <label className="flex items-center gap-3 cursor-pointer select-none">
+            <label className="flex items-center gap-3 cursor-pointer select-none glass rounded-xl border border-subtle p-3">
                 <input
                     type="checkbox"
                     checked={form.featured}
                     onChange={(e) =>
                         setForm((prev) => ({ ...prev, featured: e.target.checked }))
                     }
-                    className="w-4.5 h-4.5 rounded border-gray-300 text-[#4A9B4B] focus:ring-[#4A9B4B]"
+                    className="w-4.5 h-4.5 rounded accent-[var(--primary-color)]"
                 />
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-secondary">
                     Feature this post on the blog page
                 </span>
             </label>
 
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <div className="glass rounded-xl border border-subtle p-4">
                 <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-gray-700">
+                    <p className="text-sm font-semibold text-strong">
                         Content Blocks
                     </p>
                     <button
                         type="button"
                         onClick={addBlock}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-[#4A9B4B]/30 bg-[#4A9B4B]/5 px-3 py-1.5 text-xs font-semibold text-[#2F6A30] hover:bg-[#4A9B4B]/10 transition-colors"
+                        className="btn-glass-solid inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold"
                     >
                         <Plus className="w-3.5 h-3.5" />
                         Add Block
@@ -214,12 +233,12 @@ const BlogForm = ({ initial, categories = [], onSubmit, onCancel }) => {
                 </div>
                 <div className="mt-3 space-y-3">
                     {blocks.map((block, i) => (
-                        <div key={i} className="rounded-lg border border-gray-200 bg-white p-3">
+                        <div key={i} className="glass-strong rounded-lg border border-subtle p-3">
                             <div className="flex flex-wrap items-center gap-2">
                                 <select
                                     value={block.type}
                                     onChange={(e) => updateBlock(i, { type: e.target.value })}
-                                    className="w-32 rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 focus:outline-none focus:border-[#4A9B4B]"
+                                    className="glass-field w-32 px-2.5 py-1.5 text-xs font-medium"
                                 >
                                     {BLOCK_TYPES.map((type) => (
                                         <option key={type.value} value={type.value}>
@@ -232,7 +251,7 @@ const BlogForm = ({ initial, categories = [], onSubmit, onCancel }) => {
                                         type="button"
                                         onClick={() => moveBlock(i, -1)}
                                         disabled={i === 0}
-                                        className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                                        className="p-1.5 rounded-md text-muted hover:bg-[var(--glass-highlight)] hover:text-strong disabled:opacity-30 disabled:cursor-not-allowed"
                                     >
                                         <ArrowUp className="w-3.5 h-3.5" />
                                     </button>
@@ -240,14 +259,14 @@ const BlogForm = ({ initial, categories = [], onSubmit, onCancel }) => {
                                         type="button"
                                         onClick={() => moveBlock(i, 1)}
                                         disabled={i === blocks.length - 1}
-                                        className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                                        className="p-1.5 rounded-md text-muted hover:bg-[var(--glass-highlight)] hover:text-strong disabled:opacity-30 disabled:cursor-not-allowed"
                                     >
                                         <ArrowDown className="w-3.5 h-3.5" />
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => removeBlock(i)}
-                                        className="p-1.5 rounded-md text-gray-400 hover:bg-red-100 hover:text-red-600"
+                                        className="p-1.5 rounded-md text-muted hover:bg-[#B3261E]/10 hover:text-danger"
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
                                     </button>
@@ -285,13 +304,13 @@ const BlogForm = ({ initial, categories = [], onSubmit, onCancel }) => {
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+                    className="glass-strong rounded-lg border border-subtle-strong px-4 py-2.5 text-sm font-medium text-secondary hover:bg-[var(--glass-highlight)] transition-colors"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="inline-flex items-center justify-center rounded-lg bg-[#4A9B4B] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2F6A30] transition-colors"
+                    className="btn-glass-solid inline-flex items-center justify-center gap-2 text-sm font-semibold"
                 >
                     {initial ? "Save Changes" : "Publish Post"}
                 </button>

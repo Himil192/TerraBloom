@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
     Package,
     Plus,
-    Search,
     PenLine,
     Trash2,
     Loader2,
@@ -10,6 +9,8 @@ import {
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import { Modal } from "../../component/ui/model";
 import ProductForm from "./ProductForm";
+import SearchInput from "../../component/ui/SearchInput";
+import GlassSelect from "../../component/ui/GlassSelect";
 import {
     getAllProducts,
     createProduct,
@@ -22,8 +23,8 @@ const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
 const statusPill = (status) =>
     status === "inactive"
-        ? "bg-gray-100 text-gray-600"
-        : "bg-green-100 text-green-800";
+        ? "bg-[var(--glass-highlight)] text-secondary border border-subtle"
+        : "bg-green-100 text-green-800 border border-green-200";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -118,16 +119,16 @@ const Products = () => {
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-strong">
                         Catalog ({products.length})
                     </h3>
-                    <p className="text-sm text-gray-500 mt-0.5">
+                    <p className="text-sm text-muted mt-0.5">
                         Manage the eco products shown in your store.
                     </p>
                 </div>
                 <button
                     onClick={openCreate}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#4A9B4B] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2F6A30] transition-colors"
+                    className="btn-glass-solid inline-flex items-center gap-2 text-sm font-semibold"
                 >
                     <Plus className="w-4 h-4" />
                     Add Product
@@ -136,91 +137,91 @@ const Products = () => {
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-gray-400" />
-                    <input
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search products..."
-                        className="w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[#4A9B4B] focus:ring focus:ring-[#4A9B4B]/20"
-                    />
-                </div>
-                <select
+                <SearchInput
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="sm:flex-1 sm:max-w-md"
+                />
+                <GlassSelect
                     value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4A9B4B] focus:ring focus:ring-[#4A9B4B]/20 sm:w-44"
-                >
-                    <option value="all">All statuses</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
+                    onChange={setStatusFilter}
+                    ariaLabel="Filter products by status"
+                    options={[
+                        { value: "all", label: "All statuses" },
+                        { value: "active", label: "Active" },
+                        { value: "inactive", label: "Inactive" },
+                    ]}
+                    className="sm:w-44"
+                />
             </div>
 
             {/* PART2: Table */}
-            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="glass-strong rounded-2xl border border-subtle shadow-sm overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-16">
-                        <Loader2 className="w-8 h-8 animate-spin text-[#4A9B4B]" />
+                        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary-color)]" />
                     </div>
                 ) : filtered.length === 0 ? (
                     <div className="px-6 py-14 text-center">
-                        <Package className="w-10 h-10 mx-auto text-gray-300" />
-                        <p className="mt-3 text-sm font-medium text-gray-600">
+                        <Package className="w-10 h-10 mx-auto text-muted" />
+                        <p className="mt-3 text-sm font-medium text-secondary">
                             {products.length === 0
                                 ? "No products yet. Add your first one!"
                                 : "No products match your filters."}
                         </p>
                     </div>
                 ) : (
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    <div className="overflow-x-auto">
+                    <table className="min-w-[760px] w-full text-sm">
+                        <thead className="glass-th text-left text-xs font-semibold uppercase tracking-wider">
                             <tr>
                                 <th className="px-5 py-3.5">Product</th>
                                 <th className="px-5 py-3.5">Price</th>
-                                <th className="px-5 py-3.5">Rating</th>
-                                <th className="px-5 py-3.5">Stock</th>
+                                <th className="px-5 py-3.5 hidden sm:table-cell">Rating</th>
+                                <th className="px-5 py-3.5 hidden md:table-cell">Stock</th>
                                 <th className="px-5 py-3.5">Status</th>
                                 <th className="px-5 py-3.5 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-solid border-subtle-t">
                             {filtered.map((product) => (
-                                <tr key={product.id} className="hover:bg-gray-50">
+                                <tr key={product.id} className="glass-tr">
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center gap-3">
                                             <img
                                                 src={product.image}
                                                 alt={product.title}
-                                                className="w-10 h-10 rounded-lg object-cover border border-gray-100"
+                                                className="w-10 h-10 rounded-lg object-cover border border-subtle"
                                             />
                                             <div className="min-w-0">
-                                                <p className="font-medium text-gray-900 truncate">
+                                                <p className="font-medium text-strong truncate">
                                                     {product.title}
                                                 </p>
-                                                <p className="text-xs text-gray-500 truncate max-w-[220px]">
+                                                <p className="text-xs text-muted truncate max-w-[220px]">
                                                     {product.description}
                                                 </p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-5 py-3.5 font-semibold text-gray-900">
+                                    <td className="px-5 py-3.5 font-semibold text-strong">
                                         {formatPrice(product.price)}
                                     </td>
-                                    <td className="px-5 py-3.5 text-gray-700">
+                                    <td className="px-5 py-3.5 text-secondary hidden sm:table-cell">
                                         {product.rating}
                                     </td>
                                     <td
-                                        className={`px-5 py-3.5 ${
+                                        className={`px-5 py-3.5 hidden md:table-cell ${
                                             Number(product.stock) <= 5
-                                                ? "text-red-600 font-semibold"
-                                                : "text-gray-700"
+                                                ? "text-danger font-semibold"
+                                                : "text-secondary"
                                         }`}
                                     >
                                         {Number(product.stock)} in stock
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <span
-                                            className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(
+                                            className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${statusPill(
                                                 product.status || "active"
                                             )}`}
                                         >
@@ -228,18 +229,20 @@ const Products = () => {
                                         </span>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
-                                        <div className="flex items-center gap-1.5">
+                                        <div className="flex items-center justify-end gap-1.5">
                                             <button
                                                 onClick={() => openEdit(product)}
                                                 title="Edit product"
-                                                className="p-2 rounded-lg text-gray-500 hover:bg-[#4A9B4B]/10 hover:text-[#2F6A30] transition-colors"
+                                                aria-label={`Edit ${product.title}`}
+                                                className="p-2 rounded-lg text-secondary hover:bg-[var(--glass-highlight)] hover:text-[var(--primary-color)] transition-colors"
                                             >
                                                 <PenLine className="w-4 h-4" />
                                             </button>
                                             <button
                                                 onClick={() => setDeleting(product)}
                                                 title="Delete product"
-                                                className="p-2 rounded-lg text-gray-400 hover:bg-red-100 hover:text-red-600 transition-colors"
+                                                aria-label={`Delete ${product.title}`}
+                                                className="p-2 rounded-lg text-muted hover:bg-[#B3261E]/10 hover:text-danger transition-colors"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -249,6 +252,7 @@ const Products = () => {
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 )}
             </div>
 
@@ -258,10 +262,10 @@ const Products = () => {
                 onClose={() => setFormOpen(false)}
                 className="max-w-lg max-h-[85vh] overflow-y-auto p-6"
             >
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                <h3 className="text-lg font-semibold text-strong mb-1">
                     {editing ? "Edit Product" : "Add Product"}
                 </h3>
-                <p className="text-sm text-gray-500 mb-5">
+                <p className="text-sm text-muted mb-5">
                     {editing
                         ? "Update the details for this product."
                         : "Fill in the details to list a new eco product."}
@@ -280,17 +284,17 @@ const Products = () => {
                 showCloseButton={false}
                 className="max-w-md p-6"
             >
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-strong">
                     Delete product?
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-secondary mt-2">
                     "{deleting?.title}" will be permanently removed from the
                     catalog. This cannot be undone.
                 </p>
                 <div className="flex justify-end gap-3 mt-5">
                     <button
                         onClick={() => setDeleting(null)}
-                        className="rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+                        className="glass-strong rounded-lg border border-subtle-strong px-4 py-2.5 text-sm font-medium text-secondary hover:bg-[var(--glass-highlight)] transition-colors"
                     >
                         Cancel
                     </button>

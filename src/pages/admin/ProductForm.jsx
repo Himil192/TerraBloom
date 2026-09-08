@@ -1,12 +1,12 @@
 import { useState } from "react";
 import Input from "../../form/input/InputField";
+import { Package } from "lucide-react";
 import { showError } from "../../utils/toastUtils";
 
 const labelClass =
-    "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500";
+    "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted";
 
-const inputClass =
-    "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:border-brand-300 focus:ring-brand-500/20";
+const inputClass = "glass-field px-3.5 py-2.5 text-sm";
 
 const ProductForm = ({ initial, onSubmit, onCancel }) => {
     const [form, setForm] = useState({
@@ -44,20 +44,55 @@ const ProductForm = ({ initial, onSubmit, onCancel }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-                <label htmlFor="pf-title" className={labelClass}>
-                    Title
-                </label>
-                <Input
-                    id="pf-title"
-                    value={form.title}
-                    onChange={set("title")}
-                    placeholder="e.g. Bamboo Toothbrush"
-                />
+        <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Title + live preview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+                <div className="md:col-span-2 space-y-4">
+                    <div>
+                        <label htmlFor="pf-title" className={labelClass}>
+                            Title
+                        </label>
+                        <Input
+                            id="pf-title"
+                            value={form.title}
+                            onChange={set("title")}
+                            placeholder="e.g. Bamboo Toothbrush"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="pf-image" className={labelClass}>
+                            Image URL
+                        </label>
+                        <Input
+                            id="pf-image"
+                            value={form.image}
+                            onChange={set("image")}
+                            placeholder="/FeatureProducts/BambooBrush.jpg"
+                        />
+                    </div>
+                </div>
+
+                {/* Image preview */}
+                <div>
+                    <span className={labelClass}>Preview</span>
+                    {form.image ? (
+                        <img
+                            src={form.image}
+                            alt="Product preview"
+                            className="aspect-square w-full rounded-xl border border-subtle object-cover glass"
+                            onError={(e) => { e.currentTarget.style.opacity = "0.25"; }}
+                        />
+                    ) : (
+                        <div className="aspect-square w-full rounded-xl border border-subtle glass flex items-center justify-center">
+                            <Package className="w-9 h-9 text-muted" />
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            {/* Numbers */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label htmlFor="pf-price" className={labelClass}>
                         Price (₹)
@@ -119,18 +154,6 @@ const ProductForm = ({ initial, onSubmit, onCancel }) => {
             </div>
 
             <div>
-                <label htmlFor="pf-image" className={labelClass}>
-                    Image URL
-                </label>
-                <Input
-                    id="pf-image"
-                    value={form.image}
-                    onChange={set("image")}
-                    placeholder="/FeatureProducts/BambooBrush.jpg"
-                />
-            </div>
-
-            <div>
                 <label htmlFor="pf-description" className={labelClass}>
                     Description
                 </label>
@@ -140,7 +163,7 @@ const ProductForm = ({ initial, onSubmit, onCancel }) => {
                     value={form.description}
                     onChange={set("description")}
                     placeholder="Short eco-friendly description..."
-                    className={inputClass}
+                    className={`${inputClass} resize-none`}
                 />
             </div>
 
@@ -148,13 +171,13 @@ const ProductForm = ({ initial, onSubmit, onCancel }) => {
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+                    className="glass-strong rounded-lg border border-subtle-strong px-4 py-2.5 text-sm font-medium text-secondary hover:bg-[var(--glass-highlight)] transition-colors"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="inline-flex items-center justify-center rounded-lg bg-[#4A9B4B] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2F6A30] transition-colors"
+                    className="btn-glass-solid inline-flex items-center justify-center gap-2 text-sm font-semibold"
                 >
                     {initial ? "Save Changes" : "Add Product"}
                 </button>
