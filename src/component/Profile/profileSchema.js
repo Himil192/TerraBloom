@@ -148,9 +148,9 @@ export const ADDRESS_FIELDS = [
     },
 ];
 
-/** Seed a form-values object ({name: value}) from a Firestore user doc. */
-export const formValuesFromDoc = (fields, data = {}) =>
-    Object.fromEntries(fields.map((f) => [f.name, data[f.docKey] || ""]));
+/** Seed a form-values object ({name: value}) from a Firestore user doc (null-safe while loading). */
+export const formValuesFromDoc = (fields, data) =>
+    Object.fromEntries(fields.map((f) => [f.name, (data && data[f.docKey]) || ""]));
 
 /** Build a Firestore update patch (doc keys, trimmed) from form values. */
 export const docPatchFromForm = (fields, values) =>
