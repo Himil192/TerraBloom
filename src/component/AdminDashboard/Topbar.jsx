@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { showError } from "../../utils/toastUtils";
 import { clearSessionCache } from "../../utils/sessionCache";
 import { useTheme } from "../../theme/ThemeContext";
+import Avatar from "../common/Avatar";
 
 // Firebase singletons — module scope keeps references stable across renders
 const auth = getAuth(app);
@@ -74,14 +75,14 @@ export default function Topbar({ toggleSidebar, sidebarOpen }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
-    const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
+    const [imageUrl, setImageUrl] = useState("");
     const [, setUserData] = useState(null);
 
     const [notifOpen, setNotifOpen] = useState(false);
     const [dismissed, setDismissed] = useState([]);
     const notifRef = useRef(null);
 
-    const [, setUid] = useState(null);
+    const [uid, setUid] = useState(null);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -319,22 +320,14 @@ export default function Topbar({ toggleSidebar, sidebarOpen }) {
                 >
                     {/* User Avatar with status indicator */}
                     <div className="relative">
-                        {imageUrl ? (
-                            <img
-                                alt="Profile"
-                                src={imageUrl}
-                                className="w-10 h-10 rounded-full object-cover ring-2 ring-[var(--glass-border)] group-hover:ring-[var(--primary-color)] transition-all duration-200"
-                            />
-                        ) : (
-                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] text-white font-semibold text-sm uppercase shadow-md">
-                                {(formData.firstName || "U")
-                                    .split(" ")
-                                    .map((word) => word.charAt(0))
-                                    .join("")
-                                    .toUpperCase()
-                                    .substring(0, 2)}
-                            </div>
-                        )}
+                        <Avatar
+                            name={`${formData.firstName} ${formData.lastName}`.trim()}
+                            email={formData.email}
+                            seed={uid}
+                            src={imageUrl}
+                            alt="Profile"
+                            className="w-10 h-10 ring-2 ring-[var(--glass-border)] group-hover:ring-[var(--primary-color)] transition-all duration-200"
+                        />
                         {/* Online status indicator */}
                         <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-[#262927] rounded-full"></span>
                     </div>
@@ -365,22 +358,14 @@ export default function Topbar({ toggleSidebar, sidebarOpen }) {
                     <div className="absolute right-0 top-14 w-64 glass-strong border border-subtle-strong rounded-2xl shadow-xl z-50 p-4 animate-fadeIn">
                         {/* User info header */}
                         <div className="flex items-center gap-3 pb-3 border-b border-subtle">
-                            {imageUrl ? (
-                                <img
-                                    alt="Profile"
-                                    src={imageUrl}
-                                    className="w-12 h-12 rounded-full object-cover ring-2 ring-[var(--glass-border)]"
-                                />
-                            ) : (
-                                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] text-white font-bold text-base uppercase">
-                                    {(formData.firstName || "U")
-                                        .split(" ")
-                                        .map((word) => word.charAt(0))
-                                        .join("")
-                                        .toUpperCase()
-                                        .substring(0, 2)}
-                                </div>
-                            )}
+                            <Avatar
+                                name={`${formData.firstName} ${formData.lastName}`.trim()}
+                                email={formData.email}
+                                seed={uid}
+                                src={imageUrl}
+                                alt="Profile"
+                                className="w-12 h-12 ring-2 ring-[var(--glass-border)]"
+                            />
                             <div className="flex flex-col min-w-0 flex-1">
                                 <span className="text-sm font-semibold text-strong truncate">
                                     {formData.firstName || "Admin"} {formData.lastName || ""}

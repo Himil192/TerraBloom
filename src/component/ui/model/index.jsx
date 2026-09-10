@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export const Modal = ({
     isOpen,
@@ -44,7 +45,7 @@ export const Modal = ({
         ? "w-full h-full"
         : "relative w-full rounded-3xl glass-modal ";
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-99999">
             {!isFullscreen && (
                 <div
@@ -80,6 +81,7 @@ export const Modal = ({
                 )}
                 <div>{children}</div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };

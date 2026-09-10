@@ -8,14 +8,7 @@ import GlassSelect from "../../component/ui/GlassSelect";
 import { db } from "../../firebase";
 import { showError } from "../../utils/toastUtils";
 import { formatDate } from "../../utils/dateUtils";
-
-const initials = (name) =>
-    (name || "U")
-        .split(" ")
-        .map((word) => word.charAt(0))
-        .join("")
-        .toUpperCase()
-        .substring(0, 2);
+import Avatar from "../../component/common/Avatar";
 
 const rolePill = (role) =>
     role === "admin"
@@ -161,17 +154,14 @@ const Customers = () => {
                                 <tr key={customer.uid} className="glass-tr">
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center gap-3">
-                                            {customer.photoURL ? (
-                                                <img
-                                                    src={customer.photoURL}
-                                                    alt={customer.name}
-                                                    className="w-9 h-9 rounded-full object-cover border border-subtle"
-                                                />
-                                            ) : (
-                                                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[var(--glass-highlight-strong)] text-strong text-xs font-semibold">
-                                                    {initials(customer.name)}
-                                                </div>
-                                            )}
+                                            <Avatar
+                                                name={customer.name}
+                                                email={customer.email}
+                                                seed={customer.uid}
+                                                src={customer.photoURL}
+                                                alt={customer.name}
+                                                className="w-9 h-9 border border-subtle"
+                                            />
                                             <div className="min-w-0">
                                                 <p className="font-medium text-strong truncate">
                                                     {customer.name}

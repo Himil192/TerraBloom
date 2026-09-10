@@ -26,6 +26,9 @@ import AdminOrders from './pages/admin/Orders';
 import AdminCustomers from './pages/admin/Customers';
 import AdminSettings from './pages/admin/Settings';
 import UserDashboard from './pages/UserDashboard';
+import UserOverview from './pages/user/Overview';
+import UserOrders from './pages/user/Orders';
+import UserOrderDetail from './pages/user/OrderDetail';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
 import Profile from './pages/Profile/Profile';
@@ -145,8 +148,8 @@ function AppContent() {
               />
             </Route>
 
-            {/* User Dashboard + Profile (standalone route - UserDashboard has
-                no <Outlet />, so a nested profile route could never render) */}
+            {/* User Dashboard - shell with nested routes (Overview, My Orders,
+                Order detail, Profile) rendered into its <Outlet /> */}
             <Route
               path="/user-dashboard"
               element={
@@ -154,15 +157,40 @@ function AppContent() {
                   <UserDashboard />
                 </ProtectedRoute>
               }
-            />
-            <Route
-              path="/user-dashboard/profile"
-              element={
-                <ProtectedRoute allowedRoles={['user']}>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
+            >
+              <Route
+                index
+                element={
+                  <ProtectedRoute allowedRoles={['user']}>
+                    <UserOverview />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="orders"
+                element={
+                  <ProtectedRoute allowedRoles={['user']}>
+                    <UserOrders />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="orders/:orderId"
+                element={
+                  <ProtectedRoute allowedRoles={['user']}>
+                    <UserOrderDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <ProtectedRoute allowedRoles={['user']}>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
 
             {/* 404 fallback */}
             <Route path="*" element={<NotFound />} />

@@ -6,6 +6,7 @@ import { Star, Trash2, BadgeCheck, PenLine, LogIn } from "lucide-react";
 import { addReview, deleteReview, ratingSummary } from "../services/reviewService";
 import { userPurchasedProduct } from "../services/orderService";
 import { showSuccess, showError } from "../utils/toastUtils";
+import Avatar from "./common/Avatar";
 
 const MAX_TEXT = 1000;
 
@@ -226,9 +227,11 @@ const ReviewSection = ({ productId, reviews, onReviewsChange, catalogRating }) =
                         {reviews.map((r) => (
                             <li key={r.id} className="card-surface rounded-2xl border p-5" data-aos="fade-up">
                                 <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4A9B4B]/15 text-sm font-bold text-highlight">
-                                        {(r.userName || "?").charAt(0).toUpperCase()}
-                                    </span>
+                                    <Avatar
+                                        name={r.userName}
+                                        seed={r.uid || r.userName || `review-${r.id}`}
+                                        className="h-8 w-8"
+                                    />
                                     <span className="font-semibold">{r.userName || "Eco Shopper"}</span>
                                     {r.verified && (
                                         <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-semibold text-green-800">

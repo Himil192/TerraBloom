@@ -267,10 +267,11 @@ import { db, auth } from "../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { showSuccess, showError } from "../../utils/toastUtils";
 import { onAuthStateChanged } from "firebase/auth";
+import Avatar from "../common/Avatar";
 
 export default function UserMetaCard() {
     const [, setUser] = useState(null);
-    const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
+    const [imageUrl, setImageUrl] = useState("");
     const [uploading, setUploading] = useState(false);
     const { isOpen, openModal, closeModal } = useModal();
     const [, setUserData] = useState(null);
@@ -336,7 +337,7 @@ export default function UserMetaCard() {
                             profilePicture: data.photoURL || "",
                             role: data.role || "",
                         });
-                        setImageUrl(data.photoURL || "/images/user/owner.jpg");
+                        setImageUrl(data.photoURL || "");
                     }
                 } catch (error) {
                     showError("Failed to fetch user data");
@@ -381,14 +382,12 @@ export default function UserMetaCard() {
                                     onClick={() => setShowImagePreview(true)}
                                 />
                             ) : (
-                                <div className="flex items-center justify-center w-full h-full bg-[var(--glass-highlight)] text-secondary font-semibold">
-                                    {(formData.firstName || "U")
-                                        .split(" ")
-                                        .map((word) => word.charAt(0))
-                                        .join("")
-                                        .toUpperCase()
-                                        .substring(0, 2)}
-                                </div>
+                                <Avatar
+                                    name={`${formData.firstName} ${formData.lastName}`.trim()}
+                                    email={formData.email}
+                                    seed={uid || formData.email}
+                                    className="w-full h-full"
+                                />
                             )}
                             {showImagePreview && (
                                 <Modal isOpen={showImagePreview} onClose={() => setShowImagePreview(false)} className="max-w-[700px] m-4">
@@ -502,13 +501,17 @@ export default function UserMetaCard() {
                                 </p>
                             )}
 
-                            {imageUrl && (
-                                <img
+                            <div className="mt-6 flex flex-col items-center gap-2">
+                                <Avatar
+                                    name={`${formData.firstName} ${formData.lastName}`.trim()}
+                                    email={formData.email}
+                                    seed={uid || formData.email}
                                     src={imageUrl}
-                                    alt="Preview"
-                                    className="mt-6 w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-[var(--primary-color)] shadow-lg"
+                                    alt="Current profile picture"
+                                    className="w-24 h-24 sm:w-28 sm:h-28 ring-2 ring-[var(--primary-color)] shadow-lg"
                                 />
-                            )}
+                                <span className="text-xs text-muted">Current picture</span>
+                            </div>
                         </div>
 
 
