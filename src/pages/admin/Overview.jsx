@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
     Package,
     FileText,
@@ -27,17 +27,11 @@ import { Modal } from "../../component/ui/model";
 import { getAllProducts } from "../../services/productService";
 import { getAllBlogs } from "../../services/blogService";
 import { getAllOrders, normalizeOrder } from "../../services/orderService";
-import { showError, showSuccess } from "../../utils/toastUtils";
+import { showError } from "../../utils/toastUtils";
 import { formatDate, toJsDate } from "../../utils/dateUtils";
 
 
 const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
-const formatCompact = (n) => {
-    if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
-    if (n >= 1000) return `₹${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k`;
-    return formatPrice(n);
-};
-const LOW_STOCK_THRESHOLD = 5;
 
 const RANGES = [
     { key: "12m", label: "12M" },
@@ -50,22 +44,6 @@ const METRICS = [
     { key: "revenue", label: "Revenue", icon: IndianRupee },
     { key: "customers", label: "Customers", icon: Users },
 ];
-
-const statusPill = (status) => {
-    switch (status) {
-        case "Delivered":
-            return "bg-green-100 text-green-800 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800";
-        case "In Transit":
-            return "bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800";
-        case "Processing":
-            return "bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800";
-        case "Cancelled":
-            return "bg-red-100 text-red-600 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800";
-        default:
-            return "bg-[var(--glass-highlight)] text-secondary border border-subtle";
-    }
-};
-const STATUS_LABELS = { Processing: "Processing", "In Transit": "In Transit", Delivered: "Delivered", Cancelled: "Cancelled" };
 
 const exportToCSV = (buckets, metric, compareMode, previousBuckets, uniqueCustomers) => {
     const rows = buckets.map((b) => {
@@ -104,7 +82,6 @@ const exportToCSV = (buckets, metric, compareMode, previousBuckets, uniqueCustom
 };
 
 const Overview = () => {
-    const navigate = useNavigate();
     const [range, setRange] = useState("12m");
     const [metric, setMetric] = useState("orders");
     const [compareMode, setCompareMode] = useState(false);
@@ -113,7 +90,6 @@ const Overview = () => {
     const [blogs, setBlogs] = useState([]);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [orderDetail, setOrderDetail] = useState(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -244,7 +220,6 @@ const Overview = () => {
         if (range === "12m") {
             for (let i = 11; i >= 0; i--) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i - 1, 1);
-                const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
                 buckets.push({
                     key: `${d.getFullYear()}-${d.getMonth()}`,
                     label: d.toLocaleDateString("en-IN", { month: "short" }),
@@ -324,50 +299,10 @@ const Overview = () => {
         setHovered(null);
     }, [range, metric]);
 
-    const statusMix = useMemo(() => {
-        const mix = { Processing: 0, "In Transit": 0, Delivered: 0, Cancelled: 0 };
-        orders.forEach((order) => {
-            if (mix[order.status] !== undefined) mix[order.status] += 1;
-        });
-        return mix;
-    }, [orders]);
-    const statusTotal = orders.length;
-
-        const quickActions = [
+    const quickActions = [
         { title: "Add Product", desc: "List a new eco product in your catalog.", to: "/admin-dashboard/products", icon: Plus },
         { title: "Write a Blog Post", desc: "Share a journal entry with your readers.", to: "/admin-dashboard/blogs", icon: PenLine },
     ];
-
-    const topSellers = useMemo(() => {
-        const map = new Map();
-        paidOrders.forEach((order) => {
-            (order.items || []).forEach((item) => {
-                const key = item.productId || item.title || item.id;
-                if (!key) return;
-                const existing = map.get(key) || { title: item.title || item.name || "Unknown Product", qty: 0, revenue: 0 };
-                existing.qty += Number(item.qty || 0);
-                existing.revenue += Number(item.total || (item.price * (item.qty || 1)) || 0);
-                map.set(key, existing);
-            });
-        });
-        return [...map.values()].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-    }, [paidOrders]);
-
-    const lowStock = useMemo(
-        () => products.filter((p) => (Number(p.stock) || 0) <= LOW_STOCK_THRESHOLD),
-        [products]
-    );
-
-    const recentOrders = useMemo(
-        () => [...orders]
-            .sort((a, b) => {
-                const ta = toJsDate(a.createdAt)?.getTime() || 0;
-                const tb = toJsDate(b.createdAt)?.getTime() || 0;
-                return tb - ta;
-            })
-            .slice(0, 5),
-        [orders]
-    );
 
     return (
         <div className="space-y-6">
