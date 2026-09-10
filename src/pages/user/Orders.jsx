@@ -9,8 +9,7 @@ import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import SearchInput from "../../component/ui/SearchInput";
 import GlassSelect from "../../component/ui/GlassSelect";
 import OrderCard from "../../component/user/OrderCard";
-
-const ORDER_STATUSES = ["Processing", "In Transit", "Delivered", "Cancelled"];
+import { ORDER_STATUSES } from "../../utils/orderStatus";
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);

@@ -29,9 +29,7 @@ import { getAllBlogs } from "../../services/blogService";
 import { getAllOrders, normalizeOrder } from "../../services/orderService";
 import { showError } from "../../utils/toastUtils";
 import { formatDate, toJsDate } from "../../utils/dateUtils";
-
-
-const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
+import formatPrice from "../../utils/formatPrice";
 
 const RANGES = [
     { key: "12m", label: "12M" },
@@ -51,18 +49,14 @@ const exportToCSV = (buckets, metric, compareMode, previousBuckets, uniqueCustom
         if (metric === "customers") {
             row.Current = uniqueCustomers;
         } else {
-            row.Current = metric === "revenue"
-                ? `₹${Number(b.revenue).toLocaleString("en-IN")}`
-                : b.orders;
+            row.Current = metric === "revenue" ? formatPrice(b.revenue) : b.orders;
         }
         if (compareMode && previousBuckets) {
             const pb = previousBuckets[buckets.indexOf(b)];
             if (metric === "customers") {
                 row.Previous = uniqueCustomers;
             } else {
-                row.Previous = metric === "revenue"
-                    ? `₹${Number(pb.revenue).toLocaleString("en-IN")}`
-                    : pb.orders;
+                row.Previous = metric === "revenue" ? formatPrice(pb.revenue) : pb.orders;
             }
         }
         return row;

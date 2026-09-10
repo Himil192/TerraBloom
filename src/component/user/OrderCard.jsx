@@ -1,23 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Package } from "lucide-react";
 import { formatDate } from "../../utils/dateUtils";
-
-const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
-
-const statusPill = (status) => {
-    switch (status) {
-        case "Delivered":
-            return "bg-green-100 text-green-800 border border-green-200";
-        case "In Transit":
-            return "bg-blue-100 text-blue-700 border border-blue-200";
-        case "Processing":
-            return "bg-yellow-100 text-yellow-800 border border-yellow-200";
-        case "Cancelled":
-            return "bg-red-100 text-red-600 border border-red-200";
-        default:
-            return "bg-[var(--glass-highlight)] text-secondary border border-subtle";
-    }
-};
+import formatPrice from "../../utils/formatPrice";
+import { orderStatusPill } from "../../utils/orderStatus";
 
 /**
  * Shared order preview card - used by the Overview ("recent orders") and the
@@ -45,7 +30,7 @@ const OrderCard = ({ order, productById }) => {
             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                 <span className="font-semibold text-strong">#{orderNumber}</span>
                 <span
-                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(order.status)}`}
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${orderStatusPill(order.status)}`}
                 >
                     {order.status}
                 </span>

@@ -23,8 +23,7 @@ import { useWishlist } from "../../context/WishlistContext";
 import { formatDate, toJsDate } from "../../utils/dateUtils";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import OrderCard from "../../component/user/OrderCard";
-
-const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
+import formatPrice from "../../utils/formatPrice";
 
 const Overview = () => {
     const { items: wishlistItems } = useWishlist();

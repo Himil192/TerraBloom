@@ -16,29 +16,14 @@ import {
 import { showError, showSuccess } from "../../utils/toastUtils";
 import { formatDate as formatDateValue } from "../../utils/dateUtils";
 
-const formatPrice = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
+import formatPrice from "../../utils/formatPrice";
+import { ORDER_STATUSES, orderStatusPill } from "../../utils/orderStatus";
+
 // Delegate to the shared util: the old local version returned the raw object in
 // its catch block, which crashed React for JSON-serialized {seconds, nanoseconds}.
 // NOTE: Intl only allows "numeric" | "2-digit" for `day` ("short" throws RangeError).
 const formatDate = (d) =>
     formatDateValue(d, { day: "numeric", month: "short", year: "numeric" });
-
-const ORDER_STATUSES = ["Processing", "In Transit", "Delivered", "Cancelled"];
-
-const statusPill = (status) => {
-    switch (status) {
-        case "Delivered":
-            return "bg-green-100 text-green-800 border border-green-200";
-        case "In Transit":
-            return "bg-blue-100 text-blue-700 border border-blue-200";
-        case "Processing":
-            return "bg-yellow-100 text-yellow-800 border border-yellow-200";
-        case "Cancelled":
-            return "bg-red-100 text-red-600 border border-red-200";
-        default:
-            return "bg-[var(--glass-highlight)] text-secondary border border-subtle";
-    }
-};
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
@@ -192,7 +177,7 @@ const Orders = () => {
                                         <select
                                             value={order.status}
                                             onChange={(e) => changeStatus(order.id, e.target.value)}
-                                            className={`rounded-full text-xs font-semibold border pr-7 py-1 pl-2.5 ${statusPill(
+                                            className={`rounded-full text-xs font-semibold border pr-7 py-1 pl-2.5 ${orderStatusPill(
                                                 order.status
                                             )} focus:outline-none focus:ring-1 focus:ring-[var(--primary-color)] cursor-pointer`}
                                         >
@@ -239,7 +224,7 @@ const Orders = () => {
                                 </p>
                             </div>
                             <span
-                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusPill(
+                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${orderStatusPill(
                                     detail.status
                                 )}`}
                             >

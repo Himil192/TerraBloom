@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { auth, db } from "../firebase";
 import { showError, showSuccess } from "../utils/toastUtils";
+import { cacheRole, cacheUid } from "../utils/sessionCache";
 import SvgComponent from "./SvgComponent";
 
 const Login = () => {
@@ -44,8 +45,8 @@ const Login = () => {
                 // in localStorage (XSS exfiltration risk). Firebase Auth manages
                 // its own session storage. role/uid below are non-authoritative
                 // UI caches only - real authorization happens in Firestore rules.
-                localStorage.setItem("role", role);
-                localStorage.setItem("uid", user.uid);
+                cacheRole(role);
+                cacheUid(user.uid);
 
                 showSuccess("Welcome back!");
 
