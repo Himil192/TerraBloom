@@ -13,6 +13,7 @@ import { auth, db } from "../../firebase";
 import SvgComponent from "../SvgComponent";
 import { clearSessionCache } from "../../utils/sessionCache";
 import { showError } from "../../utils/toastUtils";
+import Avatar from "../common/Avatar";
 
 const baseNav =
     "flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer";
@@ -76,13 +77,6 @@ export default function UserSidebar() {
         }
     };
 
-    const initials = `${formData.firstName || "U"} ${formData.lastName || ""}`
-        .split(/\s+/)
-        .map((word) => word.charAt(0))
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-
     return (
         <div className="flex h-full flex-col justify-between border-e border-subtle w-64">
             <div className="px-4 py-6 overflow-y-auto">
@@ -141,17 +135,12 @@ export default function UserSidebar() {
 {user && (
                 <div className="sticky inset-x-0 bottom-0 border-t border-subtle">
                     <div className="flex items-center gap-2 p-4 hover:bg-[var(--glass-highlight)] cursor-pointer">
-                        {imageUrl ? (
-                            <img
-                                alt="Profile"
-                                src={imageUrl}
-                                className="size-10 rounded-full object-cover ring-2 ring-[var(--glass-border)]"
-                            />
-                        ) : (
-                            <div className="size-10 flex items-center justify-center rounded-full bg-[var(--glass-highlight-strong)] text-strong font-medium text-sm uppercase">
-                                {initials || "U"}
-                            </div>
-                        )}
+                        <Avatar
+                            name={`${formData.firstName} ${formData.lastName}`.trim()}
+                            email={formData.email || user.email}
+                            src={imageUrl}
+                            className="size-10 ring-2 ring-[var(--glass-border)]"
+                        />
 
                         <div className="min-w-0 flex-1">
                             <p className="text-xs">

@@ -16,6 +16,7 @@ import {
 import { auth, db } from "../../firebase";
 import { clearSessionCache } from "../../utils/sessionCache";
 import { useTheme } from "../../theme/ThemeContext";
+import Avatar from "../common/Avatar";
 
 export default function UserTopbar({ toggleSidebar, sidebarOpen }) {
     const { isDark, toggleTheme } = useTheme();
@@ -81,13 +82,6 @@ export default function UserTopbar({ toggleSidebar, sidebarOpen }) {
         }
     };
 
-    const initials = (userName || "User")
-        .split(/\s+/)
-        .map((word) => word.charAt(0))
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-
     return (
         <header className="glass-nav flex items-center justify-between px-4 py-3 border-b border-subtle text-[15px] font-[500] relative z-20">
             {/* Left: Sidebar toggle */}
@@ -127,17 +121,12 @@ export default function UserTopbar({ toggleSidebar, sidebarOpen }) {
                     onClick={() => setDropdownOpen((prev) => !prev)}
                 >
                     <div className="relative">
-                        {imageUrl ? (
-                            <img
-                                alt="Profile"
-                                src={imageUrl}
-                                className="w-10 h-10 rounded-full object-cover ring-2 ring-[var(--glass-border)] group-hover:ring-[var(--primary-color)] transition-all duration-200"
-                            />
-                        ) : (
-                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] text-white font-semibold text-sm uppercase shadow-md">
-                                {initials || "U"}
-                            </div>
-                        )}
+                        <Avatar
+                            name={userName}
+                            email={userEmail}
+                            src={imageUrl}
+                            className="w-10 h-10 ring-2 ring-[var(--glass-border)] group-hover:ring-[var(--primary-color)] transition-all duration-200"
+                        />
                         <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-[#262927] rounded-full"></span>
                     </div>
                     <div className="hidden md:flex flex-col">
@@ -165,17 +154,12 @@ export default function UserTopbar({ toggleSidebar, sidebarOpen }) {
                 {dropdownOpen && (
                     <div className="absolute right-0 top-14 w-64 glass-strong border border-subtle-strong rounded-2xl shadow-xl z-50 p-4 animate-fadeIn">
                         <div className="flex items-center gap-3 pb-3 border-b border-subtle">
-                            {imageUrl ? (
-                                <img
-                                    alt="Profile"
-                                    src={imageUrl}
-                                    className="w-12 h-12 rounded-full object-cover ring-2 ring-[var(--glass-border)]"
-                                />
-                            ) : (
-                                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--secondary-color)] text-white font-bold text-base uppercase">
-                                    {initials || "U"}
-                                </div>
-                            )}
+                            <Avatar
+                                name={userName}
+                                email={userEmail}
+                                src={imageUrl}
+                                className="w-12 h-12 ring-2 ring-[var(--glass-border)]"
+                            />
                             <div className="flex flex-col min-w-0 flex-1">
                                 <span className="text-sm font-semibold text-strong truncate">
                                     {userName}
