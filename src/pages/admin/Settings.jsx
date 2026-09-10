@@ -3,7 +3,7 @@ import { Store, Save, Database, Loader2, Upload } from "lucide-react";
 import PageBreadcrumb from "../../component/common/PageBreadCrumb";
 import Input from "../../form/input/InputField";
 import { getSettings, saveSettings } from "../../services/settingsService";
-import { catalogStatus, seedCatalog } from "../../services/seedService";
+import { catalogStatus, dedupeCatalog, findDuplicates, seedCatalog } from "../../services/seedService";
 import { showError, showSuccess } from "../../utils/toastUtils";
 
 const labelClass =
@@ -13,6 +13,8 @@ const Settings = () => {
     const [form, setForm] = useState(null);
     const [seeding, setSeeding] = useState(false);
     const [status, setStatus] = useState(null);
+    const [dupes, setDupes] = useState(null);
+    const [cleaning, setCleaning] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -29,6 +31,12 @@ const Settings = () => {
                 if (!cancelled) setStatus(snapshot);
             } catch (error) {
                 console.error("Failed to load catalog status:", error);
+            }
+            try {
+                const found = await findDuplicates();
+                if (!cancelled) setDupes(found);
+            } catch (error) {
+                console.error("Failed to scan for duplicates:", error);
             }
         };
         load();
@@ -65,6 +73,27 @@ const Settings = () => {
             showError("Could not import sample data. Check permissions and that collections are empty.");
         } finally {
             setSeeding(false);
+        }
+    };
+
+    const handleDedupe = async () => {
+        if (!window.confirm("Remove duplicate catalog items? The oldest copy of each is kept.")) return;
+        setCleaning(true);
+        try {
+            const removed = await dedupeCatalog();
+            const total = removed.products + removed.blogs;
+            if (total === 0) {
+                showSuccess("No duplicates found — catalog is already clean.");
+            } else {
+                showSuccess(`Removed ${total} duplicate item(s).`);
+            }
+            setDupes(await findDuplicates());
+            setStatus(await catalogStatus());
+        } catch (error) {
+            console.error("Failed to remove duplicates:", error);
+            showError("Could not remove duplicates. Check permissions.");
+        } finally {
+            setCleaning(false);
         }
     };
 
@@ -222,6 +251,29 @@ const Settings = () => {
                         </ul>
                     )}
                 </div>
+
+                {dupes && (dupes.products > 0 || dupes.blogs > 0) && (
+                    <div className="mt-3 flex flex-col gap-2 rounded-xl border border-amber-300/50 bg-amber-50 p-4 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between dark:border-amber-500/30 dark:bg-amber-900/20 dark:text-amber-300">
+                        <span>
+                            Found <strong>{dupes.products}</strong> duplicate product(s) and{" "}
+                            <strong>{dupes.blogs}</strong> duplicate article(s).
+                        </span>
+                        <button
+                            onClick={handleDedupe}
+                            disabled={cleaning}
+                            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-amber-400/60 px-3 py-1.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-amber-300 dark:hover:bg-amber-900/40"
+                        >
+                            {cleaning ? (
+                                <>
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                    Cleaning...
+                                </>
+                            ) : (
+                                "Remove duplicates"
+                            )}
+                        </button>
+                    </div>
+                )}
 
                 <button
                     onClick={handleSeed}
