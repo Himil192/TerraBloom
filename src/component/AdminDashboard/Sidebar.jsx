@@ -17,6 +17,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { showError } from "../../utils/toastUtils";
 import { clearSessionCache } from "../../utils/sessionCache";
+import Avatar from "../common/Avatar";
 
 const baseNav =
     "flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer";
@@ -37,10 +38,10 @@ const accountItems = [
 ];
 
 export default function Sidebar() {
-    const [imageUrl, setImageUrl] = useState("/images/user/owner.jpg");
+    const [imageUrl, setImageUrl] = useState("");
     const [, setUserData] = useState(null);
     const [user, setUser] = useState(null);
-    const [, setUid] = useState(null);
+    const [uid, setUid] = useState(null);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -151,22 +152,14 @@ export default function Sidebar() {
             {user && (
                 <div className="sticky inset-x-0 bottom-0 border-t border-subtle">
                     <div className="flex items-center gap-2 p-4 hover:bg-[var(--glass-highlight)] cursor-pointer">
-                        {imageUrl ? (
-                            <img
-                                alt="Profile"
-                                src={imageUrl}
-                                className="size-10 rounded-full object-cover ring-2 ring-[var(--glass-border)]"
-                            />
-                        ) : (
-                            <div className="size-10 flex items-center justify-center rounded-full bg-[var(--glass-highlight-strong)] text-strong font-medium text-sm uppercase">
-                                {(formData.firstName || "U")
-                                    .split(" ")
-                                    .map((word) => word.charAt(0))
-                                    .join("")
-                                    .toUpperCase()
-                                    .substring(0, 2)}
-                            </div>
-                        )}
+                        <Avatar
+                            name={`${formData.firstName} ${formData.lastName}`.trim()}
+                            email={formData.email || user.email}
+                            seed={uid}
+                            src={imageUrl}
+                            alt="Profile"
+                            className="size-10 ring-2 ring-[var(--glass-border)]"
+                        />
 
                         <div className="min-w-0 flex-1">
                             <p className="text-xs">
