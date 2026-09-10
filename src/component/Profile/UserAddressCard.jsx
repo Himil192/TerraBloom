@@ -6,7 +6,8 @@ import { Modal } from "../ui/model";
 import Button from "../ui/button/Button";
 import Input from "../../form/input/InputField";
 import Label from "../../form/switch/Label";
-import { db } from "../../firebase";
+import { db, auth } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { showSuccess, showError } from "../../utils/toastUtils";
 
@@ -22,20 +23,21 @@ export default function UserAddressCard() {
         country: "",
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [uid, setUid] = useState(null);
 
-
-    const [uid] = useState(localStorage.getItem("uid"));
-
-
+    // Identify the signed-in user (same pattern as every other card here) -
+    // no stale localStorage uid, so it reacts to sign-in/out and account switches.
     useEffect(() => {
-        const fetchUserData = async () => {
-            if (!uid) {
-                console.log("UID not found in localStorage");
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                setUid(null);
                 return;
             }
 
+            setUid(user.uid);
+
             try {
-                const docRef = doc(db, "users", uid);
+                const docRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
@@ -53,13 +55,13 @@ export default function UserAddressCard() {
                     console.log("No user document found");
                 }
             } catch (error) {
-                showError("Failed to fetch user data");
-                console.error("Error fetching user data:", error);
+                showError("Failed to fetch address data");
+                console.error("Error fetching address data:", error);
             }
-        };
+        });
 
-        fetchUserData();
-    }, [uid]);
+        return () => unsubscribe();
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

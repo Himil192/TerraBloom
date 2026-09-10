@@ -501,13 +501,17 @@ export default function UserMetaCard() {
                                 </p>
                             )}
 
-                            {imageUrl && (
-                                <img
+                            <div className="mt-6 flex flex-col items-center gap-2">
+                                <Avatar
+                                    name={`${formData.firstName} ${formData.lastName}`.trim()}
+                                    email={formData.email}
+                                    seed={uid || formData.email}
                                     src={imageUrl}
-                                    alt="Preview"
-                                    className="mt-6 w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-[var(--primary-color)] shadow-lg"
+                                    alt="Current profile picture"
+                                    className="w-24 h-24 sm:w-28 sm:h-28 ring-2 ring-[var(--primary-color)] shadow-lg"
                                 />
-                            )}
+                                <span className="text-xs text-muted">Current picture</span>
+                            </div>
                         </div>
 
 
