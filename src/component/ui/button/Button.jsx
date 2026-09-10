@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 const Button = ({
     children,
+    type = "button",
     size = "md",
     variant = "primary",
     startIcon,
@@ -32,6 +33,7 @@ const Button = ({
 
     return (
         <button
+            type={type}
             className={`inline-flex items-center justify-center gap-2 rounded-lg transition ${className} ${sizeClasses[size]
                 } ${variantClasses[variant]} ${disabled ? "cursor-not-allowed opacity-50" : ""
                 }`}
@@ -47,6 +49,7 @@ const Button = ({
 
 Button.propTypes = {
     children: PropTypes.node.isRequired,
+    type: PropTypes.oneOf(["button", "submit", "reset"]),
     size: PropTypes.oneOf(["sm", "md"]),
     variant: PropTypes.oneOf(["primary", "outline"]),
     startIcon: PropTypes.node,

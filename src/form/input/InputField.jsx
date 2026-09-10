@@ -8,6 +8,8 @@ const Input = ({
     placeholder,
     value,
     onChange,
+    onBlur,
+    autoComplete,
     className = "",
     min,
     max,
@@ -38,6 +40,8 @@ const Input = ({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                onBlur={onBlur}
+                autoComplete={autoComplete}
                 min={min}
                 max={max}
                 step={step}
@@ -68,6 +72,8 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    autoComplete: PropTypes.string,
     className: PropTypes.string,
     min: PropTypes.string,
     max: PropTypes.string,
