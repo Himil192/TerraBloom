@@ -95,3 +95,38 @@ export const ratingSummary = (reviews, fallbackRating = 0) => {
         source: "reviews",
     };
 };
+
+/**
+ * Live rating aggregates for a whole catalog (admin Top Rated, sorting...).
+ * Returns a Map(productId -> { average, count }) computed from the genuine
+ * customer-review subcollections — NEVER the seeded sample `rating` field.
+ * One bounded subcollection read per product, run in parallel; products with
+ * no reviews map to { average: 0, count: 0 }. A failed read degrades to zero
+ * counts instead of breaking the dashboard.
+ */
+export const getRatingsForProducts = async (productIds = []) => {
+    const ids = [...new Set(productIds.map(String))].filter(Boolean);
+
+    const results = await Promise.all(
+        ids.map(async (id) => {
+            try {
+                const snap = await getDocs(query(reviewsRef(id), limit(MAX_REVIEWS)));
+                let count = 0;
+                let sum = 0;
+                snap.forEach((d) => {
+                    const stars = Math.min(5, Math.max(1, Math.round(Number(d.data()?.rating) || 0)));
+                    if (stars > 0) {
+                        sum += stars;
+                        count += 1;
+                    }
+                });
+                return [id, { average: count ? sum / count : 0, count }];
+            } catch (error) {
+                console.error(`Failed to aggregate ratings for product ${id}:`, error);
+                return [id, { average: 0, count: 0 }];
+            }
+        })
+    );
+
+    return new Map(results);
+};

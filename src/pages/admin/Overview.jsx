@@ -27,6 +27,7 @@ import { Modal } from "../../component/ui/model";
 import { getAllProducts } from "../../services/productService";
 import { getAllBlogs } from "../../services/blogService";
 import { getAllOrders, normalizeOrder } from "../../services/orderService";
+import { getRatingsForProducts } from "../../services/reviewService";
 import { showError } from "../../utils/toastUtils";
 import { formatDate, toJsDate } from "../../utils/dateUtils";
 import formatPrice from "../../utils/formatPrice";
@@ -84,6 +85,7 @@ const Overview = () => {
     const [blogs, setBlogs] = useState([]);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [ratings, setRatings] = useState(new Map());
 
     useEffect(() => {
         let cancelled = false;
@@ -110,9 +112,35 @@ const Overview = () => {
         return () => { cancelled = true; };
     }, []);
 
+    // Live rating aggregates for the Top Rated widget - computed from genuine
+    // customer reviews (products/{id}/reviews), never the seeded sample values.
+    useEffect(() => {
+        if (products.length === 0) return undefined;
+        let cancelled = false;
+        getRatingsForProducts(products.map((p) => p.id))
+            .then((map) => {
+                if (!cancelled) setRatings(map);
+            })
+            .catch((error) => console.error("Failed to load live ratings:", error));
+        return () => {
+            cancelled = true;
+        };
+    }, [products]);
+
         const recentProducts = products.slice(-6).reverse();
     const recentBlogs = blogs.slice(-5).reverse();
-    const topRated = [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
+    // "Top Rated" = LIVE aggregates from genuine customer reviews:
+    // most-reviewed first, then by live average, and finally by the seeded
+    // catalog rating only for products that have no customer reviews yet.
+    const topRated = [...products]
+        .sort((a, b) => {
+            const ra = ratings.get(String(a.id)) || { average: 0, count: 0 };
+            const rb = ratings.get(String(b.id)) || { average: 0, count: 0 };
+            if (rb.count !== ra.count) return rb.count - ra.count;
+            if (Math.abs(rb.average - ra.average) > 0.05) return rb.average - ra.average;
+            return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+        })
+        .slice(0, 3);
 
     const paidOrders = useMemo(
       () => orders.filter((order) => order.status !== "Cancelled"),
@@ -656,10 +684,26 @@ const Overview = () => {
                                         className="w-8 h-8 rounded-md object-cover border border-subtle"
                                     />
                                     <span className="flex-1 text-sm text-secondary truncate">{product.title}</span>
-                                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600">
-                                        <Sparkles className="w-3 h-3" />
-                                        {product.rating}
-                                    </span>
+                                    {(() => {
+                                        const live = ratings.get(String(product.id));
+                                        const hasReviews = Boolean(live && live.count > 0);
+                                        return (
+                                            <span
+                                                className={`inline-flex items-center gap-1 text-xs font-semibold shrink-0 ${hasReviews ? "text-amber-600" : "text-muted"}`}
+                                                title={hasReviews
+                                                    ? `${live.average.toFixed(1)} from ${live.count} customer review${live.count === 1 ? "" : "s"}`
+                                                    : "No customer reviews yet — showing the catalog's sample rating"}
+                                            >
+                                                <Sparkles className="w-3 h-3" />
+                                                {(hasReviews ? live.average : Number(product.rating) || 0).toFixed(1)}
+                                                {hasReviews && (
+                                                    <span className="text-[11px] font-medium text-muted">
+                                                        ({live.count})
+                                                    </span>
+                                                )}
+                                            </span>
+                                        );
+                                    })()}
                                 </li>
                             ))}
                         </ul>
