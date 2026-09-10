@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { HeartOff, ShoppingBag, Trash2 } from "lucide-react";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
+import formatPrice from "../utils/formatPrice";
 
 const Wishlist = () => {
     const { items, remove, clear } = useWishlist();
@@ -78,7 +79,7 @@ const Wishlist = () => {
                                         {item.title}
                                     </Link>
                                     <p className="mt-1 font-bold text-highlight">
-                                        ₹{Number(item.price || 0).toLocaleString("en-IN")}
+                                        {formatPrice(item.price)}
                                     </p>
                                 </div>
                                 <div className="mt-2 flex items-center gap-2">
