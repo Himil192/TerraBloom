@@ -71,7 +71,7 @@ const NOTIFICATIONS = [
 export default function Topbar({ toggleSidebar, sidebarOpen }) {
     const { isDark, toggleTheme } = useTheme();
     const [user, setUser] = useState(null);
-    const [, setAdminName] = useState("Loading...");
+    const [adminEmail, setAdminEmail] = useState("Loading...");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
@@ -109,47 +109,15 @@ export default function Topbar({ toggleSidebar, sidebarOpen }) {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-    const [adminEmail, setAdminEmail] = useState("Loading...");
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            if (currentUser) {
-                setUser(currentUser);
-                try {
-                    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-
-                    if (userDoc.exists()) {
-                        const data = userDoc.data();
-                        setAdminName(data.fullName || currentUser.displayName || "Admin");
-                        setAdminEmail(data.email || currentUser.email);
-                    } else {
-                        // fallback if Firestore doc not found
-                        setAdminName(currentUser.displayName || "Admin");
-                        setAdminEmail(currentUser.email);
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
-                    setAdminName(currentUser.displayName || "Admin");
-                    setAdminEmail(currentUser.email);
-                }
-            } else {
-                setUser(null);
-                setAdminName("Guest");
-                setAdminEmail("guest@example.com");
-            }
-        });
-
-        return () => unsubscribe();
-    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setUser(user);
-                const uid = user.uid;
-                setUid(uid);
+                setUid(user.uid);
 
                 try {
-                    const docRef = doc(db, "users", uid);
+                    const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
@@ -163,11 +131,19 @@ export default function Topbar({ toggleSidebar, sidebarOpen }) {
                             role: data.role || "",
                         });
                         setImageUrl(data.photoURL || "");
+                        setAdminEmail(data.email || user.email);
+                    } else {
+                        setAdminEmail(user.email || "");
                     }
                 } catch (error) {
                     showError("Failed to fetch user data");
                     console.error("Error fetching user data:", error);
+                    setAdminEmail(user.email || "");
                 }
+            } else {
+                setUser(null);
+                setUid(null);
+                setAdminEmail("guest@example.com");
             }
         });
 
